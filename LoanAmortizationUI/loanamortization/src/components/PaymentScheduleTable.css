@@ -1,0 +1,49 @@
+.payment-schedule-container {
+  margin-top: 2rem;
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  border: 2px solid #e5e7eb;
+}
+
+.payment-schedule-container h3 {
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+.schedule-table-wrapper {
+  overflow-x: auto;
+}
+
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.schedule-table thead {
+  background: #1e40af;
+  color: white;
+}
+
+.schedule-table th {
+  padding: 0.75rem 0.5rem;
+  text-align: right;
+  font-weight: 600;
+  border: 1px solid #1e293b;
+}
+
+.schedule-table td {
+  padding: 0.5rem;
+  text-align: right;
+  border: 1px solid #e5e7eb;
+}
+
+.schedule-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.initial-payment {
+  background-color: #dbeafe;
+  font-weight: 600;
+}

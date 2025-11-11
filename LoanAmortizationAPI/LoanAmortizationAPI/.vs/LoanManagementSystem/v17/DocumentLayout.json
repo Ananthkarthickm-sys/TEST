@@ -1,0 +1,246 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|d:\\work\\loanamortization\\loanamortizationapi\\loanamortizationapi\\controllers\\attachmentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|solutionrelative:controllers\\attachmentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|d:\\work\\loanamortization\\loanamortizationapi\\loanamortizationapi\\models\\attachment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|solutionrelative:models\\attachment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|d:\\work\\loanamortization\\loanamortizationapi\\loanamortizationapi\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|solutionrelative:data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|d:\\work\\loanamortization\\loanamortizationapi\\loanamortizationapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|d:\\work\\loanamortization\\loanamortizationapi\\loanamortizationapi\\controllers\\paymentschedulescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|solutionrelative:controllers\\paymentschedulescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|d:\\work\\loanamortization\\loanamortizationapi\\loanamortizationapi\\models\\loan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|solutionrelative:models\\loan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|d:\\work\\loanamortization\\loanamortizationapi\\loanamortizationapi\\dtos\\loandtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|solutionrelative:dtos\\loandtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|d:\\work\\loanamortization\\loanamortizationapi\\loanamortizationapi\\controllers\\loanscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|solutionrelative:controllers\\loanscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|d:\\work\\loanamortization\\loanamortizationapi\\loanamortizationapi\\services\\loancalculationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|solutionrelative:services\\loancalculationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|d:\\work\\loanamortization\\loanamortizationapi\\loanamortizationapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{898C927C-1E1B-4265-B2FF-541F68F7797C}|LoanManagementSystem.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 15,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:131:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:134:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:133:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:130:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:131:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:135:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:135:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:134:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:139:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:140:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:141:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\Data\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "Data\\ApplicationDbContext.cs",
+              "ToolTip": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\Data\\ApplicationDbContext.cs",
+              "RelativeToolTip": "Data\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAswA8AAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-10T12:10:37.994Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Attachment.cs",
+              "DocumentMoniker": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\Models\\Attachment.cs",
+              "RelativeDocumentMoniker": "Models\\Attachment.cs",
+              "ToolTip": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\Models\\Attachment.cs",
+              "RelativeToolTip": "Models\\Attachment.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAA5wCAAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-10T12:02:25.562Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AttachmentsController.cs",
+              "DocumentMoniker": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\Controllers\\AttachmentsController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AttachmentsController.cs",
+              "ToolTip": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\Controllers\\AttachmentsController.cs",
+              "RelativeToolTip": "Controllers\\AttachmentsController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADgAAABOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-10T12:00:38.046Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "PaymentSchedulesController.cs",
+              "DocumentMoniker": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\Controllers\\PaymentSchedulesController.cs",
+              "RelativeDocumentMoniker": "Controllers\\PaymentSchedulesController.cs",
+              "ToolTip": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\Controllers\\PaymentSchedulesController.cs",
+              "RelativeToolTip": "Controllers\\PaymentSchedulesController.cs",
+              "ViewState": "AgIAAD4AAAAAAAAAAAAwwBUAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-29T18:46:33.253Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "LoansController.cs",
+              "DocumentMoniker": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\Controllers\\LoansController.cs",
+              "RelativeDocumentMoniker": "Controllers\\LoansController.cs",
+              "ToolTip": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\Controllers\\LoansController.cs",
+              "RelativeToolTip": "Controllers\\LoansController.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAgwBsAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-29T16:55:31.396Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "LoanCalculationService.cs",
+              "DocumentMoniker": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\Services\\LoanCalculationService.cs",
+              "RelativeDocumentMoniker": "Services\\LoanCalculationService.cs",
+              "ToolTip": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\Services\\LoanCalculationService.cs",
+              "RelativeToolTip": "Services\\LoanCalculationService.cs",
+              "ViewState": "AgIAAMgAAAAAAAAAAAAQwOEAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-27T10:47:12.911Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "LoanDtos.cs",
+              "DocumentMoniker": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\DTOs\\LoanDtos.cs",
+              "RelativeDocumentMoniker": "DTOs\\LoanDtos.cs",
+              "ToolTip": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\DTOs\\LoanDtos.cs",
+              "RelativeToolTip": "DTOs\\LoanDtos.cs",
+              "ViewState": "AgIAAKUAAAAAAAAAAAAywIwAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-27T08:25:01.803Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Loan.cs",
+              "DocumentMoniker": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\Models\\Loan.cs",
+              "RelativeDocumentMoniker": "Models\\Loan.cs",
+              "ToolTip": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\Models\\Loan.cs",
+              "RelativeToolTip": "Models\\Loan.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-27T08:24:18.775Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAoAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-27T07:44:23.784Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-27T07:41:42.136Z"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 102,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

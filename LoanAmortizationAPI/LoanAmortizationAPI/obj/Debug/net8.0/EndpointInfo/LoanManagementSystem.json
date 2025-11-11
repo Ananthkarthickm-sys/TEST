@@ -1,0 +1,1625 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "LoanManagementSystem",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/Attachments/upload": {
+      "post": {
+        "tags": [
+          "Attachments"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ContentType": {
+                    "type": "string"
+                  },
+                  "ContentDisposition": {
+                    "type": "string"
+                  },
+                  "Headers": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "Length": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "FileName": {
+                    "type": "string"
+                  },
+                  "loanId": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              },
+              "encoding": {
+                "ContentType": {
+                  "style": "form"
+                },
+                "ContentDisposition": {
+                  "style": "form"
+                },
+                "Headers": {
+                  "style": "form"
+                },
+                "Length": {
+                  "style": "form"
+                },
+                "Name": {
+                  "style": "form"
+                },
+                "FileName": {
+                  "style": "form"
+                },
+                "loanId": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Attachments/GetByLoan/{loanId}": {
+      "get": {
+        "tags": [
+          "Attachments"
+        ],
+        "parameters": [
+          {
+            "name": "loanId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Attachments/download/{id}": {
+      "get": {
+        "tags": [
+          "Attachments"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Attachments/Delete/{id}": {
+      "delete": {
+        "tags": [
+          "Attachments"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Frequencies": {
+      "get": {
+        "tags": [
+          "Frequencies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FrequencyDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FrequencyDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FrequencyDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Frequencies"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFrequencyDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFrequencyDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFrequencyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Frequencies/{id}": {
+      "get": {
+        "tags": [
+          "Frequencies"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Frequencies"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFrequencyDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFrequencyDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFrequencyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Frequencies"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Frequencies/first": {
+      "get": {
+        "tags": [
+          "Frequencies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Frequencies/last": {
+      "get": {
+        "tags": [
+          "Frequencies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Frequencies/{id}/previous": {
+      "get": {
+        "tags": [
+          "Frequencies"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Frequencies/{id}/next": {
+      "get": {
+        "tags": [
+          "Frequencies"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Frequencies/count": {
+      "get": {
+        "tags": [
+          "Frequencies"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Frequencies/{id}/refresh": {
+      "post": {
+        "tags": [
+          "Frequencies"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrequencyDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Loans": {
+      "get": {
+        "tags": [
+          "Loans"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LoanDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LoanDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LoanDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Loans"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLoanDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLoanDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLoanDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Loans/{id}": {
+      "get": {
+        "tags": [
+          "Loans"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Loans"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLoanDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLoanDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLoanDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Loans"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Loans/calculate": {
+      "post": {
+        "tags": [
+          "Loans"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoanCalculationRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoanCalculationRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoanCalculationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanCalculationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanCalculationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanCalculationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Loans/{id}/calculate-full": {
+      "post": {
+        "tags": [
+          "Loans"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Loans/{id}/generate-schedule": {
+      "post": {
+        "tags": [
+          "Loans"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/PaymentSchedules/loan/{loanId}": {
+      "get": {
+        "tags": [
+          "PaymentSchedules"
+        ],
+        "parameters": [
+          {
+            "name": "loanId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentScheduleDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentScheduleDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentScheduleDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "PaymentSchedules"
+        ],
+        "parameters": [
+          {
+            "name": "loanId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/PaymentSchedules/{id}": {
+      "get": {
+        "tags": [
+          "PaymentSchedules"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentScheduleDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentScheduleDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentScheduleDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PaymentSchedules/loan/{loanId}/chart-data": {
+      "get": {
+        "tags": [
+          "PaymentSchedules"
+        ],
+        "parameters": [
+          {
+            "name": "loanId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanChartDataDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanChartDataDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanChartDataDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ChartPoint": {
+        "type": "object",
+        "properties": {
+          "paymentNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateFrequencyDto": {
+        "type": "object",
+        "properties": {
+          "frequencyType": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentsPerYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "daysBetweenPayments": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateLoanDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string",
+            "nullable": true
+          },
+          "associatedAccountId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "ordering": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "loanNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "purchasePrice": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "cashDown": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "frequency": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "numberYears": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "interestRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "correctionRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "signedTermYears": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "signedTermType": {
+            "type": "string",
+            "nullable": true
+          },
+          "signedMaturityDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "extraPaymentTrigger": {
+            "type": "boolean"
+          },
+          "loanExtraPayment": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "annualTaxAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "periodTaxAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FrequencyDto": {
+        "type": "object",
+        "properties": {
+          "autoId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "frequencyType": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentsPerYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "daysBetweenPayments": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoanCalculationRequest": {
+        "type": "object",
+        "properties": {
+          "purchasePrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "cashDown": {
+            "type": "number",
+            "format": "double"
+          },
+          "frequencyId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numberYears": {
+            "type": "number",
+            "format": "double"
+          },
+          "interestRate": {
+            "type": "number",
+            "format": "double"
+          },
+          "correctionRate": {
+            "type": "number",
+            "format": "double"
+          },
+          "loanExtraPayment": {
+            "type": "number",
+            "format": "double"
+          },
+          "annualTaxAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "extraPaymentTrigger": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoanCalculationResponse": {
+        "type": "object",
+        "properties": {
+          "financedAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "numberOfPayments": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "periodInterestRate": {
+            "type": "number",
+            "format": "double"
+          },
+          "finalInterestRate": {
+            "type": "number",
+            "format": "double"
+          },
+          "paymentAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "finalPaymentAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "monthlyTaxAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalPaymentWithTax": {
+            "type": "number",
+            "format": "double"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "signedTermRemaining": {
+            "type": "number",
+            "format": "double"
+          },
+          "periodInterestRateStr": {
+            "type": "string",
+            "nullable": true
+          },
+          "finalInterestRateStr": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoanChartDataDto": {
+        "type": "object",
+        "properties": {
+          "principalData": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChartPoint"
+            },
+            "nullable": true
+          },
+          "interestData": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChartPoint"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoanDto": {
+        "type": "object",
+        "properties": {
+          "autoId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "companyId": {
+            "type": "string",
+            "nullable": true
+          },
+          "associatedAccountId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "ordering": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "loanNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "purchasePrice": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "cashDown": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "financedAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "frequency": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "frequencyType": {
+            "type": "string",
+            "nullable": true
+          },
+          "numberYears": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "interestRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "correctionRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "finalInterestRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "periodInterestRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "signedTermYears": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "signedTermType": {
+            "type": "string",
+            "nullable": true
+          },
+          "signedMaturityDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "signedTermNumberOfPayments": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "signedTermRemaining": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "extraPaymentTrigger": {
+            "type": "boolean"
+          },
+          "loanExtraPayment": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "numberOfPayments": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "paymentAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "finalPaymentAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "annualTaxAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "periodTaxAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "newTermLength": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "newNumberOfPayments": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalInterest": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalPrincipal": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalExtraPayment": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "monthlyTaxAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "correctionRateStr": {
+            "type": "string",
+            "nullable": true
+          },
+          "periodInterestRateStr": {
+            "type": "string",
+            "nullable": true
+          },
+          "finalInterestRateStr": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaymentScheduleDto": {
+        "type": "object",
+        "properties": {
+          "autoId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "loanId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "paymentNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "scheduleDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "paymentAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "principal": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "interest": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "interestRateAnnual": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "interestRatePerPeriod": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "startingBalance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "endingBalance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "endingBalanceExtra": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "loanExtraPaymentPerPeriod": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateFrequencyDto": {
+        "type": "object",
+        "properties": {
+          "frequencyType": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentsPerYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "daysBetweenPayments": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateLoanDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string",
+            "nullable": true
+          },
+          "associatedAccountId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "ordering": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "loanNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "purchasePrice": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "cashDown": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "frequency": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "numberYears": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "interestRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "correctionRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "signedTermYears": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "signedTermType": {
+            "type": "string",
+            "nullable": true
+          },
+          "signedMaturityDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "extraPaymentTrigger": {
+            "type": "boolean"
+          },
+          "loanExtraPayment": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "annualTaxAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "periodTaxAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

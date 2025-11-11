@@ -1,0 +1,13 @@
+.loan-chart-container {
+  margin-top: 2rem;
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  border: 2px solid #e5e7eb;
+}
+
+.loan-chart-container h3 {
+  color: #111827;
+  margin-bottom: 1rem;
+  text-align: center;
+}

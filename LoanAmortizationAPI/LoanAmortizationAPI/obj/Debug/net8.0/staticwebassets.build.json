@@ -1,0 +1,20 @@
+{
+  "Version": 1,
+  "Hash": "PasAW+ScFftBtw+ioML7LaXhZ/hu7PeGOFWkFE36RKA=",
+  "Source": "LoanManagementSystem",
+  "BasePath": "_content/LoanManagementSystem",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "LoanManagementSystem\\wwwroot",
+      "Source": "LoanManagementSystem",
+      "ContentRoot": "D:\\Work\\LoanAmortization\\LoanAmortizationAPI\\LoanAmortizationAPI\\wwwroot\\",
+      "BasePath": "_content/LoanManagementSystem",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [],
+  "Endpoints": []
+}
