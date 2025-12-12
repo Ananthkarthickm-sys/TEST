@@ -1,0 +1,217 @@
+{
+  "createdAt": "2025-12-03T06:49:20.654Z",
+  "updatedAt": "2025-12-05T12:29:49.000Z",
+  "id": "lKJQW5Atdral8PHZ",
+  "name": "Edited_Mail_Content__HR_confirm",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $json.query.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -128,
+        -112
+      ],
+      "id": "8c57320c-564a-40c5-8da2-1eb8757f5b27",
+      "name": "details",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const html = $('Webhook1').first().json.query.email_content;\n\nlet plainText = html\n  .replace(/<(\\/)?(p|div|h[1-6]|li|br)[^>]*>/gi, '\\n')  // Convert paragraph/line break tags\n  .replace(/<[^>]+>/g, '')                              // Strip any remaining tags\n  .replace(/\\n{2,}/g, '\\n\\n')                           // Clean up extra newlines\n  .replace(/[ \\t]+\\n/g, '\\n')                           // Clean trailing whitespace\n  .replace(/&nbsp;/gi, ' ')\n  .replace(/&amp;/gi, '&')\n  .replace(/&lt;/gi, '<')\n  .replace(/&gt;/gi, '>')\n  .trim();\n\nreturn {\n  plainTextEmail: plainText\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        112,
+        -112
+      ],
+      "id": "28965cec-12f9-4211-8f9f-8711ad15832f",
+      "name": "format mail content"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>Edit Email Content</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <style>\n    body {\n      font-family: \"Segoe UI\", sans-serif;\n      background-color: #eef2f7;\n      padding: 30px;\n      margin: 0;\n    }\n\n    .container {\n      max-width: 800px;\n      background-color: #ffffff;\n      padding: 30px;\n      margin: auto;\n      border-radius: 12px;\n      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);\n    }\n\n    h2 {\n      font-size: 24px;\n      color: #333;\n      margin-bottom: 20px;\n      border-bottom: 1px solid #ccc;\n      padding-bottom: 10px;\n    }\n\n    #emailPreview, #emailEditor {\n      white-space: pre-wrap;\n      font-size: 16px;\n      color: #333;\n      background: #f9f9f9;\n      padding: 20px;\n      border-radius: 8px;\n      border: 1px solid #ddd;\n      margin-bottom: 20px;\n    }\n\n    textarea {\n      width: 100%;\n      max-width: 100%;\n      height: 300px;\n      font-size: 16px;\n      font-family: inherit;\n      padding: 15px;\n      border-radius: 8px;\n      border: 1px solid #ccc;\n      resize: vertical;\n      box-sizing: border-box;\n    }\n\n    .btn-group {\n      display: flex;\n      gap: 10px;\n      justify-content: flex-end;\n      margin-top: 10px;\n    }\n\n    button, a.send-link {\n      padding: 10px 20px;\n      font-size: 15px;\n      border: none;\n      border-radius: 4px;\n      cursor: pointer;\n      text-decoration: none;\n      color: white;\n      display: inline-block;\n    }\n\n    .edit-btn { background-color: #005a9e; }\n    .save-btn { background-color: #0078d4; }\n    .send-btn, .send-link { background-color: #107c10; }\n\n    .signature {\n      margin-top: 30px;\n      text-align: left;\n    }\n\n    .signature img {\n      width: 150px;\n      height: auto;\n      margin-top: 10px;\n    }\n\n    .popup-box {\n      display: none;\n      text-align: center;\n    }\n\n    .popup-box h2 {\n      font-size: 26px;\n      color: #2e7d32;\n    }\n\n    .popup-box .icon {\n      font-size: 48px;\n      color: #4caf50;\n      margin-bottom: 20px;\n    }\n  </style>\n</head>\n<body>\n<div class=\"container\">\n  <h2 id=\"mainTitle\">EDIT MAIL CONTENT</h2>\n\n  <!-- Edit Area -->\n  <div id=\"editorSection\" style=\"display: none;\">\n    <textarea id=\"emailTextArea\">{{ $json.plainTextEmail }}</textarea>\n    <div class=\"btn-group\">\n      <button class=\"save-btn\" onclick=\"saveChanges()\">Make Changes</button>\n    </div>\n  </div>\n\n  <!-- Preview -->\n  <div id=\"previewSection\">\n    <div id=\"emailPreview\">{{ $json.plainTextEmail.replace(/\\n/g, '<br>') }}</div>\n    <div class=\"signature\">\n      <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" alt=\"Rencata Logo\" />\n    </div>\n    <div class=\"btn-group\">\n      <button class=\"edit-btn\" onclick=\"editEmail()\">Edit</button>\n      <button class=\"send-btn\" onclick=\"showConfirm()\">Send</button>\n    </div>\n  </div>\n\n  <!-- Confirm Preview -->\n  <div id=\"confirmSection\" style=\"display: none;\">\n    <div id=\"finalPreview\"></div>\n    <div class=\"signature\">\n      <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" alt=\"Rencata Logo\" />\n    </div>\n    <div class=\"btn-group\">\n      <a id=\"sendLink\" class=\"send-link\" target=\"_blank\" onclick=\"showThankYou()\">Confirm & Send</a>\n    </div>\n  </div>\n\n  <!-- Thank You Message -->\n  <div id=\"thankYouBox\" class=\"popup-box\">\n    <div class=\"icon\">✅</div>\n    <h2>Thank You!</h2>\n    <p>Offer Letter sent to the candidate.</p>\n    <p>This window will close automatically.</p>\n  </div>\n</div>\n\n<script>\n  function editEmail() {\n    document.getElementById('previewSection').style.display = 'none';\n    document.getElementById('editorSection').style.display = 'block';\n\n    const currentHTML = document.getElementById('emailPreview').innerHTML;\n    const plainText = currentHTML.replace(/<br\\s*\\/?>/gi, \"\\n\");\n    document.getElementById('emailTextArea').value = plainText;\n    document.getElementById('emailTextArea').focus();\n  }\n\n  function saveChanges() {\n    const edited = document.getElementById('emailTextArea').value;\n    document.getElementById('editorSection').style.display = 'none';\n    document.getElementById('previewSection').style.display = 'block';\n    document.getElementById('emailPreview').innerHTML = edited.replace(/\\n/g, \"<br>\");\n  }\n\n  function showConfirm() {\n    const final = document.getElementById('emailPreview').innerHTML;\n    const plainText = final.replace(/<br\\s*\\/?>/gi, '\\n').replace(/&nbsp;/g, ' ').trim();\n\n    document.getElementById('previewSection').style.display = 'none';\n    document.getElementById('confirmSection').style.display = 'block';\n    document.getElementById('finalPreview').innerHTML = final;\n\n    // Dynamically set the href with encoded values\n    const encodedContent = encodeURIComponent(plainText);\n    const encodedId = encodeURIComponent(`{{ $('details').item.json.id }}`);\n    document.getElementById('sendLink').href = `https://med.rencata.com/webhook/confirmsend?id=${encodedId}&email_content=${encodedContent}`;\n  }\n\n  function showThankYou() {\n    document.getElementById('mainTitle').style.display = 'none';\n    document.getElementById('confirmSection').style.display = 'none';\n    document.getElementById('thankYouBox').style.display = 'block';\n\n    setTimeout(() => window.close(), 3000);\n  }\n</script>\n\n</body>\n</html>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        352,
+        -112
+      ],
+      "id": "c0e3e02f-7468-48a6-b541-7117e03fa35b",
+      "name": "Mail Edit Page",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "path": "edit-content",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        -112
+      ],
+      "id": "0f6e05e8-5744-41a5-a89a-0ef9131166a1",
+      "name": "Webhook1",
+      "webhookId": "eecb4cd8-eef4-408b-bf13-b66a0e46d418"
+    }
+  ],
+  "connections": {
+    "details": {
+      "main": [
+        [
+          {
+            "node": "format mail content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format mail content": {
+      "main": [
+        [
+          {
+            "node": "Mail Edit Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "c20cd1b8-4e3b-4b58-b898-bd416ce25e3b",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-12-03T06:49:20.658Z",
+      "updatedAt": "2025-12-03T06:49:20.658Z",
+      "role": "workflow:owner",
+      "workflowId": "lKJQW5Atdral8PHZ",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "createdAt": "2025-12-03T06:49:39.162Z",
+      "updatedAt": "2025-12-03T06:49:39.162Z",
+      "id": "aGAAT2Yhmktcxsg1",
+      "name": "SendOfferLetter"
+    },
+    {
+      "createdAt": "2025-12-03T06:49:39.116Z",
+      "updatedAt": "2025-12-03T06:49:39.116Z",
+      "id": "hwboUBGl6pm5I3Cw",
+      "name": "button"
+    },
+    {
+      "createdAt": "2025-12-03T06:49:39.163Z",
+      "updatedAt": "2025-12-03T06:49:39.163Z",
+      "id": "qC171w6hduUTe4wY",
+      "name": "new"
+    }
+  ]
+}
