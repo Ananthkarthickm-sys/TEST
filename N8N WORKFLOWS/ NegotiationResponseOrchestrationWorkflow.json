@@ -1,0 +1,344 @@
+{
+  "createdAt": "2025-12-05T05:22:08.295Z",
+  "updatedAt": "2025-12-09T06:24:38.000Z",
+  "id": "sqPKsXSx2iyp5tOP",
+  "name": "NegotiationResponseOrchestrationWorkflow",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "toRecipients": "Ananthkarthick.m@rencata.com",
+        "subject": "hr recommendation ",
+        "bodyContent": "=<p>Dear President,</p>\n\n<p>The candidate <strong>{{ $('reading_candidate_Response').item.json.from.emailAddress.name }}</strong> has requested a negotiation after receiving the offer letter. Please find HR's review and recommendation below.</p>\n\n<p><strong>Candidate's Request:</strong></p>\n<blockquote style=\"border-left: 3px solid #ccc; padding-left: 10px; color: #555;\">\n  {{ $('reading_candidate_Response').item.json.body.content }}\n</blockquote>\n\n<p><strong>Candidate Information:</strong></p>\n<ul style=\"list-style: none; padding-left: 0;\">\n  <li><strong>Name:</strong> {{ $('reading_candidate_Response').item.json.from.emailAddress.name }}</li>\n  <li><strong>Email:</strong> {{ $('reading_candidate_Response').item.json.from.emailAddress.address }}</li>\n</ul>\n\n<p><strong>Possible Negotiation:</strong></p>\n<div style=\"background-color: #f9f9f9; padding: 15px; border-left: 3px solid #007bff; margin: 10px 0;\">\n  {{ $json.data.text }}\n</div>\n\n<p>We kindly request your decision on this negotiation. Click the button below to enter your response:</p>\n\n<div style=\"text-align: center; margin: 20px 0;\">\n  <a href=\"https://192.168.50.120:5670/form/response?Candidate_Name={{ encodeURIComponent($('reading_candidate_Response').item.json.from.emailAddress.name) }}&Candidate_personal_mail={{ encodeURIComponent($('reading_candidate_Response').item.json.from.emailAddress.address) }}&Possible_Negotiation={{ encodeURIComponent($json.data.text) }}&Candidate_Request={{ encodeURIComponent($('plain_text').item.json.plainText) }}\"\n     style=\"display:inline-block;padding:12px 30px;background-color:#007bff;color:white;text-decoration:none;border-radius:5px;font-weight:bold;\">\n     Enter Your Response\n  </a>\n</div>\n\n<p>Regards,<br>HR Team</p>\n\n<div style=\"text-align: center; margin-top: 30px;\">\n  <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" \n       alt=\"Rencata Logo\" \n       style=\"max-width: 150px; height: auto;\">\n</div>",
+        "additionalFields": {
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        48,
+        -32
+      ],
+      "id": "7426595f-4aeb-43c2-974d-5fe2565355f1",
+      "name": "recommendation mail",
+      "webhookId": "05cc0b6d-fc81-4c58-8195-5e8b1d5dd3c9",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toRecipients": "Ananthkarthick.m@rencata.com",
+        "subject": "=Negotiation Request",
+        "bodyContent": "=<p>Dear HR Team,</p>\n\n<p>The candidate <strong>{{ $json.from.emailAddress.name }}</strong> (Email: <a href=\"mailto:{{ $json.from.emailAddress.address }}\">{{ $json.from.emailAddress.address }}</a>) has responded to the offer letter with a negotiation request.</p>\n\n<p><strong>Candidate's Response:</strong></p>\n<blockquote style=\"border-left: 3px solid #ccc; padding-left: 10px; color: #555;\">\n  {{ $json.body.content }}\n</blockquote>\n\n<p>Please review the candidate’s request and provide your recommendation for further consideration.</p>\n\n<p>Regards,<br>\n<p><img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" \n     alt=\"Rencata Logo\" style=\"width: 150px; height: auto;\"></p></p>\n",
+        "additionalFields": {
+          "importance": "High",
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        -32
+      ],
+      "id": "8cafc1d6-5ed1-4a12-9eba-d7a559a845e8",
+      "name": "hr_notifying_mail",
+      "webhookId": "9f1373e0-a69e-4fe5-bc2e-56d63aef5088",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -176,
+        -48
+      ],
+      "id": "cdfce548-c9dd-4c3b-8241-8560c28d19fc",
+      "name": "Merge",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1056,
+        -48
+      ],
+      "id": "80a63d22-426e-4e10-8355-6e11449453ba",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "const html = $input.first().json.body.content|| '';\n\n// Simple regex to remove HTML tags\nconst cleanedText = html\n  .replace(/<style[^>]*>[\\s\\S]*?<\\/style>/gi, '')  // remove style blocks\n  .replace(/<script[^>]*>[\\s\\S]*?<\\/script>/gi, '') // remove script blocks\n  .replace(/<\\/?[^>]+(>|$)/g, '') // remove HTML tags\n  .replace(/\\s+/g, ' ') // collapse extra whitespace\n  .trim();\n\nreturn [{\n  json: {\n    plaintext2: cleanedText\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        48,
+        288
+      ],
+      "id": "c15620f3-ae11-4702-8814-ca7ea8a925ac",
+      "name": "formatted_plain_text"
+    },
+    {
+      "parameters": {
+        "jsCode": "const html = $input.first().json.body.content|| '';\n\n// Simple regex to remove HTML tags\nconst cleanedText = html\n  .replace(/<style[^>]*>[\\s\\S]*?<\\/style>/gi, '')  // remove style blocks\n  .replace(/<script[^>]*>[\\s\\S]*?<\\/script>/gi, '') // remove script blocks\n  .replace(/<\\/?[^>]+(>|$)/g, '') // remove HTML tags\n  .replace(/\\s+/g, ' ') // collapse extra whitespace\n  .trim();\n\nreturn [{\n  json: {\n    plainText: cleanedText\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        -224
+      ],
+      "id": "ccb1b36d-0c86-46b7-827a-e979cb99f6ba",
+      "name": "plain_text"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 1,
+        "output": "fields",
+        "fields": [
+          "body",
+          "from",
+          "subject"
+        ],
+        "filtersUI": {
+          "values": {
+            "filters": {
+              "readStatus": "read",
+              "receivedAfter": "={{ $now.minus({ hours: 1}).toISO() }}",
+              "sender": "={{ $json.personal_email }}"
+            }
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -640,
+        -176
+      ],
+      "id": "656e89ef-1359-4df9-8262-1503a1ffedc9",
+      "name": "reading_candidate_Response",
+      "webhookId": "53628309-30d5-4045-8b3b-7676c128b9db",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "toRecipients": "Ananthkarthick.m@rencata.com",
+        "subject": "Approval required",
+        "message": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Offer Negotiation Request</title>\n</head>\n<body style=\"margin: 0; padding: 0; font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; background-color: #ffffff;\">\n    <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"padding: 20px 10px;\">\n        <tr>\n            <td align=\"center\">\n                <table width=\"100%\" style=\"max-width: 650px;\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border: 1px solid #e0e0e0; border-radius: 8px;\">\n                    \n                    <!-- Header -->\n                    <tr>\n                        <td style=\"padding: 30px 25px 20px 25px; border-bottom: 2px solid #000000;\">\n                            <h1 style=\"margin: 0; color: #000000; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;\">\n                                Offer Negotiation Request\n                            </h1>\n                        </td>\n                    </tr>\n                    \n                    <!-- Content -->\n                    <tr>\n                        <td style=\"padding: 30px 25px;\">\n                            <p style=\"margin: 0 0 30px 0; color: #000000; font-size: 16px; line-height: 1.6;\">\n                                Dear HR Team,\n                            </p>\n                            \n                            <p style=\"margin: 0 0 30px 0; color: #000000; font-size: 16px; line-height: 1.6;\">\n                                The candidate <strong style=\"font-weight: 600;\">{{ $json.from.emailAddress.name }}</strong> \n                                ({{ $json.from.emailAddress.address }}) has responded to the offer letter with a negotiation request.\n                            </p>\n                            \n                            <p style=\"margin: 0 0 15px 0; color: #000000; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;\">\n                                Candidate's Response\n                            </p>\n                            \n                            <div style=\"background-color: #f5f5f5; border-left: 4px solid #000000; padding: 25px; margin: 0 0 30px 0;\">\n                                <p style=\"margin: 0; color: #000000; font-size: 15px; line-height: 1.8; white-space: pre-wrap; font-style: italic;\">{{ $json.body.content }}</p>\n                            </div>\n                            \n                            <div style=\"background-color: #f9f9f9; border: 2px solid #000000; padding: 20px; margin: 0 0 30px 0;\">\n                                <p style=\"margin: 0 0 8px 0; color: #000000; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;\">\n                                    ⚠️ Action Required\n                                </p>\n                                <p style=\"margin: 0; color: #000000; font-size: 15px; line-height: 1.6;\">\n                                    Please review this negotiation request and provide your recommendation for further consideration.\n                                </p>\n                            </div>\n                        </td>\n                    </tr>\n                    \n                    <!-- Footer -->\n                    <tr>\n                        <td style=\"padding: 25px; background-color: #fafafa; border-top: 1px solid #e0e0e0; text-align: center;\">\n                            <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" \n                                 alt=\"Rencata\" \n                                 style=\"width: 130px; height: auto; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;\">\n                            <p style=\"margin: 0 0 5px 0; color: #666666; font-size: 14px;\">\n                                Best regards,\n                            </p>\n                            <p style=\"margin: 0; color: #000000; font-size: 15px; font-weight: 600;\">\n                                Rencata HR Automation System\n                            </p>\n                        </td>\n                    </tr>\n                    \n                    <tr>\n                        <td style=\"padding: 20px 25px; background-color: #000000; text-align: center;\">\n                            <p style=\"margin: 0; color: #ffffff; font-size: 12px; line-height: 1.5;\">\n                                This is an automated notification from your recruitment system.<br>\n                                Please do not reply to this email.\n                            </p>\n                        </td>\n                    </tr>\n                    \n                </table>\n            </td>\n        </tr>\n    </table>\n</body>\n</html>",
+        "responseType": "freeText",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        272
+      ],
+      "id": "3a3d830d-84e0-47ac-bdab-95bb08c695a8",
+      "name": "Send message and wait for response",
+      "webhookId": "48fa825b-1900-4979-863e-51198ed59238",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT personal_email\nFROM onboarding.candidates\nWHERE \n  templates ->> 'offer_letter_negotiated' = 'true' \n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -864,
+        -176
+      ],
+      "id": "e23ef6e8-3b74-430c-a0c2-6cfe7e47c307",
+      "name": "Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "recommendation mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "formatted_plain_text": {
+      "main": [
+        []
+      ]
+    },
+    "plain_text": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reading_candidate_Response": {
+      "main": [
+        [
+          {
+            "node": "plain_text",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "reading_candidate_Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "9153479b-9d5a-4d71-9433-449d6c7dc4c5",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-12-05T05:22:08.299Z",
+      "updatedAt": "2025-12-05T05:22:08.299Z",
+      "role": "workflow:owner",
+      "workflowId": "sqPKsXSx2iyp5tOP",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
