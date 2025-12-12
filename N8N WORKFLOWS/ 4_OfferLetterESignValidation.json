@@ -1,0 +1,1155 @@
+{
+  "createdAt": "2025-11-19T11:57:39.559Z",
+  "updatedAt": "2025-12-01T06:56:12.000Z",
+  "id": "FoI6cRstUnOzYAQk",
+  "name": "4 OfferLetterESignValidation",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "blob",
+        "operation": "create",
+        "container": {
+          "__rl": true,
+          "value": "onboarding-ai",
+          "mode": "list",
+          "cachedResultName": "onboarding-ai"
+        },
+        "blobCreate": "=e_signed/{{ $('filename').item.json.filename }}.pdf'",
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.azureStorage",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        608
+      ],
+      "id": "2e7e6ad2-514d-4d8a-a547-d548f285395a",
+      "name": "Create blob",
+      "credentials": {
+        "azureStorageOAuth2Api": {
+          "id": "wkCauR87kgf8c1t9",
+          "name": "AnanthKarthickAzureStorageAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "49ee2196-7d40-46a1-b0d9-f906fcd4270c",
+      "typeVersion": 1.1,
+      "name": "data",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        1728,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "=1157"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -224,
+        288
+      ],
+      "id": "251b2709-84d6-4e28-9839-8f06f34c2bab",
+      "name": "details",
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const stdout = $input.first().json.stdout;\n\n// Extract the last valid JSON block using a stricter pattern\nconst jsonMatches = stdout.match(/({\\s*\"signature_present\"[\\s\\S]*?})/);\nlet jsonPart = {};\n\nif (jsonMatches) {\n  try {\n    jsonPart = JSON.parse(jsonMatches[1]);\n  } catch (err) {\n    jsonPart = { parse_error: true };\n  }\n}\n\n// Extract common_name from cert.subject block only\nconst matchSubject = stdout.match(/cert\\.subject:.*?'common_name':\\s*'([^']+)'/);\nconst signerName = matchSubject ? matchSubject[1] : null;\n\n\n// Return final combined result\nreturn [\n  {\n    json: {\n      ...jsonPart,\n      signer_common_name: signerName\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        800
+      ],
+      "id": "f8522858-2282-45c9-b0f2-d600c2163f22",
+      "name": "sign validation"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $now; // your input datetime string\nconst date = new Date(input);\n\n// Convert to IST (UTC +5:30)\nconst offsetIST = 5.5 * 60;\nconst istDate = new Date(date.getTime() + offsetIST * 60000);\n\n// Format parts\nconst yyyy = istDate.getFullYear();\nconst mm = String(istDate.getMonth() + 1).padStart(2, '0');\nconst dd = String(istDate.getDate()).padStart(2, '0');\nconst hh = String(istDate.getHours()).padStart(2, '0');\nconst min = String(istDate.getMinutes()).padStart(2, '0');\nconst ss = String(istDate.getSeconds()).padStart(2, '0');\n\n// Get employee name\nconst firstName = $('details').first().json.first_name || '';\nconst lastName = $('details').first().json.last_name || '';\n\n// Sanitize and format\nconst safeFirst = firstName.replace(/[^a-z0-9]/gi, '_').toLowerCase();\nconst safeLast = lastName.replace(/[^a-z0-9]/gi, '_').toLowerCase();\nconst timestamp = `${yyyy}_${mm}_${dd}_${hh}_${min}_${ss}`;\n\n// Final filename\nconst finalFileName = `${safeFirst}_${safeLast}_${timestamp}`;\n\nreturn [\n  {\n    json: {\n      filename: finalFileName\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        608
+      ],
+      "id": "70a5e487-9cee-4fcd-ada2-f9921faabee0",
+      "name": "filename"
+    },
+    {
+      "parameters": {
+        "toRecipients": "ananya.js@rencata.com",
+        "subject": "E-sign validation error",
+        "bodyContent": "={{ $json['email content'] }}",
+        "additionalFields": {
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        896,
+        1040
+      ],
+      "id": "17178e4d-c889-4807-9e57-eb1a42afca77",
+      "name": "send mail to HR",
+      "webhookId": "065c23e0-5ce0-4f98-936f-a7293a3d452e",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "yH6eMS0WRC0QG6xY",
+          "mode": "list",
+          "cachedResultName": "email log"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1296,
+        880
+      ],
+      "id": "baca8fb1-b5e0-455c-b212-77836d3d1438",
+      "name": "log email"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3495bf08-72f2-4690-a751-306189c639fc",
+              "name": "id",
+              "value": "={{ $('details').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "c8dcb4a0-30ac-41c9-9c86-bfe436323fd9",
+              "name": "process",
+              "value": "E-sign validation",
+              "type": "string"
+            },
+            {
+              "id": "3fe046af-2c18-4960-9d70-5e59edaa3163",
+              "name": "email content",
+              "value": "=<!DOCTYPE html>\n<html>\n  <body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333;\">\n    <p>Dear HR Team,</p>\n\n    <p>The e-signed offer letter of <strong>{{ $('details').item.json.first_name }} {{ $('details').item.json.last_name }}</strong> failed validation. Please find the issues below:</p>\n\n    {{ $json.signer_common_name === null ? '<p><strong>Issue:</strong> No e-signature found — signer name is missing.</p>' : '' }}\n    {{ $json.signer_common_name !== 'Ravikumar R' ? '<p><strong>Issue:</strong> Invalid signer — not our authorized director (expected: Ravikumar R).</p>' : '' }}\n    {{ $json.signature_present === false ? '<p><strong>Issue:</strong> No e-signature object present in the document.</p>' : '' }}\n    {{ $json.hash_matches === false ? '<p><strong>Issue:</strong> Document tampering detected — file hash does not match.</p>' : '' }}\n\n    <p>Kindly request re-sign the document.</p>\n\n    <p>Thank you,<br>\n    Team Agentic AI</p>\n  </body>\n</html>\n",
+              "type": "string"
+            },
+            {
+              "id": "0d8b881d-a2b7-4dc9-9904-ec438aaf07ac",
+              "name": "sent to",
+              "value": "ananya.js@rencata.com",
+              "type": "string"
+            },
+            {
+              "id": "08795e23-b5eb-4b71-a635-185ae852652e",
+              "name": "created_by",
+              "value": "n8n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        896
+      ],
+      "id": "91af4c4a-454d-4ef4-b8f4-e95b82a593b2",
+      "name": "contents"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1072,
+        880
+      ],
+      "id": "62aeab38-c36a-4317-af36-34a6b4cfc4c1",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = jsonb_set(templates::jsonb, '{offer_letter_generated}', 'true'::jsonb, false)::json,\n    updated_at = NOW()\nWHERE id = {{ $('data').first().json.id }};\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1344,
+        608
+      ],
+      "id": "4025fdf1-107c-44f0-91d7-12773ed2f387",
+      "name": "update offer_letter_esigned_validated",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $('data').first().json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "templates"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1552,
+        608
+      ],
+      "id": "ed1abe2c-2fcc-4213-a609-21a692456ecf",
+      "name": "offer_letter_esigned_validated done",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = jsonb_set(templates::jsonb, '{process_paused}', 'true'::jsonb, false)::json,\n    updated_at = NOW()\nWHERE id = {{ $('data').first().json.id }};\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1520,
+        880
+      ],
+      "id": "49016f59-a43f-47da-b739-57d8d236d374",
+      "name": "update process_paused",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $('data').first().json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "templates"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1744,
+        880
+      ],
+      "id": "6b29fa8b-43b7-404d-b1ca-24c46aac782e",
+      "name": "process_paused",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": true,
+        "filtersUI": {
+          "values": {
+            "filters": {
+              "hasAttachments": true,
+              "foldersToInclude": [
+                "AQMkAGEyOGEwOTRiLWUzYTQtNGQwNS1hNGY4LTRmNjNjZDRmMmVkMwAuAAADrV2KPCWoW0mPYhqgsjBRqgEADy5s4_So3U2g_37x44N3DgAAAgEMAAAA"
+              ],
+              "sender": "Ananthkarthick.m@rencata.com"
+            }
+          }
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        208,
+        224
+      ],
+      "id": "ed9a3af8-606a-413e-8d1a-1cf24e43f411",
+      "name": "All mail with attachment",
+      "webhookId": "d0c6f6d0-470e-456c-ad61-0ffd11f47aa8",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        384,
+        208
+      ],
+      "id": "27f2d10a-8b92-4834-8dab-13cdf5f80c9e",
+      "name": "Loop"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get input item\nconst item = $input.first();\n\n// Safely extract binary data\nconst binary = item.binary || {};\nconst binaryData = binary[\"attachment_0\"] || {}; // <-- fallback\n\nconst fileName = binaryData.fileName || '';\nconst fileExtension = fileName ? fileName.split('.').pop() : '';\nconst id = item.json.id || null;\n\nreturn [\n  {\n    json: {\n      fileName,\n      fileExtension,\n      mimeType: binaryData.mimeType || '',\n      fileSize: binaryData.fileSize || 0,\n      id\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        288
+      ],
+      "id": "61f465e0-9121-4aa1-81ad-bc4b4b8d3c51",
+      "name": "file type"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "96a79fe3-523a-42e9-bed8-b1b980927c90",
+              "leftValue": "={{ $json.fileExtension }}",
+              "rightValue": "pdf",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        288
+      ],
+      "id": "13a0f25e-8f0a-4d35-b7e2-e06b0e8c9849",
+      "name": "pdf check"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        288
+      ],
+      "id": "fabc2d28-71c5-4ca2-846e-6bb1c6b34c95",
+      "name": "get pdf",
+      "webhookId": "ae91bf11-2ecd-4e5d-b209-a42b768fd11c",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "attachment_0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        288
+      ],
+      "id": "404be028-9339-4e2c-b2c2-424c5f82cdd1",
+      "name": "Extract from pdf"
+    },
+    {
+      "parameters": {
+        "jsCode": "const pdfText = $input.first().json.text.toLowerCase();  // Extracted text from PDF\nconst details = $('details').first().json; // Data from previous node\n\nconst firstName = (details.first_name || '').toLowerCase();\nconst lastName = (details.last_name || '').toLowerCase();\nconst jobId = (details.job_id || '').toLowerCase();\nconst location = (details.offeredlocation || '').toLowerCase();\nconst position = (details.position || '').toLowerCase();\n\n// Perform checks\nconst isFirstNamePresent = pdfText.includes(firstName);\nconst isLastNamePresent = pdfText.includes(lastName);\nconst isJobIdPresent = pdfText.includes(jobId);\nconst isLocationPresent = pdfText.includes(location);\nconst isPositionPresent = pdfText.includes(position);\n\n// All checks passed\nconst allPresent = isFirstNamePresent && isLastNamePresent && isJobIdPresent && isLocationPresent && isPositionPresent;\n\nreturn [\n  {\n    json: {\n      isFirstNamePresent,\n      isLastNamePresent,\n      isJobIdPresent,\n      isLocationPresent,\n      isPositionPresent,\n      allPresent\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1504,
+        288
+      ],
+      "id": "13cc8def-f87c-4fdd-b249-661a2cd1ba89",
+      "name": "check document"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e667c2d6-b1ff-4844-9352-dffaa23465d6",
+              "leftValue": "={{ $json.allPresent }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1712,
+        288
+      ],
+      "id": "dfbdad51-1133-4e9e-815f-853fe60c5a73",
+      "name": "is offerletter"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $('get pdf').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -416,
+        800
+      ],
+      "id": "b7b14a4d-98a5-4224-8853-fa5d5ceb732d",
+      "name": "Get offerletter",
+      "webhookId": "ae91bf11-2ecd-4e5d-b209-a42b768fd11c",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/home/node/offertemp/esigned/{{ $('details').first().json.filename }}.pdf",
+        "dataPropertyName": "attachment_0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        800
+      ],
+      "id": "c0e923a5-eced-4e7b-af65-ad74a67c90ac",
+      "name": "save to server"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6e13f30e-548d-4a3a-98b6-828b0519e681",
+              "leftValue": "={{ $json.signer_common_name }}",
+              "rightValue": "Harris",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "c76a2ef1-1294-413d-bd7e-93cac7473129",
+              "leftValue": "={{ $json.signature_present }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        464,
+        800
+      ],
+      "id": "6f57c4ac-b847-4fc1-844b-ba3c2d14a78a",
+      "name": "e-sign match"
+    },
+    {
+      "parameters": {
+        "command": "=/home/node/offertemp/scripts/PythonScripts/venv/bin/python3 \\\n/home/node/offertemp/scripts/PythonScripts/verify_signature.py \\\n{{ $json.fileName }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        16,
+        800
+      ],
+      "id": "c15b0e62-8815-4af3-a32c-fb728541925a",
+      "name": "endsive signature check"
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/home/node/offertemp/esigned/{{ $('details').first().json.filename }}.pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        896,
+        608
+      ],
+      "id": "31629e6f-534f-48c0-96b4-673e2bed675f",
+      "name": "read offerLetter"
+    },
+    {
+      "parameters": {
+        "content": "## Check if the attachment is PDF",
+        "height": 240,
+        "width": 440,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        576,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "e1028d7c-e5f8-4cf0-97a2-7ce376d16c7c",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Check if the pdf is our that candidates offerletter",
+        "height": 260,
+        "width": 660,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1232,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "504d7a0f-9cf0-4b5b-92d9-ac8001756b90",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Check if e-sign matches",
+        "height": 260,
+        "width": 800,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -224,
+        720
+      ],
+      "typeVersion": 1,
+      "id": "a3279059-db6e-406d-8a68-8943f213cb0e",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "hasAttachments": true,
+          "readStatus": "unread",
+          "sender": "Ananthkarthick.m@rencata.com"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTrigger",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        208
+      ],
+      "id": "fd1b9fb0-eee6-4ec7-b181-9f58d74ef07c",
+      "name": "Microsoft Outlook Trigger",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        48
+      ],
+      "id": "d6f1c803-81c3-4139-8d73-31eef8ed304e",
+      "name": "Extract from File"
+    }
+  ],
+  "connections": {
+    "Create blob": {
+      "main": [
+        [
+          {
+            "node": "update offer_letter_esigned_validated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "data": {
+      "main": [
+        []
+      ]
+    },
+    "details": {
+      "main": [
+        [
+          {
+            "node": "All mail with attachment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sign validation": {
+      "main": [
+        [
+          {
+            "node": "e-sign match",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "filename": {
+      "main": [
+        [
+          {
+            "node": "read offerLetter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send mail to HR": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "log email": {
+      "main": [
+        [
+          {
+            "node": "update process_paused",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "contents": {
+      "main": [
+        [
+          {
+            "node": "send mail to HR",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "log email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update offer_letter_esigned_validated": {
+      "main": [
+        [
+          {
+            "node": "offer_letter_esigned_validated done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update process_paused": {
+      "main": [
+        [
+          {
+            "node": "process_paused",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All mail with attachment": {
+      "main": [
+        [
+          {
+            "node": "Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop": {
+      "main": [
+        [],
+        [
+          {
+            "node": "file type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "file type": {
+      "main": [
+        [
+          {
+            "node": "pdf check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "pdf check": {
+      "main": [
+        [
+          {
+            "node": "Loop",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "get pdf",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get pdf": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract from pdf",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from pdf": {
+      "main": [
+        [
+          {
+            "node": "check document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check document": {
+      "main": [
+        [
+          {
+            "node": "is offerletter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is offerletter": {
+      "main": [
+        [
+          {
+            "node": "Get offerletter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get offerletter": {
+      "main": [
+        [
+          {
+            "node": "save to server",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save to server": {
+      "main": [
+        [
+          {
+            "node": "endsive signature check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "e-sign match": {
+      "main": [
+        [
+          {
+            "node": "filename",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "contents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "endsive signature check": {
+      "main": [
+        [
+          {
+            "node": "sign validation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "read offerLetter": {
+      "main": [
+        [
+          {
+            "node": "Create blob",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Microsoft Outlook Trigger": {
+      "main": [
+        [
+          {
+            "node": "details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Microsoft Outlook Trigger": {
+      "lastTimeChecked": "2025-12-01T12:23:06.140+05:30"
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "data": [
+      {
+        "json": {
+          "id": 1031,
+          "next_task": "salary_structure_generated",
+          "process_paused": false
+        }
+      }
+    ]
+  },
+  "versionId": "b12fcc7f-3542-4d8a-a235-4a4b6e5e8748",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-11-19T11:57:39.564Z",
+      "updatedAt": "2025-11-19T11:57:39.564Z",
+      "role": "workflow:owner",
+      "workflowId": "FoI6cRstUnOzYAQk",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
