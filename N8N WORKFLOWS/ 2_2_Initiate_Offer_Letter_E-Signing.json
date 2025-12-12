@@ -1,0 +1,308 @@
+{
+  "createdAt": "2025-11-20T09:49:28.605Z",
+  "updatedAt": "2025-12-09T05:42:30.000Z",
+  "id": "Rf4hmAJ64k2MJkxk",
+  "name": "2.2.Initiate Offer Letter E-Signing",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        272,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "680b7a60-bab1-44c4-adf4-570146103bc0",
+              "leftValue": "={{ $('Check File Exists1').first() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        256
+      ],
+      "id": "fbbd0390-d682-44bb-afbb-a553c1173de5",
+      "name": "Offer Letter Exists?"
+    },
+    {
+      "parameters": {
+        "toRecipients": "=Ananthkarthick.m@rencata.com",
+        "subject": "Offer Letter Not Found - Technical Issue",
+        "bodyContent": "Dear Team,\nWe could not find the generated offer letter for this candidate.\nIt seems there is a technical issue in offer generation. Please check and regenerate.\n\nThank you,\nTeam Agentic AI",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        432
+      ],
+      "id": "27461ec4-6f34-4b91-b3d7-6f4e2ce84ea7",
+      "name": "Send Error Mail",
+      "webhookId": "5c1c4d2f-4fef-44ec-b14e-9f251dea260c",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "=1165"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "id",
+            "candidate_id",
+            "first_name",
+            "offer_letter_file_name",
+            "last_name",
+            "personal_email",
+            "mobile_number"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        480,
+        304
+      ],
+      "id": "d5495b6c-fee0-4d5b-a341-e03c19b097ca",
+      "name": "Get Candidate",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $json.offer_letter_file_name }}",
+        "options": {
+          "fileExtension": "pdf",
+          "dataPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        672,
+        304
+      ],
+      "id": "b7ac0927-d5f8-44a9-9873-8b0e537318f1",
+      "name": "Check File Exists1",
+      "alwaysOutputData": true,
+      "continueOnFail": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "toRecipients": "=ananth.ganapathy@rencata.com",
+        "subject": "= {{ $('Get Candidate').item.json.first_name }}  {{ $('Get Candidate').item.json.last_name }}'s Offer letter for E-signing",
+        "bodyContent": "=Dear ananth.ganapathy@rencata.com ,\nPlease find attached  offer letter for {{ $('Get Candidate').item.json.first_name }}  {{ $('Get Candidate').item.json.last_name }} for your review and esigning.\nOnce signed, kindly return signed copy to this email address for offerreleased candidate.\n\nThank you,\nTeam Agentic AI ",
+        "additionalFields": {
+          "attachments": {
+            "attachments": [
+              {
+                "binaryPropertyName": "data"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        240
+      ],
+      "id": "78e7f7f9-8cec-418b-b01a-d54e245032a4",
+      "name": "Send Offer Letter1",
+      "webhookId": "31d06fda-fa67-4c88-aa5e-fcc25249b178",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get Candidate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Offer Letter Exists?": {
+      "main": [
+        [
+          {
+            "node": "Send Offer Letter1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Candidate": {
+      "main": [
+        [
+          {
+            "node": "Check File Exists1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check File Exists1": {
+      "main": [
+        [
+          {
+            "node": "Offer Letter Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "8feadef9-2c71-4348-9689-1ae6a27d9ecc",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-11-20T09:49:28.608Z",
+      "updatedAt": "2025-11-20T09:49:28.608Z",
+      "role": "workflow:owner",
+      "workflowId": "Rf4hmAJ64k2MJkxk",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
