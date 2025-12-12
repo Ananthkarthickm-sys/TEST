@@ -1,0 +1,1222 @@
+{
+  "createdAt": "2025-11-20T09:53:00.514Z",
+  "updatedAt": "2025-12-04T05:36:20.000Z",
+  "id": "CRO4dtFHqC5QYDFh",
+  "name": "2.1.InitiateOfferLetterGenerate",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f0cbd6f5-a595-46c5-9dd9-a86dea09903a",
+              "leftValue": "={{ $json.variable }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1488,
+        416
+      ],
+      "id": "55e73c42-c89c-464d-847a-088c3f225a3d",
+      "name": "Has Variable Pay?"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <title>Offer Letter</title>\n  <style>\n    @page {\n      size: A4;\n      margin: 25mm 20mm 25mm 20mm;\n    }\n\n    body {\n      font-family: Arial, sans-serif;\n      line-height: 1.6;\n      padding: 0;\n    }\n\n    .header {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n    }\n\n    .section {\n      margin-top: 20px;\n      margin-bottom: 40px;\n    }\n\n    ul {\n      margin-top: 10px;\n      margin-bottom: 20px;\n    }\n\n    .signature-section {\n      margin-top: 60px;\n      margin-bottom: 40px;\n    }\n\n    table {\n      width: 100%;\n      border-collapse: collapse;\n      margin-top: 15px;\n    }\n\n    table, th, td {\n      border: 1px solid #333;\n      padding: 8px;\n    }\n  </style>\n</head>\n\n<body>\n\n<div class=\"header\">\n  <div>\n    <img src=\"https://media.istockphoto.com/id/1412438498/vector/modern-square-tech-logo-design.jpg?s=2048x2048&w=is&k=20&c=xvn_8Wsh1a_wASUSjJppMO7YJ1r6W1XjiEz5Y_zMCGo=\" alt=\"Logo\" style=\"height: 70px;\"><br>\n    <br>HRD/2024/BPO/973\n  </div>\n  <div style=\"text-align: right;\">\n    123 Business Street<br>\n    Tech City,<br>India 123456<br>\n    <br>Date: {{ (() => {\n      const d = new Date();\n      const day = String(d.getDate()).padStart(2, '0');\n      const month = String(d.getMonth() + 1).padStart(2, '0');\n      const year = d.getFullYear();\n      return `${day}/${month}/${year}`;\n    })() }}\n  </div>\n</div>\n\n\n  </div>\n  \n  <br>\n  \n  <div class=\"section\">\n    <p>Dear {{ $json.first_name }} {{ $json.last_name }} <p>\n    <br>\n\n    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n  We are pleased to offer you the position of {{ $json.position }}. Attached are the specific\n  terms and conditions of our offer – please read these important details carefully, including\n  your compensation and benefits detailed in Appendix A. Your appointment will be effective\n  from {{ (() => {\n    const [year, month, day] = $json.doj.split('T')[0].split('-');\n    return `${day}/${month}/${year}`;\n  })() }}.\n Please contact us immediately if you require an alternative joining date.\n      If you do not confirm your acceptance or we are unable to set an alternative date, this offer\n      will be withdrawn.\n    </p>\n\n    <p>To confirm your acceptance of this offer, you are required to:</p>\n\n    <ul>\n      <li>Respond via email to <strong>HR@ssgconsulting.in</strong> to communicate acceptance of the offer and to confirm your joining date. Failing to do so would deem the offer invalid.</li>\n      <li>Report to the following address:\n          <p>\n      SSG Consulting Private Limited<br>\n      No11, Salai Vinayagar Koil Street,<br>\n      45 Feet Road,<br>\n      Puducherry, India-605001.\n    </p>\n      </li>\n    </ul>\n\n\n\n    <p>\n      On the joining date at 10:00 a.m. Please note that it is important to be on time to complete\n      the joining formalities.\n    </p>\n\n    <p>\n      On the joining date at 10:00 a.m. Please note that it is important to be on time to complete the joining formalities. On your joining date, please bring (i) the original and 1 photocopy of this letter duly signed and dated by you; (ii) 3 self-photographs (passport sized, color photos with a white background), (iii) the originals and 1 sets of photocopies of the following documents:  \n    </p>\n\n    <ul>\n      <li>Education degree certificate and all year mark sheets for the highest degree attained. Photocopies should include both front and back sides of certificate.</li>\n      <li>Relieving letter or resignation acceptance letter from your most recent employer.</li>\n      <li>Aadhaar card</li>\n      <li>Proof of identity. Bring 1 set of photocopies of any one of the following documents: passport, driving license, PAN card.</li>\n      <li>Copy of last salary slip, Copy of Form 16 & Appointment letter from previous employer.</li>\n      <li>PAN card copy.</li>\n      <li>Income tax computation from previous employer.</li>\n      <li>Valid Indian Work Permit, if applicable. * Please note that the above documents are mandatory as applicable.</li>\n    </ul>\n  </div>\n  \n  <br>\n  \n<div>\n<table border=\"1\" cellspacing=\"0\" cellpadding=\"8\" width=\"100%\">\n  <tr>\n    <td><p><strong>ACCEPTANCE OF APPOINTMENT TERMS AND CONDITIONS:</strong><br>\n    <strong>I agree that I have read, CONSULTING PRIVATE LIMITED under the terms and conditions stated above.</strong></p>\n\n    <p>\n      Signature: ________________________________________________________________<br>\n      Printed Name: _____________________________________________________________<br>\n      Date: __________________<br>\n      Date of Joining (if requesting an alternative date): __________________\n    </p>\n        </td>\n  </tr>\n</table>\n  </div>\n\n<div style=\"page-break-before: always;\"></div>\n\n\n  <div class=\"section\">\n    <h3 style=\"text-align: center;\">Appendix A</h3>\n\n\n<table border=\"1\" cellpadding=\"10\" cellspacing=\"0\" width=\"100%\">\n  <tr>\n    <td>\n      <strong>OFFER DATE:</strong>{{ (() => {\n  const [year, month, day] = $json.doj.split('T')[0].split('-');\n  return `${day}/${month}/${year}`;\n})() }}\n<br>\n\n      \n    </td>\n    <td>\n      <strong>NAME:</strong> {{ $json.first_name }} {{ $json.last_name }}\n    </td>\n  </tr>\n  <tr>\n    <td>\n      <strong>DESIGNATION:</strong> {{ $json.position }}\n    </td>\n    <td>\n      <strong>WORK LOCATION:</strong>  {{ $json.offeredlocation }}\n    </td>\n  </tr>\n</table>\n\n<br>\n<br>\n<table border=\"1\" cellpadding=\"5\" cellspacing=\"0\" width=\"100%\">\n  <tr>\n    <th>Details</th>\n    <th>Monthly (In Rupees)</th>\n    <th>Annual Salary (In Rupees)</th>\n  </tr>\n  \n<!-- Breakup row across all columns -->\n<tr>\n  <td colspan=\"3\"><strong>Breakup</strong></td>\n</tr>\n\n<tr>\n  <td>(a) Basic</td>\n  <td>{{ ($('salary structure').first().json.basic_salary / 12).toFixed(0) }}</td>\n  <td>{{ $('salary structure').first().json.basic_salary }}</td>\n</tr>\n\n<tr>\n  <td>(b) PF</td>\n  <td>{{ ($('salary structure').first().json.pf_amount / 12).toFixed(0) }}</td>\n  <td>{{ $('salary structure').first().json.pf_amount }}</td>\n</tr>\n\n<tr>\n  <td>(c) HRA</td>\n  <td>{{ ($('salary structure').first().json.hra / 12).toFixed(0) }}</td>\n  <td>{{ $('salary structure').first().json.hra }}</td>\n</tr>\n\n<tr>\n  <td>(d) Gratuity**</td>\n  <td>{{ ($('salary structure').first().json.gratuity / 12).toFixed(0) }}</td>\n  <td>{{ $('salary structure').first().json.gratuity }}</td>\n</tr>\n\n<tr>\n  <td>(e) Flexi Benefits (FBP)</td>\n  <td>{{ ($('salary structure').first().json.flexi_benefits / 12).toFixed(0) }}</td>\n  <td>{{ $('salary structure').first().json.flexi_benefits }}</td>\n</tr>\n\n  <tr>\n  <td><strong>Total</strong></td>\n  <td>\n    {{\n      (\n        (\n          +$('salary structure').first().json.basic_salary +\n          +$('salary structure').first().json.pf_amount +\n          +$('salary structure').first().json.hra +\n          +$('salary structure').first().json.gratuity +\n          +$('salary structure').first().json.flexi_benefits\n        ) / 12\n      ).toFixed(0)\n    }}\n  </td>\n  <td>\n    {{\n      (\n        +$('salary structure').first().json.basic_salary +\n        +$('salary structure').first().json.pf_amount +\n        +$('salary structure').first().json.hra +\n        +$('salary structure').first().json.gratuity +\n        +$('salary structure').first().json.flexi_benefits\n      )\n    }}\n  </td>\n</tr>\n\n\n\n<tr>\n  <td>Annual Performance Incentive****</td>\n  <td>{{ ($('salary structure').first().json.total_annual_performance_incentive / 12).toFixed(0) }}</td>\n  <td>{{ $('salary structure').first().json.total_annual_performance_incentive }}</td>\n</tr>\n\n<tr>\n  <td>PF - Company's contribution</td>\n  <td>{{ ($('salary structure').first().json.pf_company_contribution / 12).toFixed(0) }}</td>\n  <td>{{ $('salary structure').first().json.pf_company_contribution }}</td>\n</tr>\n\n\n  <!-- Merged cell for Other Annual Expense -->\n  <tr>\n    <td colspan=\"3\">Other Annual Expense towards medical benefits and HR</td>\n  </tr>\n\n  <tr>\n    <td><strong>Annual CTC</strong></td>\n    <td></td>\n    <td><strong>{{ $('salary structure').first().json.annual_ctc }}</strong></td>\n  </tr>\n</table>\n\n</body>\n</html>\n"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1728,
+        320
+      ],
+      "id": "89b9c2b7-6bec-491b-b223-647b5a2658fc",
+      "name": "Set HTML with Variable"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <title>Offer Letter</title>\n  <style>\n    @page {\n      size: A4;\n      margin: 25mm 20mm 25mm 20mm;\n    }\n\n    body {\n      font-family: Arial, sans-serif;\n      line-height: 1.6;\n      padding: 0;\n    }\n\n    .header {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n    }\n\n    .section {\n      margin-top: 20px;\n      margin-bottom: 40px;\n    }\n\n    ul {\n      margin-top: 10px;\n      margin-bottom: 20px;\n    }\n\n    .signature-section {\n      margin-top: 60px;\n      margin-bottom: 40px;\n    }\n\n    table {\n      width: 100%;\n      border-collapse: collapse;\n      margin-top: 15px;\n    }\n\n    table, th, td {\n      border: 1px solid #333;\n      padding: 8px;\n    }\n  </style>\n</head>\n\n<body>\n\n<div class=\"header\">\n  <div>\n    <img src=\"https://media.istockphoto.com/id/1412438498/vector/modern-square-tech-logo-design.jpg?s=2048x2048&w=is&k=20&c=xvn_8Wsh1a_wASUSjJppMO7YJ1r6W1XjiEz5Y_zMCGo=\" alt=\"Logo\" style=\"height: 70px;\"><br>\n    <br>{{ $json.job_id }}\n  </div>\n  <div style=\"text-align: right;\">\n    123 Business Street<br>\n    Tech City,<br>India 123456<br>\n    <br>Date: {{ (() => {\n      const d = new Date();\n      const day = String(d.getDate()).padStart(2, '0');\n      const month = String(d.getMonth() + 1).padStart(2, '0');\n      const year = d.getFullYear();\n      return `${day}/${month}/${year}`;\n    })() }}\n  </div>\n</div>\n\n\n  </div>\n  \n  <br>\n  \n  <div class=\"section\">\n    <p>Dear {{ $json.first_name }} {{ $json.last_name }} <p>\n    <br>\n\n    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n  We are pleased to offer you the position of {{ $json.position }}. Attached are the specific\n  terms and conditions of our offer – please read these important details carefully, including\n  your compensation and benefits detailed in Appendix A. Your appointment will be effective\n  from {{$('doj').first().json.doj_original }}.\n Please contact us immediately if you require an alternative joining date.\n      If you do not confirm your acceptance or we are unable to set an alternative date, this offer\n      will be withdrawn.\n    </p>\n\n    <p>To confirm your acceptance of this offer, you are required to:</p>\n\n    <ul>\n      <li>Respond via email to <strong>HR@ssgconsulting.in</strong> to communicate acceptance of the offer and to confirm your joining date. Failing to do so would deem the offer invalid.</li>\n      <li>Report to the following address:\n          <p>\n      SSG Consulting Private Limited<br>\n      No11, Salai Vinayagar Koil Street,<br>\n      45 Feet Road,<br>\n      Puducherry, India-605001.\n    </p>\n      </li>\n    </ul>\n\n\n\n    <p>\n      On the joining date at 10:00 a.m. Please note that it is important to be on time to complete\n      the joining formalities.\n    </p>\n\n    <p>\n      On the joining date at 10:00 a.m. Please note that it is important to be on time to complete the joining formalities. On your joining date, please bring (i) the original and 1 photocopy of this letter duly signed and dated by you; (ii) 3 self-photographs (passport sized, color photos with a white background), (iii) the originals and 1 sets of photocopies of the following documents:  \n    </p>\n\n    <ul>\n      <li>Education degree certificate and all year mark sheets for the highest degree attained. Photocopies should include both front and back sides of certificate.</li>\n      <li>Relieving letter or resignation acceptance letter from your most recent employer.</li>\n      <li>Aadhaar card</li>\n      <li>Proof of identity. Bring 1 set of photocopies of any one of the following documents: passport, driving license, PAN card.</li>\n      <li>Copy of last salary slip, Copy of Form 16 & Appointment letter from previous employer.</li>\n      <li>PAN card copy.</li>\n      <li>Income tax computation from previous employer.</li>\n      <li>Valid Indian Work Permit, if applicable. * Please note that the above documents are mandatory as applicable.</li>\n    </ul>\n  </div>\n  \n  <br>\n  \n<div>\n<table border=\"1\" cellspacing=\"0\" cellpadding=\"8\" width=\"100%\">\n  <tr>\n    <td><p><strong>ACCEPTANCE OF APPOINTMENT TERMS AND CONDITIONS:</strong><br>\n    <strong>I agree that I have read, CONSULTING PRIVATE LIMITED under the terms and conditions stated above.</strong></p>\n\n    <p>\n      Signature: ________________________________________________________________<br>\n      Printed Name: _____________________________________________________________<br>\n      Date: __________________<br>\n      Date of Joining (if requesting an alternative date): __________________\n    </p>\n        </td>\n  </tr>\n</table>\n  </div>\n\n<div style=\"page-break-before: always;\"></div>\n\n\n  <div class=\"section\">\n    <h3 style=\"text-align: center;\">Appendix A</h3>\n\n\n<table border=\"1\" cellpadding=\"10\" cellspacing=\"0\" width=\"100%\">\n  <tr>\n    <td>\n      <strong>OFFER DATE: </strong>{{$('doj').first().json.doj_original }}\n<br>\n\n      \n    </td>\n    <td>\n      <strong>NAME:</strong> {{ $json.first_name }} {{ $json.last_name }}\n    </td>\n  </tr>\n  <tr>\n    <td>\n      <strong>DESIGNATION:</strong> {{ $json.position }}\n    </td>\n    <td>\n      <strong>WORK LOCATION:</strong> {{ $json.offeredlocation }}\n    </td>\n  </tr>\n</table>\n\n<br>\n<br>\n<table border=\"1\" cellpadding=\"5\" cellspacing=\"0\" width=\"100%\">\n  <tr>\n    <th>Details</th>\n    <th>Monthly (In Rupees)</th>\n    <th>Annual Salary (In Rupees)</th>\n  </tr>\n  \n<!-- Breakup row across all columns -->\n<tr>\n  <td colspan=\"3\"><strong>Breakup</strong></td>\n</tr>\n\n<tr>\n  <td>(a) Basic</td>\n  <td>₹{{ ($('salary structure').first().json.basic_salary / 12).toFixed(0) }}</td>\n  <td>₹{{ $('salary structure').first().json.basic_salary }}</td>\n</tr>\n\n<tr>\n  <td>(b) PF</td>\n  <td>₹{{ ($('salary structure').first().json.pf_amount / 12).toFixed(0) }}</td>\n  <td>₹{{ $('salary structure').first().json.pf_amount }}</td>\n</tr>\n\n<tr>\n  <td>(c) HRA</td>\n  <td>₹{{ ($('salary structure').first().json.hra / 12).toFixed(0) }}</td>\n  <td>₹{{ $('salary structure').first().json.hra }}</td>\n</tr>\n\n<tr>\n  <td>(d) Gratuity**</td>\n  <td>₹{{ ($('salary structure').first().json.gratuity / 12).toFixed(0) }}</td>\n  <td>₹{{ $('salary structure').first().json.gratuity }}</td>\n</tr>\n\n<tr>\n  <td>(e) Flexi Benefits (FBP)</td>\n  <td>₹{{ ($('salary structure').first().json.flexi_benefits / 12).toFixed(0) }}</td>\n  <td>₹{{ $('salary structure').first().json.flexi_benefits }}</td>\n</tr>\n\n  <tr>\n  <td><strong>Total</strong></td>\n  <td>₹\n    {{\n      (\n        (\n          +$('salary structure').first().json.basic_salary +\n          +$('salary structure').first().json.pf_amount +\n          +$('salary structure').first().json.hra +\n          +$('salary structure').first().json.gratuity +\n          +$('salary structure').first().json.flexi_benefits\n        ) / 12\n      ).toFixed(0)\n    }}\n  </td>\n  <td>₹\n    {{\n      (\n        +$('salary structure').first().json.basic_salary +\n        +$('salary structure').first().json.pf_amount +\n        +$('salary structure').first().json.hra +\n        +$('salary structure').first().json.gratuity +\n        +$('salary structure').first().json.flexi_benefits\n      )\n    }}\n  </td>\n</tr>\n\n\n\n<tr>\n  <td>Annual Performance Incentive****</td>\n  <td>₹{{ ($('salary structure').first().json.total_annual_performance_incentive / 12).toFixed(0) }}</td>\n  <td>₹{{ $('salary structure').first().json.total_annual_performance_incentive }}</td>\n</tr>\n\n<tr>\n  <td>PF - Company's contribution</td>\n  <td>₹{{ ($('salary structure').first().json.pf_company_contribution / 12).toFixed(0) }}</td>\n  <td>₹{{ $('salary structure').first().json.pf_company_contribution }}</td>\n</tr>\n\n\n  <!-- Merged cell for Other Annual Expense -->\n  <tr>\n    <td colspan=\"3\">Other Annual Expense towards medical benefits and HR</td>\n  </tr>\n\n  <tr>\n    <td><strong>Annual CTC</strong></td>\n    <td></td>\n    <td><strong>₹{{ $('salary structure').first().json.annual_ctc }}</strong></td>\n  </tr>\n</table>\n\n</body>\n</html>\n"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1728,
+        528
+      ],
+      "id": "043af1ae-35a9-4c92-948b-4138ac6f435b",
+      "name": "Set HTML without Variable"
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.command }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        416
+      ],
+      "id": "05377906-9e2c-4bf4-9c82-5780cb4b89cf",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fileName = $('filename').first().json.filename; // Already sanitized: e.g., riya_sharma_2025_07_07_17_56_40\n\nconst htmlPath = `/home/node/offertemp/html/${fileName}.html`;\nconst pdfPath = `/home/node/offertemp/pdf/${fileName}.pdf`;\n\nconst convertOfferCommand = `\ncd /home/node/offertemp/scripts\n\necho \"=== Converting ${fileName}.html to PDF ===\"\ncat > convert_offer.js << 'EOF'\nconst puppeteer = require('puppeteer');\nconst fs = require('fs');\n\n(async () => {\n  try {\n    console.log('Starting PDF conversion for ${fileName}.html...');\n\n    if (!fs.existsSync('${htmlPath}')) {\n      throw new Error('HTML file not found: ${htmlPath}');\n    }\n\n    const htmlContent = fs.readFileSync('${htmlPath}', 'utf8');\n\n    const browser = await puppeteer.launch({\n      headless: true,\n      executablePath: '/usr/bin/chromium',\n      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']\n    });\n\n    const page = await browser.newPage();\n    await page.goto('file://${htmlPath}', { waitUntil: 'networkidle0', timeout: 30000 });\n\n    await page.pdf({\n      path: '${pdfPath}',\n      format: 'A4',\n      printBackground: true,\n      margin: {\n        top: '1cm',\n        right: '1cm',\n        bottom: '1cm',\n        left: '1cm'\n      }\n    });\n\n    await browser.close();\n\n    if (fs.existsSync('${pdfPath}')) {\n      const stats = fs.statSync('${pdfPath}');\n      console.log(\\`PDF created successfully: \\${stats.size} bytes\\`);\n    } else {\n      throw new Error('PDF file was not created');\n    }\n\n  } catch (err) {\n    console.error('Error during PDF conversion:', err);\n    fs.writeFileSync('/home/node/offertemp/pdf/error.log',\n      \\`Error converting ${fileName}.html: \\${err.message}\\\\n\\${err.stack}\\\\n\\`,\n      { flag: 'a' }\n    );\n    process.exit(1);\n  }\n})();\nEOF\n\necho \"=== Running conversion ===\"\nnode convert_offer.js\n\necho \"=== Checking result ===\"\nls -la ${pdfPath}\n`;\n\nreturn {\n  json: {\n    command: convertOfferCommand.trim(),\n    htmlPath: htmlPath,\n    pdfPath: pdfPath\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2384,
+        416
+      ],
+      "id": "a7469827-7fc6-499d-a809-05d960cf0dd9",
+      "name": "to pdf"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fileName = $('filename').first().json.filename; // Already safe: riya_sharma_2025_07_07_17_56_40\n\nconst filePath = `/home/node/offertemp/html/${fileName}.html`;\nconst htmlContent = $input.first().json.html;\n\nconst command = `\nmkdir -p /home/node/offertemp/html && cat > ${filePath} << 'EOF'\n${htmlContent}\nEOF\n`;\n\nreturn {\n  json: {\n    htmlFilePath: filePath,\n    htmlContent: htmlContent,\n    command: command.trim()\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1936,
+        416
+      ],
+      "id": "4c4fb963-adbd-4bd6-b176-adc0bb4382a0",
+      "name": "html file"
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.command }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2608,
+        416
+      ],
+      "id": "bf5bda95-7e5a-4746-a302-54bdc6b31892",
+      "name": "Execute Command1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = jsonb_set(templates::jsonb, '{offer_letter_generated}', 'true'::jsonb, false)::json,\n    updated_at = NOW()\nWHERE id = 1081\nAND jsonb_typeof(templates::jsonb) = 'object';\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3040,
+        416
+      ],
+      "id": "2e3fc491-6a1b-491c-bb66-46f1b2f52db5",
+      "name": "update offer_letter_generated",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "=1081"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "offer_letter_file_name"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3264,
+        416
+      ],
+      "id": "e1f8c59a-c4e0-475d-a6ff-ea3ee5e90a88",
+      "name": "offer_letter_generated done",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "=1081"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        832,
+        336
+      ],
+      "id": "945ef9e3-9b8a-45df-9ad2-528cead8f9d6",
+      "name": "details",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        1280,
+        400
+      ],
+      "id": "fe225c77-fbaa-4838-b779-00c95a485f6e",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "salary_structures",
+          "mode": "list",
+          "cachedResultName": "salary_structures"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "=1081"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "basic_salary",
+            "pf_amount",
+            "hra",
+            "gratuity",
+            "flexi_benefits",
+            "total_annual_performance_incentive",
+            "pf_company_contribution",
+            "annual_ctc"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1056,
+        688
+      ],
+      "id": "4b7f6789-63ed-4d24-ab48-8ea9632ffa57",
+      "name": "salary structure",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get employee name\nconst firstName = $('details').first().json.first_name || '';\nconst lastName = $('details').first().json.last_name || '';\n\n// Sanitize and format\nconst safeFirst = firstName.replace(/[^a-z0-9]/gi, '_').toLowerCase();\nconst safeLast = lastName.replace(/[^a-z0-9]/gi, '_').toLowerCase();\n\n\n// Final filename\nconst finalFileName = `${safeFirst}_${safeLast}`;\n\nreturn [\n  {\n    json: {\n      filename: finalFileName\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        176
+      ],
+      "id": "e14de763-8075-491b-89df-fbe23b0b4fc2",
+      "name": "filename"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "experience": 0,
+            "ctc": 0,
+            "notice_period": 0,
+            "offer_letter_file_name": "={{ $('filename').item.json.filename }}",
+            "id": 1088
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "candidate_id",
+              "displayName": "candidate_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "personal_email",
+              "displayName": "personal_email",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "mobile_number",
+              "displayName": "mobile_number",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "hiring_department",
+              "displayName": "hiring_department",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "start_date",
+              "displayName": "start_date",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customer_name",
+              "displayName": "customer_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "project_name",
+              "displayName": "project_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_by",
+              "displayName": "created_by",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "templates",
+              "displayName": "templates",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "currentlocation",
+              "displayName": "currentlocation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "offeredlocation",
+              "displayName": "offeredlocation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "experience",
+              "displayName": "experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ctc",
+              "displayName": "ctc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "position",
+              "displayName": "position",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doj",
+              "displayName": "doj",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "notice_period",
+              "displayName": "notice_period",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Assets",
+              "displayName": "Assets",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "software",
+              "displayName": "software",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "jobId",
+              "displayName": "jobId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "offer_letter_file_name",
+              "displayName": "offer_letter_file_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2816,
+        416
+      ],
+      "id": "59762811-17c2-441c-9f54-d32767ef05ee",
+      "name": "update filename",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const dojString = $input.first().json.doj;\n\n// Validate input exists\nif (!dojString || typeof dojString !== \"string\") {\n  return [{ json: { error: \"doj date is missing or invalid\" }}];\n}\n\n// Extract only the date portion (YYYY-MM-DD)\nconst pureDate = dojString.split(\"T\")[0];\n\nconst parts = pureDate.split(\"-\");\nif (parts.length !== 3 || parts.some(p => isNaN(p))) {\n  return [{ json: { error: \"doj date has invalid format (expected YYYY-MM-DD)\" }}];\n}\n\nconst [year, month, day] = parts.map(Number);\n\n// Construct Date in UTC\nconst doj = new Date(Date.UTC(year, month - 1, day));\n\nif (isNaN(doj.getTime())) {\n  return [{ json: { error: \"Invalid doj date\" }}];\n}\n\n// Subtract 5 days\nconst dojMinus5 = new Date(doj.getTime() - 5 * 24 * 60 * 60 * 1000);\ndojMinus5.setUTCHours(0, 0, 0, 0);\n\n// Format function\nfunction formatDate(date) {\n  const dd = String(date.getUTCDate()).padStart(2, \"0\");\n  const mm = String(date.getUTCMonth() + 1).padStart(2, \"0\");\n  const yyyy = date.getUTCFullYear();\n  return `${dd}-${mm}-${yyyy}`;\n}\n\nreturn [{\n  json: {\n    doj_original: formatDate(doj),\n    doj_minus_5: formatDate(dojMinus5)\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        480
+      ],
+      "id": "584235b8-f76c-4085-a152-a1eb924faef3",
+      "name": "doj"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        1616,
+        1424
+      ],
+      "id": "fefbde35-e78e-4e5f-bcdc-b21d25a0e446",
+      "name": "When chat message received",
+      "webhookId": "48ed972f-6ec3-4725-a225-69bdad63474e"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all input items\nconst items = $input.all();\n\n// Define numeric fields to convert\nconst numericFields = [\n  'fixed_component',\n  'variable_component', \n  'basic_salary',\n  'hra',\n  'other_allowances',\n  'pf_amount',\n  'esi_amount',\n  'gross_salary',\n  'net_salary',\n  'gratuity',\n  'flexi_benefits',\n  'total_annual_performance_incentive',\n  'pf_company_contribution',\n  'annual_ctc'\n];\n\n// Convert fields for each item\nreturn items.map(item => {\n  const converted = { ...item.json };\n\n  numericFields.forEach(field => {\n    if (converted[field] !== undefined && converted[field] !== null && converted[field] !== '') {\n      converted[field] = parseFloat(converted[field]);\n    }\n  });\n\n  return { json: converted };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2304,
+        1264
+      ],
+      "id": "4c1238c2-1fb5-4381-b239-b7a25386e6f5",
+      "name": "Convert Data Types"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  c.*,\n  s.fixed_component,\n  s.variable_component,\n  s.basic_salary,\n  s.hra,\n  s.other_allowances,\n  s.pf_amount,\n  s.esi_eligible,\n  s.esi_amount,\n  s.gross_salary,\n  s.net_salary,\n  s.gratuity,\n  s.flexi_benefits,\n  s.total_annual_performance_incentive,\n  s.pf_company_contribution,\n  s.annual_ctc\nFROM onboarding.candidates c\nLEFT JOIN onboarding.salary_structures s ON c.candidate_id = s.candidate_id\n--WHERE c.id =1158\nWHERE c.id = {{ $json.id }};\n--WHERE c.id =  {{ $json.chatInput }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2064,
+        1296
+      ],
+      "id": "67dbbf24-a20e-404f-a919-dd27be7b98e6",
+      "name": "Combined Data Query4",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get candidate data from the IF node (previous node that has the candidate data)\n// const candidateData = $('Has Variable Pay?1').first().json;\nconst employeeName = $('Combined Data Query4').first().json.first_name;\nconst employeeLastName = $('Combined Data Query4').first().json.last_name;\nconst safeFileName = $('UpdateFileName').first().json.safeFileName.replace(/[^a-z0-9]/gi, '_').toLowerCase();\nconst filePath = `/home/node/offertemp/html/offerletter_${safeFileName}.html`;\nconst htmlContent = $input.first().json.html;\n\nconst command = `\nmkdir -p /home/node/offertemp/html && cat > ${filePath} << 'EOF'\n${htmlContent}\nEOF\n`;\n\nreturn {\n  json: {\n    htmlFilePath: filePath,\n    htmlContent: htmlContent,\n    command: command.trim(),\n    fileName: `offerletter_${safeFileName}.html`,\n    candidateName: `${employeeName} ${employeeLastName}`\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3296,
+        1280
+      ],
+      "id": "d35bcba6-c142-4f9d-a95d-fe8f2ba6f997",
+      "name": "html file1"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <title>Offer Letter</title>\n  <style>\n    @page {\n      size: A4;\n      margin: 25mm 20mm 25mm 20mm;\n    }\n\n    body {\n      font-family: Arial, sans-serif;\n      line-height: 1.6;\n      padding: 0;\n    }\n\n    .header {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n    }\n\n    .section {\n      margin-top: 20px;\n      margin-bottom: 40px;\n    }\n\n    ul {\n      margin-top: 10px;\n      margin-bottom: 20px;\n    }\n\n    .signature-section {\n      margin-top: 60px;\n      margin-bottom: 40px;\n    }\n\n    table {\n      width: 100%;\n      border-collapse: collapse;\n      margin-top: 15px;\n    }\n\n    table, th, td {\n      border: 1px solid #333;\n      padding: 8px;\n    }\n  </style>\n</head>\n\n<body>\n\n<div class=\"header\">\n  <div>\n    <img src=\"https://media.istockphoto.com/id/1412438498/vector/modern-square-tech-logo-design.jpg?s=2048x2048&w=is&k=20&c=xvn_8Wsh1a_wASUSjJppMO7YJ1r6W1XjiEz5Y_zMCGo=\" alt=\"Logo\" style=\"height: 70px;\"><br>\n    <br>{{ $('Combined Data Query4').item.json.jobId }}/{{ $('Combined Data Query4').item.json.candidate_id }}\n  </div>\n  <div style=\"text-align: right;\">\n    123 Business Street<br>\n    Tech City,<br>India 123456<br>\n    <br>Date: {{ (() => {\n      const d = new Date();\n      const day = String(d.getDate()).padStart(2, '0');\n      const month = String(d.getMonth() + 1).padStart(2, '0');\n      const year = d.getFullYear();\n      return `${day}/${month}/${year}`;\n    })() }}\n  </div>\n</div>\n\n  <br>\n  \n  <div class=\"section\">\n    <p>Dear {{ $('Convert Data Types').first().json.first_name }} {{ $('Convert Data Types').first().json.last_name }}</p>\n    <br>\n\n    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n      We are pleased to offer you the position of {{ $('Convert Data Types').first().json.position }}. Attached are the specific\n      terms and conditions of our offer – please read these important details carefully, including\n      your compensation and benefits detailed in Appendix A. Your appointment will be effective\n      from {{ (() => {\n        const dojString = $('Convert Data Types').first().json.doj;\n        const [year, month, day] = dojString.split('T')[0].split('-');\n        return `${day}/${month}/${year}`;\n      })() }}\n. Please contact us immediately if you require an alternative joining date.\n      If you do not confirm your acceptance or we are unable to set an alternative date, this offer\n      will be withdrawn.\n    </p>\n\n    <p>To confirm your acceptance of this offer, you are required to:</p>\n\n    <ul>\n      <li>Respond via email to <strong>HR@ssgconsulting.in</strong> to communicate acceptance of the offer and to confirm your joining date. Failing to do so would deem the offer invalid.</li>\n      <li>Report to the following address:\n          <p>\n      SSG Consulting Private Limited<br>\n      No11, Salai Vinayagar Koil Street,<br>\n      45 Feet Road,<br>\n      Puducherry, India-605001.\n    </p>\n      </li>\n    </ul>\n\n    <p>\n      On the joining date at 10:00 a.m. Please note that it is important to be on time to complete\n      the joining formalities.\n    </p>\n\n    <p>\n      On the joining date at 10:00 a.m. Please note that it is important to be on time to complete the joining formalities. On your joining date, please bring (i) the original and 1 photocopy of this letter duly signed and dated by you; (ii) 3 self-photographs (passport sized, color photos with a white background), (iii) the originals and 1 sets of photocopies of the following documents:  \n    </p>\n\n    <ul>\n      <li>Education degree certificate and all year mark sheets for the highest degree attained. Photocopies should include both front and back sides of certificate.</li>\n      <li>Relieving letter or resignation acceptance letter from your most recent employer.</li>\n      <li>Aadhaar card</li>\n      <li>Proof of identity. Bring 1 set of photocopies of any one of the following documents: passport, driving license, PAN card.</li>\n      <li>Copy of last salary slip, Copy of Form 16 & Appointment letter from previous employer.</li>\n      <li>PAN card copy.</li>\n      <li>Income tax computation from previous employer.</li>\n      <li>Valid Indian Work Permit, if applicable. * Please note that the above documents are mandatory as applicable.</li>\n    </ul>\n  </div>\n  \n  <br>\n  \n<div>\n<table border=\"1\" cellspacing=\"0\" cellpadding=\"8\" width=\"100%\">\n  <tr>\n    <td><p><strong>ACCEPTANCE OF APPOINTMENT TERMS AND CONDITIONS:</strong><br>\n    <strong>I agree that I have read, CONSULTING PRIVATE LIMITED under the terms and conditions stated above.</strong></p>\n\n    <p>\n      Signature: ________________________________________________________________<br>\n      Printed Name: _____________________________________________________________<br>\n      Date: __________________<br>\n      Date of Joining (if requesting an alternative date): __________________\n    </p>\n        </td>\n  </tr>\n</table>\n  </div>\n\n<div style=\"page-break-before: always;\"></div>\n\n  <div class=\"section\">\n    <h3 style=\"text-align: center;\">Appendix A</h3>\n\n<table border=\"1\" cellpadding=\"10\" cellspacing=\"0\" width=\"100%\">\n  <tr>\n    <td>\n      <strong>OFFER DATE:</strong> {{ (() => {\n        const dojString = $('Convert Data Types').first().json.doj;\n        const [year, month, day] = dojString.split('T')[0].split('-');\n        return `${day}/${month}/${year}`;\n      })() }}<br>\n    </td>\n    <td>\n      <strong>NAME:</strong> {{ $('Convert Data Types').first().json.first_name }} {{ $('Convert Data Types').first().json.last_name }}\n    </td>\n  </tr>\n  <tr>\n    <td>\n      <strong>DESIGNATION:</strong> {{ $('Convert Data Types').first().json.position }}\n    </td>\n    <td>\n      <strong>WORK LOCATION:</strong> {{ $('Convert Data Types').first().json.offeredlocation }}\n    </td>\n  </tr>\n</table>\n\n<br>\n<br>\n<table border=\"1\" cellpadding=\"5\" cellspacing=\"0\" width=\"100%\">\n  <tr>\n    <th>Details</th>\n    <th>Monthly (In Rupees)</th>\n    <th>Annual Salary (In Rupees)</th>\n  </tr>\n  \n  <!-- Breakup row across all columns -->\n  <tr>\n    <td colspan=\"3\"><strong>Breakup</strong></td>\n  </tr>\n\n  <tr>\n    <td>(a) Basic</td>\n    <td>{{ ($('Convert Data Types').first().json.basic_salary / 12).toFixed(0) }}</td>\n    <td>{{ $('Convert Data Types').first().json.basic_salary }}</td>\n  </tr>\n  <tr>\n    <td>(b) PF</td>\n    <td>{{ ($('Convert Data Types').first().json.pf_amount / 12).toFixed(0) }}</td>\n    <td>{{ $('Convert Data Types').first().json.pf_amount }}</td>\n  </tr>\n  <tr>\n    <td>(c) HRA</td>\n    <td>{{ ($('Convert Data Types').first().json.hra / 12).toFixed(0) }}</td>\n    <td>{{ $('Convert Data Types').first().json.hra }}</td>\n  </tr>\n  <tr>\n    <td>(d) Gratuity**</td>\n    <td>{{ ($('Convert Data Types').first().json.gratuity / 12).toFixed(0) }}</td>\n    <td>{{ $('Convert Data Types').first().json.gratuity }}</td>\n  </tr>\n  <tr>\n    <td>(e) Flexi Benefits(FBP)</td>\n    <td>{{ ($('Convert Data Types').first().json.flexi_benefits / 12).toFixed(0) }}</td>\n    <td>{{ $('Convert Data Types').first().json.flexi_benefits }}</td>\n  </tr>\n\n  <tr>\n    <td><strong>Total</strong></td>\n    <td>{{ ($('Convert Data Types').first().json.gross_salary / 12).toFixed(0) }}</td>\n    <td>{{ $('Convert Data Types').first().json.gross_salary }}</td>\n  </tr>\n\n  <tr>\n    <td>Annual Performance Incentive****</td>\n    <td>{{ ($('Convert Data Types').first().json.total_annual_performance_incentive / 12).toFixed(0) }}</td>\n    <td>{{ $('Convert Data Types').first().json.total_annual_performance_incentive }}</td>\n  </tr>\n\n  <tr>\n    <td>PF - Company's contribution</td>\n    <td>{{ ($('Convert Data Types').first().json.pf_company_contribution / 12).toFixed(0) }}</td>\n    <td>{{ $('Convert Data Types').first().json.pf_company_contribution }}</td>\n  </tr>\n\n  <!-- Merged cell for Other Annual Expense -->\n  <tr>\n    <td colspan=\"3\">Other Annual Expense towards medical benefits and HR</td>\n  </tr>\n\n  <tr>\n    <td><strong>Annual CTC</strong></td>\n    <td></td>\n    <td><strong>{{ $('Convert Data Types').first().json.annual_ctc }}</strong></td>\n  </tr>\n</table>\n\n</body>\n</html>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        2992,
+        1120
+      ],
+      "id": "c354adfb-a72a-4f66-8bb9-d1a520f4261d",
+      "name": "Set HTML with VariableV2"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <title>Offer Letter</title>\n  <style>\n    @page {\n      size: A4;\n      margin: 25mm 20mm 25mm 20mm;\n    }\n\n    body {\n      font-family: Arial, sans-serif;\n      line-height: 1.6;\n      padding: 0;\n    }\n\n    .header {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n    }\n\n    .section {\n      margin-top: 20px;\n      margin-bottom: 40px;\n    }\n\n    ul {\n      margin-top: 10px;\n      margin-bottom: 20px;\n    }\n\n    .signature-section {\n      margin-top: 60px;\n      margin-bottom: 40px;\n    }\n\n    table {\n      width: 100%;\n      border-collapse: collapse;\n      margin-top: 15px;\n    }\n\n    table, th, td {\n      border: 1px solid #333;\n      padding: 8px;\n    }\n  </style>\n</head>\n\n<body>\n\n<div class=\"header\">\n  <div>\n    <img src=\"https://media.istockphoto.com/id/1412438498/vector/modern-square-tech-logo-design.jpg?s=2048x2048&w=is&k=20&c=xvn_8Wsh1a_wASUSjJppMO7YJ1r6W1XjiEz5Y_zMCGo=\" alt=\"Logo\" style=\"height: 70px;\"><br>\n    <br>{{ $('Combined Data Query4').item.json.jobId }}/{{ $('Combined Data Query4').item.json.candidate_id }}\n  </div>\n  <div style=\"text-align: right;\">\n    123 Business Street<br>\n    Tech City,<br>India 123456<br>\n    <br>Date: {{ (() => {\n      const d = new Date();\n      const day = String(d.getDate()).padStart(2, '0');\n      const month = String(d.getMonth() + 1).padStart(2, '0');\n      const year = d.getFullYear();\n      return `${day}/${month}/${year}`;\n    })() }}\n  </div>\n</div>\n\n  <br>\n  \n  <div class=\"section\">\n    <p>Dear {{ $('Convert Data Types').first().json.first_name }} {{ $('Convert Data Types').first().json.last_name }}</p>\n    <br>\n\n    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n      We are pleased to offer you the position of {{ $('Convert Data Types').first().json.position }}. Attached are the specific\n      terms and conditions of our offer – please read these important details carefully, including\n      your compensation and benefits detailed in Appendix A. Your appointment will be effective\n      from {{ (() => {\n        const dojString = $('Convert Data Types').first().json.doj;\n        const [year, month, day] = dojString.split('T')[0].split('-');\n        return `${day}/${month}/${year}`;\n      })() }}\n. Please contact us immediately if you require an alternative joining date.\n      If you do not confirm your acceptance or we are unable to set an alternative date, this offer\n      will be withdrawn.\n    </p>\n\n    <p>To confirm your acceptance of this offer, you are required to:</p>\n\n    <ul>\n      <li>Respond via email to <strong>HR@ssgconsulting.in</strong> to communicate acceptance of the offer and to confirm your joining date. Failing to do so would deem the offer invalid.</li>\n      <li>Report to the following address:\n          <p>\n      SSG Consulting Private Limited<br>\n      No11, Salai Vinayagar Koil Street,<br>\n      45 Feet Road,<br>\n      Puducherry, India-605001.\n    </p>\n      </li>\n    </ul>\n\n    <p>\n      On the joining date at 10:00 a.m. Please note that it is important to be on time to complete\n      the joining formalities.\n    </p>\n\n    <p>\n      On the joining date at 10:00 a.m. Please note that it is important to be on time to complete the joining formalities. On your joining date, please bring (i) the original and 1 photocopy of this letter duly signed and dated by you; (ii) 3 self-photographs (passport sized, color photos with a white background), (iii) the originals and 1 sets of photocopies of the following documents:  \n    </p>\n\n    <ul>\n      <li>Education degree certificate and all year mark sheets for the highest degree attained. Photocopies should include both front and back sides of certificate.</li>\n      <li>Relieving letter or resignation acceptance letter from your most recent employer.</li>\n      <li>Aadhaar card</li>\n      <li>Proof of identity. Bring 1 set of photocopies of any one of the following documents: passport, driving license, PAN card.</li>\n      <li>Copy of last salary slip, Copy of Form 16 & Appointment letter from previous employer.</li>\n      <li>PAN card copy.</li>\n      <li>Income tax computation from previous employer.</li>\n      <li>Valid Indian Work Permit, if applicable. * Please note that the above documents are mandatory as applicable.</li>\n    </ul>\n  </div>\n  \n  <br>\n  \n<div>\n<table border=\"1\" cellspacing=\"0\" cellpadding=\"8\" width=\"100%\">\n  <tr>\n    <td><p><strong>ACCEPTANCE OF APPOINTMENT TERMS AND CONDITIONS:</strong><br>\n    <strong>I agree that I have read, CONSULTING PRIVATE LIMITED under the terms and conditions stated above.</strong></p>\n\n    <p>\n      Signature: ________________________________________________________________<br>\n      Printed Name: _____________________________________________________________<br>\n      Date: __________________<br>\n      Date of Joining (if requesting an alternative date): __________________\n    </p>\n        </td>\n  </tr>\n</table>\n  </div>\n\n<div style=\"page-break-before: always;\"></div>\n\n  <div class=\"section\">\n    <h3 style=\"text-align: center;\">Appendix A</h3>\n\n<table border=\"1\" cellpadding=\"10\" cellspacing=\"0\" width=\"100%\">\n  <tr>\n    <td>\n      <strong>OFFER DATE:</strong> {{ (() => {\n        const dojString = $('Convert Data Types').first().json.doj;\n        const [year, month, day] = dojString.split('T')[0].split('-');\n        return `${day}/${month}/${year}`;\n      })() }}<br>\n    </td>\n    <td>\n      <strong>NAME:</strong> {{ $('Convert Data Types').first().json.first_name }} {{ $('Convert Data Types').first().json.last_name }}\n    </td>\n  </tr>\n  <tr>\n    <td>\n      <strong>DESIGNATION:</strong> {{ $('Convert Data Types').first().json.position }}\n    </td>\n    <td>\n      <strong>WORK LOCATION:</strong> {{ $('Convert Data Types').first().json.offeredlocation }}\n    </td>\n  </tr>\n</table>\n\n<br>\n<br>\n<table border=\"1\" cellpadding=\"5\" cellspacing=\"0\" width=\"100%\">\n  <tr>\n    <th>Details</th>\n    <th>Monthly (In Rupees)</th>\n    <th>Annual Salary (In Rupees)</th>\n  </tr>\n  \n  <!-- Breakup row across all columns -->\n  <tr>\n    <td colspan=\"3\"><strong>Breakup</strong></td>\n  </tr>\n\n  <tr>\n    <td>(a) Basic</td>\n    <td>{{ ($('Convert Data Types').first().json.basic_salary / 12).toFixed(0) }}</td>\n    <td>{{ $('Convert Data Types').first().json.basic_salary }}</td>\n  </tr>\n  <tr>\n    <td>(b) PF</td>\n    <td>{{ ($('Convert Data Types').first().json.pf_amount / 12).toFixed(0) }}</td>\n    <td>{{ $('Convert Data Types').first().json.pf_amount }}</td>\n  </tr>\n  <tr>\n    <td>(c) HRA</td>\n    <td>{{ ($('Convert Data Types').first().json.hra / 12).toFixed(0) }}</td>\n    <td>{{ $('Convert Data Types').first().json.hra }}</td>\n  </tr>\n  <tr>\n    <td>(d) Gratuity**</td>\n    <td>{{ ($('Convert Data Types').first().json.gratuity / 12).toFixed(0) }}</td>\n    <td>{{ $('Convert Data Types').first().json.gratuity }}</td>\n  </tr>\n  <tr>\n    <td>(e) Flexi Benefits(FBP)</td>\n    <td>{{ ($('Convert Data Types').first().json.flexi_benefits / 12).toFixed(0) }}</td>\n    <td>{{ $('Convert Data Types').first().json.flexi_benefits }}</td>\n  </tr>\n\n  <tr>\n    <td><strong>Total</strong></td>\n    <td>{{ ($('Convert Data Types').first().json.gross_salary / 12).toFixed(0) }}</td>\n    <td>{{ $('Convert Data Types').first().json.gross_salary }}</td>\n  </tr>\n\n  <tr>\n    <td>Annual Performance Incentive****</td>\n    <td>{{ ($('Convert Data Types').first().json.total_annual_performance_incentive / 12).toFixed(0) }}</td>\n    <td>{{ $('Convert Data Types').first().json.total_annual_performance_incentive }}</td>\n  </tr>\n\n  <tr>\n    <td>PF - Company's contribution</td>\n    <td>{{ ($('Convert Data Types').first().json.pf_company_contribution / 12).toFixed(0) }}</td>\n    <td>{{ $('Convert Data Types').first().json.pf_company_contribution }}</td>\n  </tr>\n\n  <!-- Merged cell for Other Annual Expense -->\n  <tr>\n    <td colspan=\"3\">Other Annual Expense towards medical benefits and HR</td>\n  </tr>\n\n  <tr>\n    <td><strong>Annual CTC</strong></td>\n    <td></td>\n    <td><strong>{{ $('Convert Data Types').first().json.annual_ctc }}</strong></td>\n  </tr>\n</table>\n\n</body>\n</html>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        3056,
+        1408
+      ],
+      "id": "839b3909-72b3-4dab-8881-c815150f0438",
+      "name": "Set HTML without Variable_V2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get first and last name from previous node\nconst employeeFirstName = $('Convert Data Types').first().json.first_name;\n\nconst employeeLastName = $('Convert Data Types').first().json.last_name;\n\n// Get current date\nconst now = new Date();\n\n// Normalize date as YYYY-MM-DD\nconst yyyy = now.getFullYear();\nconst mm = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based\nconst dd = String(now.getDate()).padStart(2, '0');\nconst normalizedDate = `${yyyy}-${mm}-${dd}`;\n\n// Build safe file name\nconst safeFileName = `${employeeFirstName}_${employeeLastName}_${normalizedDate}`\n  .replace(/[^a-z0-9_]/gi, '_') // replace any special chars with _\n  .toLowerCase();\n\n// Return as json\nreturn [{ json: { safeFileName } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2512,
+        1152
+      ],
+      "id": "2c97a6ee-4164-42ac-a2ed-0b02d62c9ae5",
+      "name": "UpdateFileName"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates SET templates = jsonb_set(templates::jsonb, '{offer_letter_generated}', 'true'::jsonb, false)::json, offer_letter_file_name = '{{ $('UpdateFileName').item.json.safeFileName }}', updated_at = NOW() WHERE id = {{ $('When chat message received').item.json.chatInput }};\n\nUPDATE onboarding.candidates\nSET \n  templates = jsonb_set(\n      CASE \n          WHEN jsonb_typeof(templates::jsonb) = 'object' THEN templates::jsonb\n          ELSE '{}'::jsonb\n      END,\n      '{offer_letter_generated}', \n      'true'::jsonb, \n      false\n  ),\n  offer_letter_file_name = 'reena_gupta_2025_11_21',\n  updated_at = NOW()\n\nWHERE id = {{ $('Combined Data Query4').item.json.id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        4288,
+        1296
+      ],
+      "id": "e3f39f5f-05b0-4369-823f-7f644f0ba0ca",
+      "name": "Update Offer Letter Info",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.command }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        4064,
+        1296
+      ],
+      "id": "44965a2b-31f7-40e8-8506-7413e16da5eb",
+      "name": "Execute PDF Command",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.command }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        3680,
+        1296
+      ],
+      "id": "65e89ff3-e538-4fb8-9e41-53457a13b066",
+      "name": "Execute Command2"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst safeFileName = $('UpdateFileName').first().json.safeFileName;\nconst htmlPath = `/home/node/offertemp/html/offerletter_${safeFileName}.html`;\nconst pdfPath = `/home/node/offertemp/pdf/offerletter_${safeFileName}.pdf`;\n\nconst convertOfferCommand = `\ncd /home/node/offertemp/scripts\n\necho \"=== Converting ${safeFileName}.html to PDF ===\"\ncat > convert_offer.js << 'EOF'\nconst puppeteer = require('puppeteer');\nconst fs = require('fs');\n\n(async () => {\n  try {\n    console.log('Starting PDF conversion for ${safeFileName}.html...');\n\n    if (!fs.existsSync('${htmlPath}')) {\n      throw new Error('HTML file not found: ${htmlPath}');\n    }\n\n    const htmlContent = fs.readFileSync('${htmlPath}', 'utf8');\n\n    const browser = await puppeteer.launch({\n      headless: true,\n      executablePath: '/usr/bin/chromium',\n      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']\n    });\n\n    const page = await browser.newPage();\n    await page.goto('file://${htmlPath}', { waitUntil: 'networkidle0', timeout: 30000 });\n\n    await page.pdf({\n      path: '${pdfPath}',\n      format: 'A4',\n      printBackground: true,\n      margin: {\n        top: '1cm',\n        right: '1cm',\n        bottom: '1cm',\n        left: '1cm'\n      }\n    });\n\n    await browser.close();\n\n    if (fs.existsSync('${pdfPath}')) {\n      const stats = fs.statSync('${pdfPath}');\n      console.log(\\`PDF created successfully: \\${stats.size} bytes\\`);\n    } else {\n      throw new Error('PDF file was not created');\n    }\n\n  } catch (err) {\n    console.error('Error during PDF conversion:', err);\n    fs.writeFileSync('/home/node/offertemp/pdf/error.log',\n      \\`Error converting ${safeFileName}.html: \\${err.message}\\\\n\\${err.stack}\\\\n\\`,\n      { flag: 'a' }\n    );\n    process.exit(1);\n  }\n})();\nEOF\n\necho \"=== Running conversion ===\"\nnode convert_offer.js\n\necho \"=== Checking result ===\"\nls -la ${pdfPath}\n`;\n\nreturn {\n  json: {\n    command: convertOfferCommand.trim(),\n    htmlPath: htmlPath,\n    pdfPath: pdfPath\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3872,
+        1296
+      ],
+      "id": "556e4ce8-f0d5-4f47-a124-1b023407c732",
+      "name": "to pdf1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f0cbd6f5-a595-46c5-9dd9-a86dea09903a",
+              "leftValue": "={{ $json.variable_component }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2704,
+        1280
+      ],
+      "id": "f183f839-2410-4870-9230-7a0eb02492df",
+      "name": "Has Variable Pay?1"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        1568,
+        1088
+      ],
+      "id": "650fcf61-86e5-43ec-9dff-e786b0801b84",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET \n  templates = jsonb_set(\n      CASE \n          WHEN jsonb_typeof(templates::jsonb) = 'object' THEN templates::jsonb\n          ELSE '{}'::jsonb\n      END,\n      '{offer_letter_generated}', \n      'true'::jsonb, \n      false\n  ),\n  offer_letter_file_name = '{{ $('to pdf1').item.json.pdfPath }}',\n  updated_at = NOW()\n\nWHERE id = {{ $('Combined Data Query4').item.json.id }}\nRETURNING id,offer_letter_file_name;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        4400,
+        1152
+      ],
+      "id": "90d37415-da55-4fb2-8fa5-163ccd1b4f98",
+      "name": "Update Offer Letter Info1",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Has Variable Pay?": {
+      "main": [
+        [
+          {
+            "node": "Set HTML with Variable",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set HTML without Variable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set HTML with Variable": {
+      "main": [
+        [
+          {
+            "node": "html file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set HTML without Variable": {
+      "main": [
+        [
+          {
+            "node": "html file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "to pdf",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "to pdf": {
+      "main": [
+        [
+          {
+            "node": "Execute Command1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "html file": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command1": {
+      "main": [
+        [
+          {
+            "node": "update filename",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update offer_letter_generated": {
+      "main": [
+        [
+          {
+            "node": "offer_letter_generated done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "details": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "doj",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "filename",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Has Variable Pay?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "salary structure": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "filename": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "update filename": {
+      "main": [
+        [
+          {
+            "node": "update offer_letter_generated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "doj": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        []
+      ]
+    },
+    "Convert Data Types": {
+      "main": [
+        [
+          {
+            "node": "UpdateFileName",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Has Variable Pay?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combined Data Query4": {
+      "main": [
+        [
+          {
+            "node": "Convert Data Types",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "html file1": {
+      "main": [
+        [
+          {
+            "node": "Execute Command2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set HTML with VariableV2": {
+      "main": [
+        [
+          {
+            "node": "html file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set HTML without Variable_V2": {
+      "main": [
+        [
+          {
+            "node": "html file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UpdateFileName": {
+      "main": [
+        [
+          {
+            "node": "Has Variable Pay?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute PDF Command": {
+      "main": [
+        [
+          {
+            "node": "Update Offer Letter Info1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command2": {
+      "main": [
+        [
+          {
+            "node": "to pdf1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "to pdf1": {
+      "main": [
+        [
+          {
+            "node": "Execute PDF Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Variable Pay?1": {
+      "main": [
+        [
+          {
+            "node": "Set HTML with VariableV2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set HTML without Variable_V2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Combined Data Query4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Offer Letter Info1": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "f2c68a5c-1fbf-4e96-826c-56eba575e0c6",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-11-20T09:53:00.516Z",
+      "updatedAt": "2025-11-20T09:53:00.516Z",
+      "role": "workflow:owner",
+      "workflowId": "CRO4dtFHqC5QYDFh",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
