@@ -1,0 +1,388 @@
+{
+  "createdAt": "2025-12-03T10:35:28.849Z",
+  "updatedAt": "2025-12-04T12:28:04.000Z",
+  "id": "9xPtm5lIBjv56nLN",
+  "name": "Offer Acceptance Auto-Analyzer",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": true,
+        "output": "fields",
+        "fields": [
+          "subject",
+          "sender",
+          "replyTo",
+          "receivedDateTime",
+          "body"
+        ],
+        "filtersUI": {
+          "values": {
+            "filters": {
+              "hasAttachments": false,
+              "readStatus": "unread",
+              "sender": "=Ananthkarthick.m@rencata.com"
+            }
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -1568,
+        48
+      ],
+      "id": "82d28fd8-9796-40d7-9c5d-86be955c467f",
+      "name": "Microsoft Outlook",
+      "webhookId": "8c1de534-be1d-4481-94ef-89cc6b801b9d",
+      "alwaysOutputData": true,
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an email classification assistant. Your task is to analyze incoming email responses and classify them in two stages:\nStage 1: Primary Classification\nDetermine if the email is related to a job offer letter or not.\n\nOFFER_LETTER_RESPONSE Indicators:\nReferences to job offer acceptance or rejection\n Mentions of salary, compensation, benefits discussion\n Start date negotiations or confirmations\n- Position title confirmations\n- Terms and conditions discussions\n Counter-offer proposals\n Questions about the job offer details\n Expressions of gratitude for the offer\nRequests for offer modifications\n Acceptance confirmations with signatures\n Joining date confirmations\n Acknowledgment of receiving offer letter\n\n### NOT_OFFER_LETTER_RESPONSE Examples:\nGeneral inquiries about job applications\n Interview scheduling emails\n Thank you notes after interviews\n Status update requests\n Resume submissions\n Networking emails\n General job search inquiries\nUnrelated business correspondence\n\nStage 2: Offer Letter Response Sub-Classification\nIf classified as OFFER_LETTER_RESPONSE, further classify into one of these categories:\n\n ACCEPTED\n Explicit acceptance statements (\"I accept the offer\", \"I am delighted to accept\")\n Confirmation of joining dates\n Expressions of excitement about starting\n Gratitude for the opportunity\n Confirmation of terms without requesting changes\nStatements about looking forward to joining\n\n DECLINED\n- Explicit rejection of the offer\n Polite refusal statements\n Mentions of accepting another opportunity\n Clear statements of inability to accept\n\nNEGOTIATED\nRequests for salary/compensation changes\n Requests to modify start dates\n Questions about benefits or terms\n Counter-proposals for any aspect of the offer\nRequests for additional time to consider\nConditional acceptance (acceptance pending changes)\n\n INQUIRY\nQuestions about offer details without acceptance/rejection\n Requests for clarification on terms\n Asking for additional information about the role\n General questions about the offer without clear intent\n\nOutput Format:\nFor non-offer letter responses:\n\nNOT_OFFER_LETTER_RESPONSE\n\n\nFor offer letter responses:\n\nOFFER_LETTER_RESPONSE - [ACCEPTED/DECLINED/NEGOTIATED/INQUIRY]\n\n\nInstructions:\n1. Analyze the email content carefully\n2. First determine if it's an offer letter response\n3. If yes, classify the specific type of response\n4. Respond with ONLY the classification result\n5. Do not provide explanations or additional text\n\n## Email Content to Classify:\n{{ $json.plainTextBody }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        -1120,
+        48
+      ],
+      "id": "a200069b-1a78-4761-90e6-6c2e8409c6ed",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const item = $input.item;\nconst html = item.json.body.content || '';\n\nfunction decodeHTMLEntities(text) {\n  const entities = {\n    '&nbsp;': ' ',\n    '&amp;': '&',\n    '&quot;': '\"',\n    '&lt;': '<',\n    '&gt;': '>',\n  };\n  return text.replace(/&[a-z]+;/g, match => entities[match] || match);\n}\n\nlet plainText = html.replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim();\nplainText = decodeHTMLEntities(plainText);\n\nitem.json.plainTextBody = plainText;\n\nreturn item;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1344,
+        48
+      ],
+      "id": "a841134e-22f7-427e-9d6d-4cb0e63aee38",
+      "name": "html to text",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT personal_email\nFROM onboarding.candidates\nWHERE \n  templates ->> 'offer_letter_sent_to_candidate' = 'true' AND\n  templates ->> 'offer_accepted' = 'false' AND\n  templates ->> 'offer_declined' = 'false';\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1808,
+        32
+      ],
+      "id": "1971bf24-f66e-4a6b-981a-9d8f09998929",
+      "name": "Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "output": "={{\n  $json[\"text\"].trim() === \"OFFER_LETTER_RESPONSE - ACCEPTED\" ? 0 :\n  $json[\"text\"].trim() === \"OFFER_LETTER_RESPONSE - DECLINED\" ? 1 :\n  $json[\"text\"].trim() === \"OFFER_LETTER_RESPONSE - NEGOTIATED\" ? 2 :\n  $json[\"text\"].trim() === \"NOT_OFFER_LETTER_RESPONSE\" ? 3 :\n  -1\n}}\n"
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -784,
+        32
+      ],
+      "id": "ea1d4030-a42b-405e-91a1-838604da8bf3",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1056,
+        272
+      ],
+      "id": "d2970a84-1bbe-4f4c-910c-21c1e73a67c3",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "EDKQjccT9Ythpx7J",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = jsonb_set(\n                   jsonb_set(templates::jsonb, '{offer_accepted}', 'true'::jsonb, false),\n                   '{offer_declined}', 'false'::jsonb, false\n               )::json,\n    updated_at = NOW()\nWHERE personal_email = '';\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -416,
+        -176
+      ],
+      "id": "1d2ddae3-12ba-4cd1-bb71-16e5e9cd5fa2",
+      "name": "accepted_flag",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = jsonb_set(\n                   jsonb_set(templates::jsonb, '{offer_declined}', 'true'::jsonb, false),\n                   '{offer_accepted}', 'false'::jsonb, false\n               )::json,\n    updated_at = NOW()\nWHERE personal_email = '{{ $(\"Postgres\").item.json.personal_email }}';\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -384,
+        16
+      ],
+      "id": "424110b6-abd0-4fce-be85-3bc0d0c32115",
+      "name": "decline_flag",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "mBoZU3mfmpoSBLPv",
+          "mode": "list",
+          "cachedResultName": "negotiation_main"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -352,
+        256
+      ],
+      "id": "69652bb8-4394-453c-b9a7-dd4dcb3b530a",
+      "name": "negotiation_flow"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2080,
+        48
+      ],
+      "id": "fb8e2611-ec62-4717-ab7d-94f1db3f5bcc",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "connections": {
+    "Microsoft Outlook": {
+      "main": [
+        [
+          {
+            "node": "html to text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "html to text": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Microsoft Outlook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "accepted_flag",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "decline_flag",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "negotiation_flow",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "99b5fcdf-7ca0-4b7a-9936-44d752b95e1e",
+  "triggerCount": 2,
+  "shared": [
+    {
+      "createdAt": "2025-12-03T10:35:28.851Z",
+      "updatedAt": "2025-12-03T10:35:28.851Z",
+      "role": "workflow:owner",
+      "workflowId": "9xPtm5lIBjv56nLN",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
