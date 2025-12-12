@@ -1,0 +1,121 @@
+{
+  "createdAt": "2025-12-11T12:26:03.890Z",
+  "updatedAt": "2025-12-11T12:33:12.000Z",
+  "id": "JLc3nipruwuNEQSt",
+  "name": "PF1",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "PF-registration",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "3af668a9-712a-422c-8186-eefa2e8db1d6",
+      "name": "Webhook - Display PF Form",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        48,
+        -208
+      ],
+      "webhookId": "pf-registration-get"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<!DOCTYPE html>\n<html>\n<head>\n  <title>PF Registration Form</title>\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      background-color: #f0f2f5;\n      padding: 20px;\n    }\n\n    .container {\n      width: 90%;\n      max-width: 900px;\n      margin: 0 auto;\n      border: 1px solid #ccc;\n      padding: 20px;\n      box-shadow: 0 0 20px rgba(0,0,0,0.1);\n      border-radius: 8px;\n      background: #fff;\n    }\n\n    h1 {\n      color: #2c5aa0;\n      text-align: center;\n      margin-bottom: 30px;\n    }\n\n    fieldset {\n      border: 1px solid #ccc;\n      padding: 10px;\n      margin-bottom: 20px;\n    }\n\n    legend {\n      font-weight: bold;\n    }\n\n    table {\n      width: 100%;\n      border-collapse: collapse;\n    }\n\n    table td, table th {\n      padding: 8px;\n      vertical-align: top;\n    }\n\n    input, textarea {\n      width: 100%;\n      border: 1px solid #ccc;\n      outline: none;\n      padding: 5px;\n      box-sizing: border-box;\n    }\n\n    button {\n      background-color: #4A90E2;\n      color: white;\n      border: none;\n      padding: 10px 20px;\n      font-size: 16px;\n      border-radius: 5px;\n      cursor: pointer;\n      width: 100%;\n      margin-top: 10px;\n    }\n\n    button:hover {\n      background-color: #357ABD;\n    }\n\n    button:disabled {\n      background-color: #ccc;\n      cursor: not-allowed;\n    }\n\n    .success-message {\n      display: none;\n      background-color: #d4edda;\n      color: #155724;\n      padding: 15px;\n      border-radius: 4px;\n      margin-bottom: 20px;\n      text-align: center;\n    }\n\n    .error-message {\n      display: none;\n      background-color: #f8d7da;\n      color: #721c24;\n      padding: 15px;\n      border-radius: 4px;\n      margin-bottom: 20px;\n      text-align: center;\n    }\n  </style>\n</head>\n<body>\n\n<div class=\"container\">\n  <h1>PF Registration Form</h1>\n  \n  <div id=\"successMessage\" class=\"success-message\"></div>\n  <div id=\"errorMessage\" class=\"error-message\"></div>\n\n  <form id=\"pfForm\">\n    <input type=\"hidden\" id=\"candidateId\" name=\"candidateId\">\n    \n    <fieldset>\n      <legend>Personal Information</legend>\n      <table>\n        <tr><td>Name:</td><td><input type=\"text\" id=\"name\" name=\"name\"></td></tr>\n        <tr><td>DOB:</td><td><input type=\"date\" id=\"dob\" name=\"dob\"></td></tr>\n        <tr><td>Blood Group:</td><td><input type=\"text\" id=\"bloodGroup\" name=\"bloodGroup\"></td></tr>\n        <tr><td>PF Number:</td><td><input type=\"text\" id=\"pfNumber\" name=\"pfNumber\"></td></tr>\n        <tr><td>UAN Number:</td><td><input type=\"text\" id=\"uanNumber\" name=\"uanNumber\"></td></tr>\n        <tr><td>Bank Account (Axis only):</td><td><input type=\"text\" id=\"bankAccount\" name=\"bankAccount\"></td></tr>\n        <tr><td>Marital Status:</td><td><input type=\"text\" id=\"maritalStatus\" name=\"maritalStatus\"></td></tr>\n        <tr><td>Permanent Address:</td><td><textarea id=\"permanentAddress\" name=\"permanentAddress\" rows=\"3\"></textarea></td></tr>\n        <tr><td>Temporary Address:</td><td><textarea id=\"temporaryAddress\" name=\"temporaryAddress\" rows=\"3\"></textarea></td></tr>\n      </table>\n    </fieldset>\n\n    <fieldset>\n      <legend>Family Information</legend>\n      <table border=\"1\">\n        <thead>\n          <tr>\n            <th>Relationship</th>\n            <th>Name</th>\n            <th>DOB</th>\n            <th>Address</th>\n          </tr>\n        </thead>\n        <tbody>\n          <tr>\n            <td>Father</td>\n            <td><input type=\"text\" id=\"fatherName\" name=\"fatherName\"></td>\n            <td><input type=\"date\" id=\"fatherDob\" name=\"fatherDob\"></td>\n            <td><input type=\"text\" id=\"fatherAddress\" name=\"fatherAddress\"></td>\n          </tr>\n          <tr>\n            <td>Mother</td>\n            <td><input type=\"text\" id=\"motherName\" name=\"motherName\"></td>\n            <td><input type=\"date\" id=\"motherDob\" name=\"motherDob\"></td>\n            <td><input type=\"text\" id=\"motherAddress\" name=\"motherAddress\"></td>\n          </tr>\n          <tr>\n            <td>Spouse</td>\n            <td><input type=\"text\" id=\"spouseName\" name=\"spouseName\"></td>\n            <td><input type=\"date\" id=\"spouseDob\" name=\"spouseDob\"></td>\n            <td><input type=\"text\" id=\"spouseAddress\" name=\"spouseAddress\"></td>\n          </tr>\n          <tr>\n            <td>Child 1</td>\n            <td><input type=\"text\" id=\"child1Name\" name=\"child1Name\"></td>\n            <td><input type=\"date\" id=\"child1Dob\" name=\"child1Dob\"></td>\n            <td><input type=\"text\" id=\"child1Address\" name=\"child1Address\"></td>\n          </tr>\n          <tr>\n            <td>Child 2</td>\n            <td><input type=\"text\" id=\"child2Name\" name=\"child2Name\"></td>\n            <td><input type=\"date\" id=\"child2Dob\" name=\"child2Dob\"></td>\n            <td><input type=\"text\" id=\"child2Address\" name=\"child2Address\"></td>\n          </tr>\n        </tbody>\n      </table>\n    </fieldset>\n\n    <button type=\"submit\">Submit</button>\n  </form>\n</div>\n\n<script>\n  function getUrlParams() {\n    const params = new URLSearchParams(window.location.search);\n    return {\n      id: params.get('id'),\n      firstName: params.get('firstName'),\n      lastName: params.get('lastName'),\n      email: params.get('email')\n    };\n  }\n\n  window.addEventListener('DOMContentLoaded', function() {\n    const params = getUrlParams();\n    \n    if (params.id) {\n      document.getElementById('candidateId').value = params.id;\n    }\n    if (params.firstName && params.lastName) {\n      document.getElementById('name').value = params.firstName + ' ' + params.lastName;\n    }\n  });\n\n  document.getElementById('pfForm').addEventListener('submit', async function(e) {\n    e.preventDefault();\n    \n    const submitBtn = this.querySelector('button[type=\"submit\"]');\n    const successMsg = document.getElementById('successMessage');\n    const errorMsg = document.getElementById('errorMessage');\n    \n    successMsg.style.display = 'none';\n    errorMsg.style.display = 'none';\n    \n    submitBtn.disabled = true;\n    submitBtn.textContent = 'Submitting...';\n    \n    const formData = {\n      candidate_id: document.getElementById('candidateId').value,\n      name: document.getElementById('name').value,\n      dob: document.getElementById('dob').value,\n      blood_group: document.getElementById('bloodGroup').value,\n      pf_number: document.getElementById('pfNumber').value,\n      uan_number: document.getElementById('uanNumber').value,\n      bank_account: document.getElementById('bankAccount').value,\n      marital_status: document.getElementById('maritalStatus').value,\n      permanent_address: document.getElementById('permanentAddress').value,\n      temporary_address: document.getElementById('temporaryAddress').value,\n      father_name: document.getElementById('fatherName').value,\n      father_dob: document.getElementById('fatherDob').value,\n      father_address: document.getElementById('fatherAddress').value,\n      mother_name: document.getElementById('motherName').value,\n      mother_dob: document.getElementById('motherDob').value,\n      mother_address: document.getElementById('motherAddress').value,\n      spouse_name: document.getElementById('spouseName').value,\n      spouse_dob: document.getElementById('spouseDob').value,\n      spouse_address: document.getElementById('spouseAddress').value,\n      child1_name: document.getElementById('child1Name').value,\n      child1_dob: document.getElementById('child1Dob').value,\n      child1_address: document.getElementById('child1Address').value,\n      child2_name: document.getElementById('child2Name').value,\n      child2_dob: document.getElementById('child2Dob').value,\n      child2_address: document.getElementById('child2Address').value\n    };\n    \n    try {\n      const response = await fetch('https://192.168.50.120:5670/webhook-test/PF-registration-submit', {\n        method: 'POST',\n        headers: {\n          'Content-Type': 'application/json',\n        },\n        body: JSON.stringify(formData)\n      });\n      \n      if (response.ok) {\n        successMsg.textContent = 'PF Registration submitted successfully!';\n        successMsg.style.display = 'block';\n        document.getElementById('pfForm').reset();\n        \n        setTimeout(() => {\n          window.close();\n        }, 2000);\n      } else {\n        throw new Error('Failed to submit');\n      }\n    } catch (error) {\n      errorMsg.textContent = 'Error submitting form. Please try again.';\n      errorMsg.style.display = 'block';\n    } finally {\n      submitBtn.disabled = false;\n      submitBtn.textContent = 'Submit';\n    }\n  });\n</script>\n\n</body>\n</html>",
+        "options": {}
+      },
+      "id": "f895444c-d083-40e2-bb96-b31577b45765",
+      "name": "Respond to Webhook - PF Form HTML",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        256,
+        -208
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook - Display PF Form": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook - PF Form HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "7856e2ec-fcef-4468-b904-2922ff9fc293",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-12-11T12:26:03.893Z",
+      "updatedAt": "2025-12-11T12:26:03.893Z",
+      "role": "workflow:owner",
+      "workflowId": "JLc3nipruwuNEQSt",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
