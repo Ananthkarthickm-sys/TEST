@@ -1,0 +1,1143 @@
+{
+  "createdAt": "2025-12-12T05:16:37.217Z",
+  "updatedAt": "2025-12-12T06:22:13.000Z",
+  "id": "NL82x4NdLHt7SApE",
+  "name": "My workflow 45",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24
+            }
+          ]
+        }
+      },
+      "id": "0a96ba9b-9e21-4ded-a797-3c4c16cc9508",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -656,
+        -112
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "url": "https://192.168.50.120:5670/api/v1/workflows",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "n8nApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": []
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "name": "Get All Workflows",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -400,
+        -112
+      ],
+      "id": "3d7ef95a-3952-4180-9f11-c45167c3ce62",
+      "credentials": {
+        "n8nApi": {
+          "id": "lF0w43EAP5bIt32d",
+          "name": "n8n account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.item.json;\nif (!response.data || !Array.isArray(response.data)) {\n  return { json: { error: 'No workflows found' } };\n}\nconst workflows = response.data.map(workflow => ({\n  json: {\n    id: workflow.id,\n    name: workflow.name,\n    createdAt: workflow.createdAt,\n    updatedAt: workflow.updatedAt,\n    active: workflow.active\n  }\n}));\nreturn workflows;"
+      },
+      "name": "Extract Workflow List",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -192,
+        -112
+      ],
+      "id": "ff85bed9-93c4-4615-8237-fc61c9602461"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Loop Over Workflows",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        16,
+        -112
+      ],
+      "id": "3d91a9d2-5515-45bd-ab04-a7414df73513"
+    },
+    {
+      "parameters": {
+        "url": "=https://192.168.50.120:5670/api/v1/workflows/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "n8nApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "name": "Get Full Workflow Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        0
+      ],
+      "id": "a1db7b24-57a1-43f2-a216-f8a1edb38037",
+      "credentials": {
+        "n8nApi": {
+          "id": "lF0w43EAP5bIt32d",
+          "name": "n8n account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Code node to extract workflow JSON and remove array wrapper\n// Place this after \"Get Full Workflow Data\" node\nconst response = $input.item.json;\n\n// If response is an array, get the first item\n// If it's already an object, use it as-is\nlet workflow = Array.isArray(response) ? response[0] : response;\n\n// Generate clean filename\nconst timestamp = DateTime.now().toFormat('yyyy-MM-dd_HH-mm-ss');\nconst cleanName = workflow.name.replace(/[^a-zA-Z0-9-_]/g, '_');\nconst filename = `${cleanName}.json`;\n\n// Format as pretty JSON\nconst workflowJson = JSON.stringify(workflow, null, 2);\n\nreturn {\n  json: {\n    filename: filename,\n    content: workflowJson,\n    workflowName: workflow.name,\n    workflowId: workflow.id,\n    timestamp: timestamp,\n    commitMessage: `Backup: ${workflow.name} (${timestamp})`\n  }\n};"
+      },
+      "name": "Format for GitHub",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        0
+      ],
+      "id": "3fea885f-a2b0-4cd6-997c-b8730805849d"
+    },
+    {
+      "parameters": {
+        "owner": {
+          "__rl": true,
+          "mode": "list",
+          "value": "YOUR_GITHUB_USERNAME"
+        },
+        "repository": {
+          "__rl": true,
+          "mode": "list",
+          "value": "n8n-workflows-backup"
+        },
+        "title": "GF",
+        "body": "HF",
+        "labels": [],
+        "assignees": []
+      },
+      "name": "Create/Update File in GitHub",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        2416,
+        -176
+      ],
+      "id": "0fd2fc87-4f12-4bfb-8705-62091d8b313d",
+      "webhookId": "dc1a742e-f5d1-40c0-8ff3-11687b4a3e20",
+      "credentials": {
+        "githubApi": {
+          "id": "0LXCRcpOhkLgnxBn",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.filename }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Filter Valid Workflows",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        -192,
+        80
+      ],
+      "id": "0be3cb4e-d37f-4901-ac0b-4cd5d9503557"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        256,
+        144
+      ],
+      "id": "c4e6721b-d331-4b3a-b508-5480ab668e66",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.16.173:3000/to-claude",
+        "sendBody": true,
+        "specifyBody": "json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        464,
+        144
+      ],
+      "id": "dab0297c-4092-4537-9a98-9397f681a8ae",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM onboarding.holiday WHERE date = '{{ $json.doj }}';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3280,
+        608
+      ],
+      "id": "3b0e7442-e1ca-4f92-94d4-68fb90653b58",
+      "name": "Holiday Check",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const holidayResult = $node[\"Holiday Check\"].json; // Replace \"Holiday Check\" with the actual name of your holiday check node\nconst isHoliday = Object.keys(holidayResult).length > 0;\n\nconst doj = new Date($('date format').first().json.doj);\nconst day = doj.getDay(); // 0 = Sunday, 6 = Saturday\nconst isWeekend = (day === 0 || day === 6);\n\nreturn [{\n  json: {\n    doj: $('date format').first().json.doj,\n    isWeekend,\n    isHoliday,\n    isNonWorkingDay: isWeekend || isHoliday\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3504,
+        608
+      ],
+      "id": "08301522-4be4-436a-85bf-88704c29fabc",
+      "name": "check nonWorkingDay"
+    },
+    {
+      "parameters": {
+        "jsCode": "const isNonWorkingDay = $input.first().json.isNonWorkingDay;\n\nif (isNonWorkingDay) {\n  const doj = new Date($input.first().json.doj);\n  doj.setDate(doj.getDate() + 1);\n\n  return [{\n    json: {\n      message: \"DOJ is not a valid working day.\",\n      original_doj: $('data').first().json.doj,\n      doj: doj.toISOString().split(\"T\")[0]\n    }\n  }];\n} else {\n  return [{\n    json: {\n      doj: $input.first().json.doj\n    }\n  }];\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3728,
+        608
+      ],
+      "id": "bf76b609-5bed-4317-8112-f3e7e25749f5",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "427f87af-d210-47e3-962e-4f3ed2d20ddf",
+              "leftValue": "={{ $json.doj }}",
+              "rightValue": "={{ $('date format').item.json.doj }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4048,
+        528
+      ],
+      "id": "d1d18f04-cadf-42e2-9dad-a168e6912980",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "636c3f91-5243-4bcc-8227-2218fc3481bc",
+              "name": "doj",
+              "value": "={{ $json.doj }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3152,
+        528
+      ],
+      "id": "640a418b-9c94-4b91-8971-5450e535cdca",
+      "name": "date format"
+    },
+    {
+      "parameters": {
+        "path": "doj",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        2928,
+        528
+      ],
+      "id": "40d8cda9-b807-4e85-b797-60899c3d4b07",
+      "name": "data",
+      "webhookId": "f1efc9f9-fc97-400b-8233-9f768d0ca1ef"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "doj": "={{ $json.doj }}",
+            "id": "={{ $('data').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "candidate_id",
+              "displayName": "candidate_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "personal_email",
+              "displayName": "personal_email",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "mobile_number",
+              "displayName": "mobile_number",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "hiring_department",
+              "displayName": "hiring_department",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "start_date",
+              "displayName": "start_date",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "customer_name",
+              "displayName": "customer_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "project_name",
+              "displayName": "project_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_by",
+              "displayName": "created_by",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "templates",
+              "displayName": "templates",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "currentlocation",
+              "displayName": "currentlocation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "offeredlocation",
+              "displayName": "offeredlocation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "experience",
+              "displayName": "experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ctc",
+              "displayName": "ctc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "position",
+              "displayName": "position",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "doj",
+              "displayName": "doj",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "notice_period",
+              "displayName": "notice_period",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "filename",
+              "displayName": "filename",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        4256,
+        528
+      ],
+      "id": "33b005bb-375c-4410-bd67-6638d3e06256",
+      "name": "Update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pass through the content to GitHub\nreturn {\n  json: {\n    content: $input.first().json.content\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        144
+      ],
+      "id": "1faf0b8b-ef4b-40d9-a641-4e7b6bedd98f",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://github.com/Ananthkarthickm-sys/TEST.git",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.content }}",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1648,
+        432
+      ],
+      "id": "f4227f0a-fec1-4016-bd55-1915b6f9a599",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24
+            }
+          ]
+        }
+      },
+      "id": "3142ed12-72a3-4fa8-807b-039464ace0d0",
+      "name": "Schedule Trigger1",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        2176,
+        928
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "url": "https://192.168.50.120:5670/api/v1/workflows",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "n8nApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": []
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "name": "Get All Workflows1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2432,
+        928
+      ],
+      "id": "47a2cd4b-20c4-49c1-a6b7-be570488087d"
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.item.json;\nif (!response.data || !Array.isArray(response.data)) {\n  return { json: { error: 'No workflows found' } };\n}\nconst workflows = response.data.map(workflow => ({\n  json: {\n    id: workflow.id,\n    name: workflow.name,\n    createdAt: workflow.createdAt,\n    updatedAt: workflow.updatedAt,\n    active: workflow.active\n  }\n}));\nreturn workflows;"
+      },
+      "name": "Extract Workflow List1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        928
+      ],
+      "id": "e6f4a54e-6edc-41e8-8127-5908275bc7cd"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Loop Over Workflows1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2848,
+        928
+      ],
+      "id": "65bfd36d-6796-4783-8780-85fe7303a803"
+    },
+    {
+      "parameters": {
+        "url": "=https://192.168.50.120:5670/api/v1/workflows/{{ $json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "n8nApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": []
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "name": "Get Full Workflow Data1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3056,
+        928
+      ],
+      "id": "d8f1e32e-fd75-4861-8bbe-cfa77fca9123"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Code node to extract workflow JSON and remove array wrapper\n// Place this after \"Get Full Workflow Data\" node\nconst response = $input.item.json;\n\n// If response is an array, get the first item\n// If it's already an object, use it as-is\nlet workflow = Array.isArray(response) ? response[0] : response;\n\n// Generate clean filename\nconst timestamp = DateTime.now().toFormat('yyyy-MM-dd_HH-mm-ss');\nconst cleanName = workflow.name.replace(/[^a-zA-Z0-9-_]/g, '_');\nconst filename = `${cleanName}_${workflow.id}.json`;\n\n// Format as pretty JSON\nconst workflowJson = JSON.stringify(workflow, null, 2);\n\nreturn {\n  json: {\n    filename: filename,\n    content: workflowJson,\n    workflowName: workflow.name,\n    workflowId: workflow.id,\n    timestamp: timestamp,\n    commitMessage: `Backup: ${workflow.name} (${timestamp})`\n  }\n};"
+      },
+      "name": "Format for GitHub1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3264,
+        928
+      ],
+      "id": "d2b198f7-f870-4747-a99a-c0c7e5dc0e66"
+    },
+    {
+      "parameters": {
+        "owner": {
+          "__rl": true,
+          "mode": "list",
+          "value": "YOUR_GITHUB_USERNAME"
+        },
+        "repository": {
+          "__rl": true,
+          "mode": "list",
+          "value": "n8n-workflows-backup"
+        },
+        "labels": [],
+        "assignees": []
+      },
+      "name": "Create/Update File in GitHub1",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        3472,
+        928
+      ],
+      "id": "c9267d35-7b0b-4943-a938-619da11c1387",
+      "webhookId": "6156d93c-3104-47c0-84fb-c8b030291468",
+      "credentials": {
+        "githubApi": {
+          "id": "0LXCRcpOhkLgnxBn",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.filename }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Filter Valid Workflows1",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        1120
+      ],
+      "id": "6edf4b8c-9ff6-44cb-b078-1720f48595da"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "https://github.com/Ananthkarthickm-sys",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "TEST",
+          "mode": "list",
+          "cachedResultName": "TEST",
+          "cachedResultUrl": "https://github.com/Ananthkarthickm-sys/TEST"
+        },
+        "filePath": "=N8N WORKFLOWS/ {{ $('Format for GitHub').item.json.filename }}",
+        "fileContent": "={{ $json.content }}",
+        "commitMessage": "DONR"
+      },
+      "name": "Create/Update File in GitHub2",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1536,
+        96
+      ],
+      "id": "c5fb01f4-b706-43aa-9fc0-a2789beb45ce",
+      "webhookId": "6156d93c-3104-47c0-84fb-c8b030291468",
+      "credentials": {
+        "githubApi": {
+          "id": "0LXCRcpOhkLgnxBn",
+          "name": "GitHub account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get All Workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Workflows": {
+      "main": [
+        [
+          {
+            "node": "Extract Workflow List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Workflow List": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Workflows": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get Full Workflow Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Full Workflow Data": {
+      "main": [
+        [
+          {
+            "node": "Format for GitHub",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format for GitHub": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create/Update File in GitHub": {
+      "main": [
+        []
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Holiday Check": {
+      "main": [
+        [
+          {
+            "node": "check nonWorkingDay",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check nonWorkingDay": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "date format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "date format": {
+      "main": [
+        [
+          {
+            "node": "Holiday Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "data": {
+      "main": [
+        [
+          {
+            "node": "date format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Create/Update File in GitHub2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get All Workflows1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Workflows1": {
+      "main": [
+        [
+          {
+            "node": "Extract Workflow List1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Workflow List1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Workflows1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Workflows1": {
+      "main": [
+        [
+          {
+            "node": "Get Full Workflow Data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Full Workflow Data1": {
+      "main": [
+        [
+          {
+            "node": "Format for GitHub1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format for GitHub1": {
+      "main": [
+        [
+          {
+            "node": "Create/Update File in GitHub1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create/Update File in GitHub1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Workflows1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create/Update File in GitHub2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "4948b466-7f9d-464d-a067-227997bcb7f3",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-12-12T05:16:37.221Z",
+      "updatedAt": "2025-12-12T05:16:37.221Z",
+      "role": "workflow:owner",
+      "workflowId": "NL82x4NdLHt7SApE",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
