@@ -1,0 +1,226 @@
+{
+  "createdAt": "2025-11-27T07:14:03.118Z",
+  "updatedAt": "2025-12-03T07:09:23.000Z",
+  "id": "vvdiw7ZjnZC75Dj1",
+  "name": "My workflow 30",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "0379cef8-cc17-4bf6-af37-09b8e746972a",
+      "name": "When clicking 'Test workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": []
+        },
+        "options": {}
+      },
+      "id": "83a98068-675c-46fd-a272-bf35404e6f45",
+      "name": "Set Sample Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        -272,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "command": "=cat > /home/username/dynamic_script.py << 'EOF'\n#!/usr/bin/env python3\n\"\"\"\nAuto-generated Python script\nCreated: {{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}\n\"\"\"\n\nimport json\nfrom datetime import datetime\n\nclass DataProcessor:\n    def __init__(self):\n        self.username = \"{{ $json.username }}\"\n        self.api_key = \"{{ $json.api_key }}\"\n        self.value = {{ $json.value }}\n        self.timestamp = datetime.now()\n    \n    def process(self):\n        print(f\"Processing data for user: {self.username}\")\n        print(f\"Value: {self.value}\")\n        print(f\"Timestamp: {self.timestamp}\")\n        \n        # Calculate result\n        result = self.value * 2\n        print(f\"Result: {result}\")\n        \n        # Save to file\n        output = {\n            \"username\": self.username,\n            \"original_value\": self.value,\n            \"result\": result,\n            \"processed_at\": str(self.timestamp)\n        }\n        \n        with open('/home/username/results.json', 'w') as f:\n            json.dump(output, f, indent=2)\n        \n        print(\"Results saved to results.json\")\n        return result\n\nif __name__ == \"__main__\":\n    processor = DataProcessor()\n    processor.process()\nEOF\n\nchmod +x /home/username/dynamic_script.py\necho \"Dynamic Python file created!\""
+      },
+      "id": "ba94aa2f-d045-4e9f-8845-f3d14fd22cb0",
+      "name": "SSH - Create Dynamic Python",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "command": "python3 /home/username/dynamic_script.py"
+      },
+      "id": "74a158b6-32b8-4c2b-99e2-2f568567789d",
+      "name": "SSH - Execute Python",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        176,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "command": "cat /home/username/results.json"
+      },
+      "id": "689d5890-e372-4dd1-a349-b374e1185017",
+      "name": "SSH - Read Results",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        384,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "command": "cat > /home/username/my_script.py << 'EOF'\n#!/usr/bin/env python3\n\nimport datetime\nimport sys\n\ndef main():\n    print(\"Script executed at:\", datetime.datetime.now())\n    print(\"Hello from n8n!\")\n    print(\"Python version:\", sys.version)\n    \n    # Your code here\n    result = 10 + 20\n    print(f\"Result: {result}\")\n\nif __name__ == \"__main__\":\n    main()\nEOF\n\nchmod +x /home/username/my_script.py\necho \"Python file created successfully!\""
+      },
+      "id": "544adb38-839e-4ecf-9541-3642d9a47a8b",
+      "name": "SSH - Create Python File",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        -288
+      ]
+    },
+    {
+      "parameters": {
+        "command": "python3 /home/username/my_script.py"
+      },
+      "id": "f14d3957-32aa-429e-a9ff-fd1891bb6526",
+      "name": "SSH - Execute Python File",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        48,
+        -288
+      ]
+    }
+  ],
+  "connections": {
+    "When clicking 'Test workflow'": {
+      "main": [
+        [
+          {
+            "node": "Set Sample Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Sample Data": {
+      "main": [
+        [
+          {
+            "node": "SSH - Create Dynamic Python",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SSH - Create Dynamic Python": {
+      "main": [
+        [
+          {
+            "node": "SSH - Execute Python",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SSH - Execute Python": {
+      "main": [
+        [
+          {
+            "node": "SSH - Read Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SSH - Create Python File": {
+      "main": [
+        [
+          {
+            "node": "SSH - Execute Python File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "f72eaf13-d927-4897-bd5e-99fe58e71b88",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-11-27T07:14:03.121Z",
+      "updatedAt": "2025-11-27T07:14:03.121Z",
+      "role": "workflow:owner",
+      "workflowId": "vvdiw7ZjnZC75Dj1",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
