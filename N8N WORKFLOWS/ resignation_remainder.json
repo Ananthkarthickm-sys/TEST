@@ -1,0 +1,197 @@
+{
+  "createdAt": "2025-12-11T09:34:22.256Z",
+  "updatedAt": "2025-12-11T09:45:52.000Z",
+  "id": "YecdNKKWnnu5H6Kl",
+  "name": "resignation remainder",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 5,
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -256,
+        -96
+      ],
+      "id": "58ebce4e-7868-4989-b06d-97dede0558cb",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = templates::jsonb || jsonb_build_object(\n                    'resignation_reminder_sent', true,\n                    'resignation_last_reminder', NOW()::text\n                ),\n    updated_at = NOW()\nWHERE id = {{ $('Execute a SQL query1').item.json.id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        416,
+        -96
+      ],
+      "id": "e4f2ce8a-3c57-4ad7-8d04-e5917ee8e30a",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM onboarding.candidates\nWHERE templates::jsonb->>'offer_accepted' = 'true'\n  AND templates::jsonb->>'resignation_proof_received' = 'false';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -32,
+        -96
+      ],
+      "id": "f25944cd-d34d-41a0-a4f5-aeb86780973e",
+      "name": "Execute a SQL query1",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toRecipients": "=Ananthkarthick.m@rencata.com",
+        "subject": "Pending Document: Resignation Acceptance Letter Required",
+        "bodyContent": "= {{ $json.first_name }} {{ $json.last_name }}\nI hope you are doing well. This is a kind reminder that we have not yet received your resignation acceptance/relieving letter from your previous employer, which is required to complete your onboarding documentation.\n\nPlease share the document at the earliest convenience or let us know if you are facing any challenges in obtaining it.\n\nThank you for your cooperation.\n\nWarm regards,\n[HR Name]\n[Company Name]\n[Contact Details]",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        192,
+        -96
+      ],
+      "id": "3d58b77f-6355-4c1d-839d-ea3ea1cd9e4b",
+      "name": "Send a message",
+      "webhookId": "26296050-162a-427a-a323-37550fc17a51",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "099e2067-8206-47f1-9e24-506140c1563c",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-12-11T09:34:22.259Z",
+      "updatedAt": "2025-12-11T09:34:22.259Z",
+      "role": "workflow:owner",
+      "workflowId": "YecdNKKWnnu5H6Kl",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
