@@ -1,0 +1,992 @@
+{
+  "createdAt": "2025-12-10T10:38:05.741Z",
+  "updatedAt": "2025-12-12T05:04:52.000Z",
+  "id": "gFZwz6KgKZ2F4Hxn",
+  "name": "COLLECT PROOF OF JOINING",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT personal_email\nFROM onboarding.candidates\nWHERE \n  templates ->> 'offer_letter_sent_to_candidate' = 'true' AND\n  templates ->> 'offer_accepted' = 'true' AND\n  templates ->> 'offer_declined' = 'false';\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -272,
+        -1264
+      ],
+      "id": "c09c2b81-b1a6-4f9b-8a81-d248ba201e97",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 1,
+        "filtersUI": {
+          "values": {
+            "filters": {
+              "hasAttachments": true,
+              "readStatus": "unread",
+              "receivedAfter": "={{ new Date(new Date($('Schedule Trigger').item.json.timestamp).getTime() - (10 * 60 * 60 * 2000)).toISOString() }}",
+              "sender": "Ananthkarthick.m@rencata.com"
+            }
+          }
+        },
+        "options": {
+          "attachmentsPrefix": "data",
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        176,
+        -1264
+      ],
+      "id": "2f64c6b3-632f-4f5d-aebd-1d2eaf12a9b1",
+      "name": "Get many messages",
+      "webhookId": "b19ccd76-186d-4bad-a6d3-47ac5bbbc6a7",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -496,
+        -1264
+      ],
+      "id": "fa767e41-7904-413d-bc64-097425e8cae6",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/home/node/offertemp/{{ $('Code').item.json.filename }}",
+        "dataPropertyName": "data0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        -1360
+      ],
+      "id": "3b98eece-6dbf-4600-94eb-285aa3a638e3",
+      "name": "Read/Write Files from Disk1",
+      "executeOnce": false,
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "command": "=cat /home/node/offertemp/{{ $('Code').item.json.filename }} |  node /home/node/offertemp/scripts/PythonScripts/12_09_2025_parseEmail.js "
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        -1360
+      ],
+      "id": "9d79140f-9231-4fff-b369-7519d2c37ca7",
+      "name": "Execute Command1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an assistant that analyzes the content of a text.\nRead the following email and determine:\n1. Whether it is an HR acceptance (e.g., accepting a job offer, approving a request, confirming a decision).\n2. Whether it is a resignation letter.\n3. If it is neither, briefly explain what the message is about.\nRespond in the following **JSON format**:\n{\n  \"Classification\": \"HR Acceptance\" | \"Resignation\" | \"Other\",\n  \"Explanation\": \"<short explanation>\"\n}\nText: \n{{ $json.cleanedText }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        2192,
+        -1264
+      ],
+      "id": "24640ae0-67fb-4b6f-8be6-73edff8a34f2",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2272,
+        -1040
+      ],
+      "id": "1d978898-d79d-4609-9a12-0a1722d497e9",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "EDKQjccT9Ythpx7J",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the raw text from input\nconst raw = $input.first().json.text;\n\n// Remove wrapping triple backticks or markdown artifacts if any\nconst cleaned = raw.replace(/```json|```/g, '').trim();\n\n// Parse JSON\nconst parsed = JSON.parse(cleaned);\n\n// Output in a clean format for later use\nreturn [\n  {\n    json: {\n      classification: parsed.Classification,\n      explanation: parsed.Explanation,\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2544,
+        -1264
+      ],
+      "id": "90b10dea-b5a6-410e-ab2a-7edc97f2a63a",
+      "name": "text1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.classification }}",
+                    "rightValue": "Other",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "de77fc31-298d-4ebc-89cf-9ee2715183d6"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "not_verified"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4bc18092-244a-4227-aed4-0df8519957b1",
+                    "leftValue": "={{ $json.classification }}",
+                    "rightValue": "Resignation",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "verified"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ed7fc107-f5f3-4ae7-a3bf-3fbaf03aa0ff",
+                    "leftValue": "={{ $json.classification }}",
+                    "rightValue": "HR Acceptance",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "verified"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2768,
+        -1280
+      ],
+      "id": "7a010a68-c357-4682-9851-a4ff5a988779",
+      "name": "Switch3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawText =  $input.first().json.ocrText || \"\";\n\nconst cleanedText = rawText\n  .replace(/\\\\n/g, '\\n')          // Convert literal \\n to real line breaks\n  .replace(/\\n\\.\\n\\.\\n/g, '\\n')   // Remove OCR noise like dots\n  .replace(/[ ]{2,}/g, ' ')       // Remove extra spaces\n  .replace(/\\n{2,}/g, '\\n')       // Normalize newlines\n  .trim();\n\nlet name = null;\n\n// Extract lines\nconst lines = cleanedText.split('\\n').map(line => line.trim()).filter(Boolean);\n\n// Heuristic 1: Look for greeting line like “Dear [Name],”\nconst greetingMatch = cleanedText.match(/^Dear\\s+([a-zA-Z\\s]+),/im);\nif (greetingMatch) {\n  name = greetingMatch[1].trim();\n}\n\n// Heuristic 2: Look for name after closing phrases if greeting not found\nif (!name) {\n  for (let i = 0; i < lines.length; i++) {\n    const line = lines[i].toLowerCase();\n    if (line.includes(\"sincerely\") || line.includes(\"regards\") || line.includes(\"yours truly\")) {\n      name = lines[i + 1] ? lines[i + 1].trim() : null;\n      break;\n    }\n  }\n}\n\n// Fallback\nif (!name) {\n  name = \"Unknown\";\n}\n\nreturn [{\n  cleanedText,\n  extractedName: name,\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1968,
+        -1360
+      ],
+      "id": "83ebcf09-a291-411b-8c47-8075d4d6eadb",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "92819ab0-667c-4a3b-aeed-b976e453ed12",
+              "name": "ocrText",
+              "value": "={{ $json.stdout }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1744,
+        -1360
+      ],
+      "id": "1de1f072-acef-4333-9c7d-201f81f57b91",
+      "name": "extracted text1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "updateFields": {
+          "isRead": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        -1616
+      ],
+      "id": "4a772c64-ac7f-473b-8873-dc371e6bbbcd",
+      "name": "Update a message",
+      "webhookId": "aeb618be-e19e-4988-b131-17bd8a548f87",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/home/node/offertemp/{{ $('Code').item.json.filename }}",
+        "options": {
+          "dataPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        -1360
+      ],
+      "id": "e4793ee1-1e80-4ad2-ac80-8ec3bb044a66",
+      "name": "Read/Write Files from Disk2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fileName = $input.item.binary.data0.fileName.trim();\n// Remove any existing path if present\nconst cleanFileName = fileName.split('/').pop();\n\nreturn {\n  filename: cleanFileName\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        -1264
+      ],
+      "id": "078f16fb-1b3d-4067-9d43-bee39f0c644a",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 1,
+        "filtersUI": {
+          "values": {
+            "filters": {
+              "hasAttachments": true,
+              "readStatus": "unread",
+              "receivedAfter": "={{ new Date(new Date($('Schedule Trigger').item.json.timestamp).getTime() - (10 * 60 * 60 * 2000)).toISOString() }}",
+              "sender": "Ananthkarthick.m@rencata.com"
+            }
+          }
+        },
+        "options": {
+          "attachmentsPrefix": "data",
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        624,
+        -1264
+      ],
+      "id": "f95c5af3-5b40-4421-907c-775326c927be",
+      "name": "Get many messages1",
+      "webhookId": "b19ccd76-186d-4bad-a6d3-47ac5bbbc6a7",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "numberOutputs": 3,
+        "output": "={{ \n  $binary.data0.mimeType.startsWith('image/') ? 0 :\n  ($binary.data0.mimeType === 'application/pdf' ? 1 :\n  ($binary.data0.mimeType === 'message/rfc822' ? 0 :\n  ($binary.data0.mimeType === 'application/vnd.ms-outlook' || $binary.data0.fileName.endsWith('.msg') ? 2 : -1)))\n}}\n"
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        848,
+        -1280
+      ],
+      "id": "f1b69094-ff88-4505-a7ab-38196d9c90a9",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/home/node/offertemp/{{ $('Code').item.json.filename }}",
+        "dataPropertyName": "=data0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        -1168
+      ],
+      "id": "31895416-0bec-494a-8d2e-29ac2cd4f551",
+      "name": "Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        -1168
+      ],
+      "id": "6d44ea0d-fa74-4d99-9b6a-3645726aad46",
+      "name": "Extract from File1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/home/node/offertemp/{{ $('Code').item.json.filename }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        -1168
+      ],
+      "id": "4bdf1591-3844-4bf2-94ae-757be729b642",
+      "name": "Read/Write Files from Disk",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "92819ab0-667c-4a3b-aeed-b976e453ed12",
+              "name": "ocrText",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1744,
+        -1168
+      ],
+      "id": "392d58ae-3dc1-460d-b208-28783ec41629",
+      "name": "extracted text"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawText =  $input.first().json.ocrText || \"\";\n\nconst cleanedText = rawText\n  .replace(/\\\\n/g, '\\n')          // Convert literal \\n to real line breaks\n  .replace(/\\n\\.\\n\\.\\n/g, '\\n')   // Remove OCR noise like dots\n  .replace(/[ ]{2,}/g, ' ')       // Remove extra spaces\n  .replace(/\\n{2,}/g, '\\n')       // Normalize newlines\n  .trim();\n\nlet name = null;\n\n// Extract lines\nconst lines = cleanedText.split('\\n').map(line => line.trim()).filter(Boolean);\n\n// Heuristic 1: Look for greeting line like “Dear [Name],”\nconst greetingMatch = cleanedText.match(/^Dear\\s+([a-zA-Z\\s]+),/im);\nif (greetingMatch) {\n  name = greetingMatch[1].trim();\n}\n\n// Heuristic 2: Look for name after closing phrases if greeting not found\nif (!name) {\n  for (let i = 0; i < lines.length; i++) {\n    const line = lines[i].toLowerCase();\n    if (line.includes(\"sincerely\") || line.includes(\"regards\") || line.includes(\"yours truly\")) {\n      name = lines[i + 1] ? lines[i + 1].trim() : null;\n      break;\n    }\n  }\n}\n\n// Fallback\nif (!name) {\n  name = \"Unknown\";\n}\n\nreturn [{\n  cleanedText,\n  extractedName: name,\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1968,
+        -1168
+      ],
+      "id": "5146b9e7-b207-4935-a28a-e3783c775cc2",
+      "name": "Code6"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = templates::jsonb || jsonb_build_object(\n                    'resignation_proof_received', true,\n                    'resignation_proof_date', NOW()::text\n                ),\n    updated_at = NOW()\nWHERE id = {{ $('Select rows from a table').item.json.id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2992,
+        -1360
+      ],
+      "id": "c8b9ed0d-3e8d-4e7f-bc0a-1e0afa2d84b2",
+      "name": "update resignation_proof_received",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $('Select rows from a table').item.json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "templates"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3216,
+        -1360
+      ],
+      "id": "905baee9-6a59-44cb-8c6a-17565c1b23d1",
+      "name": "resignation_proof_received",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "personal_email",
+              "value": "={{ $json.personal_email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -48,
+        -1264
+      ],
+      "id": "8ce7fd5a-6ac0-4dcf-80cb-003bfc70c92e",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = templates::jsonb || jsonb_build_object(\n                    'hr_acceptance_received', true,\n                    'hr_acceptance_date', NOW()::text\n                ),\n    updated_at = NOW()\nWHERE id = {{ $('Select rows from a table').item.json.id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2992,
+        -1168
+      ],
+      "id": "88b2fdb5-f34b-44f0-bff8-920d72424408",
+      "name": "update resignation_proof_received1",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $('Select rows from a table').item.json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "templates"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3216,
+        -1168
+      ],
+      "id": "137d897d-b18a-4fcc-8bb8-d81919afc50b",
+      "name": "resignation_proof_received1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk1": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command1": {
+      "main": [
+        [
+          {
+            "node": "extracted text1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "text1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "text1": {
+      "main": [
+        [
+          {
+            "node": "Switch3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extracted text1": {
+      "main": [
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk2": {
+      "main": [
+        [
+          {
+            "node": "Execute Command1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Get many messages1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "extracted text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extracted text": {
+      "main": [
+        [
+          {
+            "node": "Code6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code6": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update resignation_proof_received": {
+      "main": [
+        [
+          {
+            "node": "resignation_proof_received",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch3": {
+      "main": [
+        [],
+        [
+          {
+            "node": "update resignation_proof_received",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "update resignation_proof_received1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "Get many messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update resignation_proof_received1": {
+      "main": [
+        [
+          {
+            "node": "resignation_proof_received1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "4878397c-9923-44bd-8d0b-ad5a35620c33",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-12-10T10:38:05.743Z",
+      "updatedAt": "2025-12-10T10:38:05.743Z",
+      "role": "workflow:owner",
+      "workflowId": "gFZwz6KgKZ2F4Hxn",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
