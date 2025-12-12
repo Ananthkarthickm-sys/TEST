@@ -1,0 +1,181 @@
+{
+  "createdAt": "2025-12-04T06:42:40.437Z",
+  "updatedAt": "2025-12-08T06:58:32.000Z",
+  "id": "QfONoGdYRWtFmOM7",
+  "name": "hr acceptance received",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "f023e9ea-a4e0-4409-b52d-cfcb7e47386a",
+      "typeVersion": 1.1,
+      "name": "data",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = jsonb_set(templates::jsonb, '{hr_acceptance_received}', 'true'::jsonb, false)::json,\n    updated_at = NOW()\nWHERE id = {{ $json.id }};\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        224,
+        0
+      ],
+      "id": "bbc9f4f1-882f-4c3f-945f-65e07d74b6bb",
+      "name": "update hr_acceptance_received",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $('data').item.json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "templates"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        448,
+        0
+      ],
+      "id": "5ce0b23d-73f9-4490-a9ca-1d9ca85642b1",
+      "name": "hr_acceptance_received",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "data": {
+      "main": [
+        [
+          {
+            "node": "update hr_acceptance_received",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update hr_acceptance_received": {
+      "main": [
+        [
+          {
+            "node": "hr_acceptance_received",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "c6f14682-42b5-40e6-a723-93c2e06d4838",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-12-04T06:42:40.440Z",
+      "updatedAt": "2025-12-04T06:42:40.440Z",
+      "role": "workflow:owner",
+      "workflowId": "QfONoGdYRWtFmOM7",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
