@@ -1,0 +1,1071 @@
+{
+  "createdAt": "2025-12-09T04:44:34.845Z",
+  "updatedAt": "2025-12-11T07:29:00.000Z",
+  "id": "3IpFRrwNuClLOMOE",
+  "name": "COLLECT PJ  WORKFLOW",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT personal_email\nFROM onboarding.candidates\nWHERE \n  templates ->> 'offer_letter_sent_to_candidate' = 'true' AND\n  templates ->> 'offer_accepted' = 'true' AND\n  templates ->> 'offer_declined' = 'false';\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -10160,
+        -688
+      ],
+      "id": "4968f7bb-0ad8-46d5-8388-bc2cbbdd9d19",
+      "name": "Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "data0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -8624,
+        640
+      ],
+      "id": "1fa35d80-1992-4983-ad0c-cca9a59a2804",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "output": "={{ \n  $binary.data0.mimeType.startsWith('image/') ? 0 :\n  ($binary.data0.mimeType === 'application/pdf' ? 1 :\n  ($binary.data0.mimeType === 'message/rfc822' ? 2 :\n  ($binary.data0.mimeType === 'application/vnd.ms-outlook' || $binary.data0.fileName.endsWith('.msg') ? 3 : -1)))\n}}\n"
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -10080,
+        288
+      ],
+      "id": "9d5bd740-ad9a-4ec0-b323-5434f893d584",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawText =  $input.first().json.ocrText || \"\";\n\nconst cleanedText = rawText\n  .replace(/\\\\n/g, '\\n')          // Convert literal \\n to real line breaks\n  .replace(/\\n\\.\\n\\.\\n/g, '\\n')   // Remove OCR noise like dots\n  .replace(/[ ]{2,}/g, ' ')       // Remove extra spaces\n  .replace(/\\n{2,}/g, '\\n')       // Normalize newlines\n  .trim();\n\nlet name = null;\n\n// Extract lines\nconst lines = cleanedText.split('\\n').map(line => line.trim()).filter(Boolean);\n\n// Heuristic 1: Look for greeting line like “Dear [Name],”\nconst greetingMatch = cleanedText.match(/^Dear\\s+([a-zA-Z\\s]+),/im);\nif (greetingMatch) {\n  name = greetingMatch[1].trim();\n}\n\n// Heuristic 2: Look for name after closing phrases if greeting not found\nif (!name) {\n  for (let i = 0; i < lines.length; i++) {\n    const line = lines[i].toLowerCase();\n    if (line.includes(\"sincerely\") || line.includes(\"regards\") || line.includes(\"yours truly\")) {\n      name = lines[i + 1] ? lines[i + 1].trim() : null;\n      break;\n    }\n  }\n}\n\n// Fallback\nif (!name) {\n  name = \"Unknown\";\n}\n\nreturn [{\n  cleanedText,\n  extractedName: name,\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -8400,
+        448
+      ],
+      "id": "51b5d43e-92b0-4fd5-a0ec-0ed10b244ea7",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "command": "=tesseract \"/tmp/{{ $binary.data0.fileName }}\" \"/tmp/output_text\" && cat /tmp/output_text.txt\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -8848,
+        448
+      ],
+      "id": "bb907489-3312-468e-b44d-7518530705cb",
+      "name": "OCR"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/tmp/{{ $binary.data0.fileName }}",
+        "dataPropertyName": "data0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -9072,
+        448
+      ],
+      "id": "585577ea-2ec3-4d00-b689-14c89b012903",
+      "name": "Write Files to Disk"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "92819ab0-667c-4a3b-aeed-b976e453ed12",
+              "name": "ocrText",
+              "value": "={{ $json.stdout }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -8624,
+        448
+      ],
+      "id": "7eb98c48-3a93-461c-bbe6-27b94d9652fb",
+      "name": "extracted text"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an assistant that analyzes the content of a text.\n\nRead the following email and determine:\n\n1. Whether it is a resignation letter or not.\n\n2. If it is not a resignation, briefly explain what the message is about.\n\nRespond in the following **JSON format**:\n\n{\n  \"Classification\": \"Resignation\" | \"Other\",\n  \"Explanation\": \"<short explanation>\"\n}\n\ntext:\n{{ $json.cleanedText }}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        -8176,
+        448
+      ],
+      "id": "9fc911cb-8585-4f2e-9d67-02daa2a6a5f2",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "command": "="
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -8624,
+        256
+      ],
+      "id": "ac676c97-479b-4ae6-bb94-cbb781554bf9",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/tmp/data0",
+        "dataPropertyName": "=data0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -9296,
+        256
+      ],
+      "id": "10ea2bc8-bd6d-421e-a49a-2c7dfe3ece8f",
+      "name": "Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawText = $input.first().json.text  || \"\";\n\nconst cleanedText = rawText\n  .replace(/\\\\n/g, '\\n')          // Convert literal \\n to real line breaks\n  .replace(/\\n\\.\\n\\.\\n/g, '\\n')   // Remove OCR noise like dots\n  .replace(/[ ]{2,}/g, ' ')       // Remove extra spaces\n  .replace(/\\n{2,}/g, '\\n')       // Normalize newlines\n  .trim();\n\nlet name = null;\n\n// Extract lines\nconst lines = cleanedText.split('\\n').map(line => line.trim()).filter(Boolean);\n\n// Heuristic 1: Look for greeting line like “Dear [Name],”\nconst greetingMatch = cleanedText.match(/^Dear\\s+([a-zA-Z\\s]+),/im);\nif (greetingMatch) {\n  name = greetingMatch[1].trim();\n}\n\n// Heuristic 2: Look for name after closing phrases if greeting not found\nif (!name) {\n  for (let i = 0; i < lines.length; i++) {\n    const line = lines[i].toLowerCase();\n    if (line.includes(\"sincerely\") || line.includes(\"regards\") || line.includes(\"yours truly\")) {\n      name = lines[i + 1] ? lines[i + 1].trim() : null;\n      break;\n    }\n  }\n}\n\n// Fallback\nif (!name) {\n  name = \"Unknown\";\n}\n\nreturn [{\n  cleanedText,\n  extractedName: name,\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -8400,
+        640
+      ],
+      "id": "5b7e73fb-5ef1-4174-a089-d2d56b6d4483",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawText =  $input.first().json.stdout || \"\";\n\nconst cleanedText = rawText\n  .replace(/\\\\n/g, '\\n')          // Convert literal \\n to real line breaks\n  .replace(/\\n\\.\\n\\.\\n/g, '\\n')   // Remove OCR noise like dots\n  .replace(/[ ]{2,}/g, ' ')       // Remove extra spaces\n  .replace(/\\n{2,}/g, '\\n')       // Normalize newlines\n  .trim();\n\nlet name = null;\n\n// Extract lines\nconst lines = cleanedText.split('\\n').map(line => line.trim()).filter(Boolean);\n\n// Heuristic 1: Look for greeting line like “Dear [Name],”\nconst greetingMatch = cleanedText.match(/^Dear\\s+([a-zA-Z\\s]+),/im);\nif (greetingMatch) {\n  name = greetingMatch[1].trim();\n}\n\n// Heuristic 2: Look for name after closing phrases if greeting not found\nif (!name) {\n  for (let i = 0; i < lines.length; i++) {\n    const line = lines[i].toLowerCase();\n    if (line.includes(\"sincerely\") || line.includes(\"regards\") || line.includes(\"yours truly\")) {\n      name = lines[i + 1] ? lines[i + 1].trim() : null;\n      break;\n    }\n  }\n}\n\n// Fallback\nif (!name) {\n  name = \"Unknown\";\n}\n\nreturn [{\n  cleanedText,\n  extractedName: name,\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -8400,
+        256
+      ],
+      "id": "097b6da9-fded-44b7-8039-38c2693d007d",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": true,
+        "filtersUI": {
+          "values": {
+            "filters": {
+              "hasAttachments": true,
+              "receivedAfter": "={{ new Date(new Date($('Schedule Trigger').item.json.timestamp).getTime() - (10 * 60 * 60 * 400)).toISOString() }}",
+              "sender": "=Ananthkarthick.m@rencata.com"
+            }
+          }
+        },
+        "options": {
+          "attachmentsPrefix": "data",
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -9936,
+        -640
+      ],
+      "id": "564beaf5-1ad5-4872-a6df-e661d8dc226a",
+      "name": "All Mail",
+      "webhookId": "d5344c5a-a6c1-463b-9849-14d35ee3a987",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -10192,
+        0
+      ],
+      "id": "9c6d0716-fe07-45ac-a643-74d977ba7923",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -8112,
+        672
+      ],
+      "id": "ee373a61-f166-444d-9e5c-eda68223ee07",
+      "name": "Google Gemini Chat Model"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the raw text from input\nconst raw = $input.first().json.text;\n\n// Remove wrapping triple backticks or markdown artifacts if any\nconst cleaned = raw.replace(/```json|```/g, '').trim();\n\n// Parse JSON\nconst parsed = JSON.parse(cleaned);\n\n// Output in a clean format for later use\nreturn [\n  {\n    json: {\n      classification: parsed.Classification,\n      explanation: parsed.Explanation,\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -7824,
+        448
+      ],
+      "id": "61320283-f678-44d1-a096-a09081a9247c",
+      "name": "text"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.classification }}",
+                    "rightValue": "Other",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "de77fc31-298d-4ebc-89cf-9ee2715183d6"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "not_verified"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4bc18092-244a-4227-aed4-0df8519957b1",
+                    "leftValue": "={{ $json.classification }}",
+                    "rightValue": "Resignation",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "verified"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -7600,
+        448
+      ],
+      "id": "7b9b3ec1-8e3f-401b-8eb6-57b1d8f1af50",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "data0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -9072,
+        256
+      ],
+      "id": "1d8f223c-7c55-49ab-81fd-5628d15e621e",
+      "name": "Extract from File1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -10448,
+        -592
+      ],
+      "id": "2e90edd2-e5d6-487b-8337-bd53d31e3fde",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse email content from extracted text\nconst extractedText = $input.first().json.text;\n\n// Parse the text to extract email fields\n// Adjust these regex patterns based on your actual email format\nconst parsed = {\n  subject: extractedText.match(/Subject:\\s*(.+)/i)?.[1]?.trim() || '',\n  body: extractedText.match(/Body:\\s*(.+)/is)?.[1]?.trim() || extractedText,\n  from: extractedText.match(/From:\\s*(.+)/i)?.[1]?.trim() || '',\n  date: extractedText.match(/Date:\\s*(.+)/i)?.[1]?.trim() || ''\n};\n\nreturn { json: parsed };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -8848,
+        256
+      ],
+      "id": "af8a86e4-15ab-48be-a1b2-59305f3861e7",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "data0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -9296,
+        -224
+      ],
+      "id": "a63322c9-eae1-472d-8cd2-16f63b26de54",
+      "name": "Extract from File2"
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "output": "={{ \n  $binary.data0.mimeType.startsWith('image/') ? 0 :\n  ($binary.data0.mimeType === 'application/pdf' ? 1 :\n  ($binary.data0.mimeType === 'message/rfc822' ? 2 :\n  ($binary.data0.mimeType === 'application/vnd.ms-outlook' || $binary.data0.fileName.endsWith('.msg') ? 3 : -1)))\n}}\n"
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -10144,
+        -304
+      ],
+      "id": "732578e6-bed4-48f1-ade4-f41be540c9af",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawText =  $input.first().json.ocrText || \"\";\n\nconst cleanedText = rawText\n  .replace(/\\\\n/g, '\\n')          // Convert literal \\n to real line breaks\n  .replace(/\\n\\.\\n\\.\\n/g, '\\n')   // Remove OCR noise like dots\n  .replace(/[ ]{2,}/g, ' ')       // Remove extra spaces\n  .replace(/\\n{2,}/g, '\\n')       // Normalize newlines\n  .trim();\n\nlet name = null;\n\n// Extract lines\nconst lines = cleanedText.split('\\n').map(line => line.trim()).filter(Boolean);\n\n// Heuristic 1: Look for greeting line like “Dear [Name],”\nconst greetingMatch = cleanedText.match(/^Dear\\s+([a-zA-Z\\s]+),/im);\nif (greetingMatch) {\n  name = greetingMatch[1].trim();\n}\n\n// Heuristic 2: Look for name after closing phrases if greeting not found\nif (!name) {\n  for (let i = 0; i < lines.length; i++) {\n    const line = lines[i].toLowerCase();\n    if (line.includes(\"sincerely\") || line.includes(\"regards\") || line.includes(\"yours truly\")) {\n      name = lines[i + 1] ? lines[i + 1].trim() : null;\n      break;\n    }\n  }\n}\n\n// Fallback\nif (!name) {\n  name = \"Unknown\";\n}\n\nreturn [{\n  cleanedText,\n  extractedName: name,\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -9072,
+        -416
+      ],
+      "id": "cbb049e0-4f54-4dcd-a595-8e3cf6164526",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "command": "=\ntesseract \"/tmp/{{ $binary.data0.fileName }}\" \"/tmp/output_text\" && cat /tmp/output_text.txt\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -9408,
+        -416
+      ],
+      "id": "bda9456a-d65d-4322-bd95-ebefa274d05a",
+      "name": "OCR1"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/tmp/test",
+        "dataPropertyName": "data0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -9744,
+        -416
+      ],
+      "id": "21c8d0f1-059d-4ef2-a0da-9592fc09d3f7",
+      "name": "Write Files to Disk1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "92819ab0-667c-4a3b-aeed-b976e453ed12",
+              "name": "ocrText",
+              "value": "={{ $json.stdout }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -9296,
+        -416
+      ],
+      "id": "31d36fb9-1d01-4edb-87b7-3a43c9d7f868",
+      "name": "extracted text1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an assistant that analyzes the content of a text.\n\nRead the following email and determine:\n\n1. Whether it is a resignation letter or not.\n\n2. If it is not a resignation, briefly explain what the message is about.\n\nRespond in the following **JSON format**:\n\n{\n  \"Classification\": \"Resignation\" | \"Other\",\n  \"Explanation\": \"<short explanation>\"\n}\n\ntext:\n{{ $json.cleanedText }}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        -8432,
+        -416
+      ],
+      "id": "659c477e-8d37-4c64-a4fd-1ff88c8dc7d3",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "command": "=node /home/node/offertemp/scripts/PythonScripts/12_09_2025_parseEmail.js \"tmp/{{$binary.data0.fileName}}\""
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -8880,
+        -640
+      ],
+      "id": "ad1b8984-d4fd-43ca-968e-c6f555b4d1a9",
+      "name": "Execute Command1"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/tmp/{{$binary.data0.fileName}} ",
+        "dataPropertyName": "data0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -9520,
+        -640
+      ],
+      "id": "5c2edb0a-ac91-4d3b-ab6e-24050001f5cd",
+      "name": "Write Files from Disk1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawText = $input.first().json.text  || \"\";\n\nconst cleanedText = rawText\n  .replace(/\\\\n/g, '\\n')          // Convert literal \\n to real line breaks\n  .replace(/\\n\\.\\n\\.\\n/g, '\\n')   // Remove OCR noise like dots\n  .replace(/[ ]{2,}/g, ' ')       // Remove extra spaces\n  .replace(/\\n{2,}/g, '\\n')       // Normalize newlines\n  .trim();\n\nlet name = null;\n\n// Extract lines\nconst lines = cleanedText.split('\\n').map(line => line.trim()).filter(Boolean);\n\n// Heuristic 1: Look for greeting line like “Dear [Name],”\nconst greetingMatch = cleanedText.match(/^Dear\\s+([a-zA-Z\\s]+),/im);\nif (greetingMatch) {\n  name = greetingMatch[1].trim();\n}\n\n// Heuristic 2: Look for name after closing phrases if greeting not found\nif (!name) {\n  for (let i = 0; i < lines.length; i++) {\n    const line = lines[i].toLowerCase();\n    if (line.includes(\"sincerely\") || line.includes(\"regards\") || line.includes(\"yours truly\")) {\n      name = lines[i + 1] ? lines[i + 1].trim() : null;\n      break;\n    }\n  }\n}\n\n// Fallback\nif (!name) {\n  name = \"Unknown\";\n}\n\nreturn [{\n  cleanedText,\n  extractedName: name,\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -9072,
+        -224
+      ],
+      "id": "aa0d8870-e821-4767-ac3d-bba8219b4680",
+      "name": "Code5"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawText =  $input.first().json.stdout || \"\";\n\nconst cleanedText = rawText\n  .replace(/\\\\n/g, '\\n')          // Convert literal \\n to real line breaks\n  .replace(/\\n\\.\\n\\.\\n/g, '\\n')   // Remove OCR noise like dots\n  .replace(/[ ]{2,}/g, ' ')       // Remove extra spaces\n  .replace(/\\n{2,}/g, '\\n')       // Normalize newlines\n  .trim();\n\nlet name = null;\n\n// Extract lines\nconst lines = cleanedText.split('\\n').map(line => line.trim()).filter(Boolean);\n\n// Heuristic 1: Look for greeting line like “Dear [Name],”\nconst greetingMatch = cleanedText.match(/^Dear\\s+([a-zA-Z\\s]+),/im);\nif (greetingMatch) {\n  name = greetingMatch[1].trim();\n}\n\n// Heuristic 2: Look for name after closing phrases if greeting not found\nif (!name) {\n  for (let i = 0; i < lines.length; i++) {\n    const line = lines[i].toLowerCase();\n    if (line.includes(\"sincerely\") || line.includes(\"regards\") || line.includes(\"yours truly\")) {\n      name = lines[i + 1] ? lines[i + 1].trim() : null;\n      break;\n    }\n  }\n}\n\n// Fallback\nif (!name) {\n  name = \"Unknown\";\n}\n\nreturn [{\n  cleanedText,\n  extractedName: name,\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -8656,
+        -640
+      ],
+      "id": "bc74d51d-7fd1-4deb-aed3-55a1c647ec31",
+      "name": "Code6"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -8368,
+        -192
+      ],
+      "id": "51406b37-6a8f-42ce-bf0b-fae6f2bce5cc",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "EDKQjccT9Ythpx7J",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the raw text from input\nconst raw = $input.first().json.text;\n\n// Remove wrapping triple backticks or markdown artifacts if any\nconst cleaned = raw.replace(/```json|```/g, '').trim();\n\n// Parse JSON\nconst parsed = JSON.parse(cleaned);\n\n// Output in a clean format for later use\nreturn [\n  {\n    json: {\n      classification: parsed.Classification,\n      explanation: parsed.Explanation,\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -8080,
+        -416
+      ],
+      "id": "86e9c7f8-4396-4cb7-918b-7b5e0e6fb155",
+      "name": "text1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.classification }}",
+                    "rightValue": "Other",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "de77fc31-298d-4ebc-89cf-9ee2715183d6"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "not_verified"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4bc18092-244a-4227-aed4-0df8519957b1",
+                    "leftValue": "={{ $json.classification }}",
+                    "rightValue": "Resignation",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "verified"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -7856,
+        -416
+      ],
+      "id": "3532cdba-0d71-445f-bea4-e66052d8adf8",
+      "name": "Switch3"
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/tmp/{{$binary.data0.fileName}} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -9312,
+        -640
+      ],
+      "id": "ea7ff804-7b8e-4794-b9e5-48bd33cfb2ab",
+      "name": "Read/Write Files from Disk"
+    }
+  ],
+  "connections": {
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OCR": {
+      "main": [
+        [
+          {
+            "node": "extracted text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Files to Disk": {
+      "main": [
+        [
+          {
+            "node": "OCR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extracted text": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All Mail": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "All Mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "text": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        []
+      ]
+    },
+    "Extract from File2": {
+      "main": [
+        [
+          {
+            "node": "Code5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "Write Files to Disk1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        []
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OCR1": {
+      "main": [
+        [
+          {
+            "node": "extracted text1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Files to Disk1": {
+      "main": [
+        [
+          {
+            "node": "Execute Command1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extracted text1": {
+      "main": [
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "text1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command1": {
+      "main": [
+        [
+          {
+            "node": "Code6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Files from Disk1": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code5": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code6": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "text1": {
+      "main": [
+        [
+          {
+            "node": "Switch3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "4e84f4a1-9d96-4c6a-9e4a-72fcc4a2cc82",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-12-09T04:44:34.847Z",
+      "updatedAt": "2025-12-09T04:44:34.847Z",
+      "role": "workflow:owner",
+      "workflowId": "3IpFRrwNuClLOMOE",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
