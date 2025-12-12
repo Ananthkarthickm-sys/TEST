@@ -1,0 +1,327 @@
+{
+  "createdAt": "2025-11-19T10:27:46.765Z",
+  "updatedAt": "2025-11-20T10:01:08.000Z",
+  "id": "NZ0Axgeqt41MvkFH",
+  "name": "3 Initiate Offer Letter E-Signing",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "ae7180e8-f59e-418f-8ca6-f1349295b702",
+      "typeVersion": 1.1,
+      "name": "data",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -208,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        160,
+        64
+      ],
+      "id": "46af8aa3-9dc6-4ea0-a1fd-b559d5489dc0",
+      "name": "When chat message received",
+      "webhookId": "b773450e-b36a-430c-a77f-d1b7252ac457"
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/home/node/offertemp/pdf/offerletter_amit_sharma_2025_09_28.pdf",
+        "options": {
+          "fileExtension": "pdf",
+          "dataPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        480,
+        240
+      ],
+      "id": "2f09fb99-f2e8-4f23-b2db-8007345a7b6f",
+      "name": "Check File Exists1",
+      "alwaysOutputData": false,
+      "continueOnFail": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "toRecipients": "={{ $('Get Candidate').item.json.personal_email }}",
+        "subject": "= {{ $('Get Candidate').item.json.first_name }}'s Offer letter for E-signing",
+        "bodyContent": "Dear Team,\nPlease find attached the offer letter for e-signing.\nOnce signed, kindly return it so we may proceed with the next steps.\n\nThank you,\nTeam Agentic AI",
+        "additionalFields": {
+          "attachments": {
+            "attachments": [
+              {
+                "binaryPropertyName": "data"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        960,
+        160
+      ],
+      "id": "a5f32404-f836-4148-a904-f33cfb4d8e0e",
+      "name": "Send Offer Letter1",
+      "webhookId": "31d06fda-fa67-4c88-aa5e-fcc25249b178",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $json.chatInput }}"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "id",
+            "candidate_id",
+            "first_name",
+            "offer_letter_file_name",
+            "last_name",
+            "personal_email",
+            "mobile_number"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        288,
+        240
+      ],
+      "id": "902893c0-a431-4515-ae04-6220f7281188",
+      "name": "Get Candidate",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toRecipients": "={{ $('Get Candidate').item.json.personal_email }}",
+        "subject": "Offer Letter Not Found - Technical Issue",
+        "bodyContent": "Dear Team,\nWe could not find the generated offer letter for this candidate.\nIt seems there is a technical issue in offer generation. Please check and regenerate.\n\nThank you,\nTeam Agentic AI",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        976,
+        368
+      ],
+      "id": "641bba2c-1367-430d-bb13-fd6a2f11d650",
+      "name": "Send Error Mail",
+      "webhookId": "5c1c4d2f-4fef-44ec-b14e-9f251dea260c",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "680b7a60-bab1-44c4-adf4-570146103bc0",
+              "leftValue": "={{ $('Check File Exists1').first() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        688,
+        192
+      ],
+      "id": "88bdbcda-bd06-4340-b601-ea84cc805e55",
+      "name": "Offer Letter Exists?"
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        []
+      ]
+    },
+    "Check File Exists1": {
+      "main": [
+        [
+          {
+            "node": "Offer Letter Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Candidate": {
+      "main": [
+        [
+          {
+            "node": "Check File Exists1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Offer Letter Exists?": {
+      "main": [
+        [
+          {
+            "node": "Send Offer Letter1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "data": {
+      "main": [
+        [
+          {
+            "node": "Get Candidate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "bc88f67d-7542-4bc5-a882-88f894e94712",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-11-19T10:27:46.768Z",
+      "updatedAt": "2025-11-19T10:27:46.768Z",
+      "role": "workflow:owner",
+      "workflowId": "NZ0Axgeqt41MvkFH",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
