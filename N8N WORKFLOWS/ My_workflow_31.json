@@ -1,0 +1,222 @@
+{
+  "createdAt": "2025-11-28T07:12:36.094Z",
+  "updatedAt": "2025-12-03T07:09:20.000Z",
+  "id": "i65yl410H1Pl2VmE",
+  "name": "My workflow 31",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "output": "fields",
+        "fields": [
+          "hasAttachments"
+        ],
+        "filters": {
+          "hasAttachments": true,
+          "readStatus": "read"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8bc9f4d7-3074-4de5-86ef-f3b1126d9cca",
+      "name": "Microsoft Outlook Trigger",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "0e156fbe-6f29-4d37-ac94-699be6464b80",
+      "name": "Get many messages",
+      "webhookId": "290fcd10-08aa-4313-86a8-3ebf590e0408",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messageAttachment",
+        "operation": "get",
+        "messageId": {
+          "__rl": true,
+          "value": "AAMkAGEyOGEwOTRiLWUzYTQtNGQwNS1hNGY4LTRmNjNjZDRmMmVkMwBGAAAAAACtXYo8JahbSY9iGqCyMFGqBwAPLmzj5KjdTaD7fvHjg3cOAAAAAAEJAAAPLmzj5KjdTaD7fvHjg3cOAAB0gws-AAA=",
+          "mode": "list",
+          "cachedResultName": " tomand's Offer letter for E-signing",
+          "cachedResultUrl": "https://outlook.office365.com/owa/?ItemID=AAMkAGEyOGEwOTRiLWUzYTQtNGQwNS1hNGY4LTRmNjNjZDRmMmVkMwBGAAAAAACtXYo8JahbSY9iGqCyMFGqBwAPLmzj5KjdTaD7fvHjg3cOAAAAAAEJAAAPLmzj5KjdTaD7fvHjg3cOAAB0gws%2FAAA%3D&exvsurl=1&viewmodel=ReadMessageItem"
+        },
+        "attachmentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "6aeb96df-fde2-489a-969a-5546adcacad3",
+      "name": "Get an attachment",
+      "webhookId": "9a127e0f-59dd-4ffb-8cb8-50d5b3ef0881",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "hasAttachments": true,
+          "readStatus": "unread"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTrigger",
+      "typeVersion": 1,
+      "position": [
+        64,
+        -224
+      ],
+      "id": "c94990a9-5cc7-4493-aad5-4edc9e1b14fb",
+      "name": "Microsoft Outlook Trigger1",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Microsoft Outlook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get many messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages": {
+      "main": [
+        [
+          {
+            "node": "Get an attachment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "5e26f9b2-5fee-4f70-a945-5ccdc9e9bbcf",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-11-28T07:12:36.098Z",
+      "updatedAt": "2025-11-28T07:12:36.098Z",
+      "role": "workflow:owner",
+      "workflowId": "i65yl410H1Pl2VmE",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
