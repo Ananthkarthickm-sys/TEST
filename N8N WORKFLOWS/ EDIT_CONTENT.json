@@ -1,0 +1,198 @@
+{
+  "createdAt": "2025-12-05T07:03:41.497Z",
+  "updatedAt": "2025-12-09T05:22:54.000Z",
+  "id": "hSFMB8ORc6Lro7bK",
+  "name": "EDIT CONTENT",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "personal_email",
+              "value": "={{ $json.query.email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -96,
+        -32
+      ],
+      "id": "e5e6676d-36e0-42a8-9e84-473cb2fbf6c0",
+      "name": "details",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const html = $('Webhook1').first().json.query.Edit_Response;\n\nlet plainText = html\n  .replace(/<(\\/)?(p|div|h[1-6]|li|br)[^>]*>/gi, '\\n')  // Convert paragraph/line break tags\n  .replace(/<[^>]+>/g, '')                              // Strip any remaining tags\n  .replace(/\\n{2,}/g, '\\n\\n')                           // Clean up extra newlines\n  .replace(/[ \\t]+\\n/g, '\\n')                           // Clean trailing whitespace\n  .replace(/&nbsp;/gi, ' ')\n  .replace(/&amp;/gi, '&')\n  .replace(/&lt;/gi, '<')\n  .replace(/&gt;/gi, '>')\n  .trim();\n\nreturn {\n  plainTextEmail: plainText\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        -32
+      ],
+      "id": "a043c280-8b62-451e-978f-f533c81144e8",
+      "name": "format mail content"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>Edit Email Content</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <style>\n    body {\n      font-family: \"Segoe UI\", sans-serif;\n      background-color: #eef2f7;\n      padding: 30px;\n      margin: 0;\n    }\n\n    .container {\n      max-width: 800px;\n      background-color: #ffffff;\n      padding: 30px;\n      margin: auto;\n      border-radius: 12px;\n      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);\n    }\n\n    h2 {\n      font-size: 24px;\n      color: #333;\n      margin-bottom: 20px;\n      border-bottom: 1px solid #ccc;\n      padding-bottom: 10px;\n    }\n\n    .email-header {\n      margin-bottom: 20px;\n    }\n\n    .email-header label {\n      font-weight: bold;\n      display: block;\n      margin-bottom: 5px;\n    }\n\n    .email-header input {\n      width: 100%;\n      padding: 10px;\n      font-size: 16px;\n      border: 1px solid #ddd;\n      border-radius: 4px;\n      box-sizing: border-box;\n      background-color: #f5f5f5;\n    }\n\n    #emailPreview, #emailEditor {\n      white-space: pre-wrap;\n      font-size: 16px;\n      color: #333;\n      background: #f9f9f9;\n      padding: 20px;\n      border-radius: 8px;\n      border: 1px solid #ddd;\n      margin-bottom: 20px;\n    }\n\n    textarea {\n      width: 100%;\n      max-width: 100%;\n      height: 300px;\n      font-size: 16px;\n      font-family: inherit;\n      padding: 15px;\n      border-radius: 8px;\n      border: 1px solid #ccc;\n      resize: vertical;\n      box-sizing: border-box;\n    }\n\n    .btn-group {\n      display: flex;\n      gap: 10px;\n      justify-content: flex-end;\n      margin-top: 10px;\n    }\n\n    button, a.send-link {\n      padding: 10px 20px;\n      font-size: 15px;\n      border: none;\n      border-radius: 4px;\n      cursor: pointer;\n      text-decoration: none;\n      color: white;\n      display: inline-block;\n    }\n\n    .edit-btn { background-color: #005a9e; }\n    .save-btn { background-color: #0078d4; }\n    .send-btn, .send-link { background-color: #107c10; }\n\n    .signature {\n      margin-top: 30px;\n      text-align: left;\n    }\n\n    .signature img {\n      width: 150px;\n      height: auto;\n      margin-top: 10px;\n    }\n\n    .popup-box {\n      display: none;\n      text-align: center;\n    }\n\n    .popup-box h2 {\n      font-size: 26px;\n      color: #2e7d32;\n    }\n\n    .popup-box .icon {\n      font-size: 48px;\n      color: #4caf50;\n      margin-bottom: 20px;\n    }\n  </style>\n</head>\n<body>\n<div class=\"container\">\n  <h2 id=\"mainTitle\">EDIT MAIL CONTENT</h2>\n\n  <!-- Email Header -->\n  <div class=\"email-header\">\n    <label>From: <strong>Agentic AI</strong></label>\n    <label for=\"recipientEmail\">To:</label>\n    <input type=\"email\" id=\"recipientEmail\" value=\"{{ $('details').item.json.personal_email }}\" readonly />\n  </div>\n\n  <!-- Edit Area -->\n  <div id=\"editorSection\" style=\"display: none;\">\n    <textarea id=\"emailTextArea\">{{ $json.plainTextEmail }}</textarea>\n    <div class=\"btn-group\">\n      <button class=\"save-btn\" onclick=\"saveChanges()\">Make Changes</button>\n    </div>\n  </div>\n\n  <!-- Preview -->\n  <div id=\"previewSection\">\n    <div id=\"emailPreview\">{{ $json.plainTextEmail.replace(/\\n/g, '<br>') }}</div>\n    <div class=\"signature\">\n      <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" alt=\"Rencata Logo\" />\n    </div>\n    <div class=\"btn-group\">\n      <button class=\"edit-btn\" onclick=\"editEmail()\">Edit</button>\n      <button class=\"send-btn\" onclick=\"showConfirm()\">Send</button>\n    </div>\n  </div>\n\n  <!-- Confirm Preview -->\n  <div id=\"confirmSection\" style=\"display: none;\">\n    <div id=\"finalPreview\"></div>\n    <div class=\"signature\">\n      <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" alt=\"Rencata Logo\" />\n    </div>\n    <div class=\"btn-group\">\n      <a id=\"sendLink\" class=\"send-link\" target=\"_blank\" onclick=\"showThankYou()\">Confirm & Send</a>\n    </div>\n  </div>\n\n  <!-- Thank You Message -->\n  <div id=\"thankYouBox\" class=\"popup-box\">\n    <div class=\"icon\">✅</div>\n    <h2>Thank You!</h2>\n    <p>Offer Letter sent to the candidate.</p>\n    <p>This window will close automatically.</p>\n  </div>\n</div>\n\n<script>\n  function editEmail() {\n    document.getElementById('previewSection').style.display = 'none';\n    document.getElementById('editorSection').style.display = 'block';\n\n    const currentHTML = document.getElementById('emailPreview').innerHTML;\n    const plainText = currentHTML.replace(/<br\\s*\\/?>/gi, \"\\n\");\n    document.getElementById('emailTextArea').value = plainText;\n    document.getElementById('emailTextArea').focus();\n  }\n\n  function saveChanges() {\n    const edited = document.getElementById('emailTextArea').value;\n    document.getElementById('editorSection').style.display = 'none';\n    document.getElementById('previewSection').style.display = 'block';\n    document.getElementById('emailPreview').innerHTML = edited.replace(/\\n/g, \"<br>\");\n  }\n\n  function showConfirm() {\n    const final = document.getElementById('emailPreview').innerHTML;\n    const plainText = final.replace(/<br\\s*\\/?>/gi, '\\n').replace(/&nbsp;/g, ' ').trim();\n\n    document.getElementById('previewSection').style.display = 'none';\n    document.getElementById('confirmSection').style.display = 'block';\n    document.getElementById('finalPreview').innerHTML = final;\n\n    // Get the recipient email\n    const candidateEmail = document.getElementById('recipientEmail').value;\n    \n    // Dynamically set the href with encoded values\n    const encodedContent = encodeURIComponent(plainText);\n    const encodedEmail = encodeURIComponent(candidateEmail);\n    \n    document.getElementById('sendLink').href = `https://192.168.50.120:5670/webhook/Approval?content=${encodedContent}&to=${encodedEmail}`;\n  }\n\n  function showThankYou() {\n    document.getElementById('mainTitle').style.display = 'none';\n    document.getElementById('confirmSection').style.display = 'none';\n    document.getElementById('thankYouBox').style.display = 'block';\n\n    setTimeout(() => window.close(), 3000);\n  }\n</script>\n\n</body>\n</html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        384,
+        -32
+      ],
+      "id": "20357c05-f978-4d9a-805b-8804992d4e49",
+      "name": "Mail Edit Page",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "path": "edit",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -288,
+        -32
+      ],
+      "id": "be02b558-593d-4ab5-85f1-98d9df0443d2",
+      "name": "Webhook1",
+      "webhookId": "eecb4cd8-eef4-408b-bf13-b66a0e46d418"
+    }
+  ],
+  "connections": {
+    "details": {
+      "main": [
+        [
+          {
+            "node": "format mail content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format mail content": {
+      "main": [
+        [
+          {
+            "node": "Mail Edit Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "959d1b31-276b-47cb-a2b7-9c55065e103e",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-12-05T07:03:41.500Z",
+      "updatedAt": "2025-12-05T07:03:41.500Z",
+      "role": "workflow:owner",
+      "workflowId": "hSFMB8ORc6Lro7bK",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
