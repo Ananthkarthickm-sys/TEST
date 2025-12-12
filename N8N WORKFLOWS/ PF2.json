@@ -1,0 +1,154 @@
+{
+  "createdAt": "2025-12-11T12:26:25.483Z",
+  "updatedAt": "2025-12-11T12:32:58.000Z",
+  "id": "B3zWJ9bxrZS7Y0aq",
+  "name": "PF2",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "PF-registration-submit",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "c8cf85da-d9c8-4cb9-9ce3-288a94db9bdd",
+      "name": "Webhook - Receive PF Form",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        0
+      ],
+      "webhookId": "pf-registration-post"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO onboarding.pf_registration (\n    candidate_id, name, dob, blood_group, pf_number, uan_number,\n    bank_account, marital_status, permanent_address, temporary_address,\n    father_name, father_dob, father_address,\n    mother_name, mother_dob, mother_address,\n    spouse_name, spouse_dob, spouse_address,\n    child1_name, child1_dob, child1_address,\n    child2_name, child2_dob, child2_address,\n    created_at, updated_at\n)\nVALUES (\n    {{ $json.body.candidate_id }},\n    '{{ $json.body.name }}',\n    NULLIF('{{ $json.body.dob }}', '')::DATE,\n    '{{ $json.body.blood_group }}',\n    '{{ $json.body.pf_number }}',\n    '{{ $json.body.uan_number }}',\n    '{{ $json.body.bank_account }}',\n    '{{ $json.body.marital_status }}',\n    '{{ $json.body.permanent_address }}',\n    '{{ $json.body.temporary_address }}',\n    '{{ $json.body.father_name }}',\n    NULLIF('{{ $json.body.father_dob }}', '')::DATE,\n    '{{ $json.body.father_address }}',\n    '{{ $json.body.mother_name }}',\n    NULLIF('{{ $json.body.mother_dob }}', '')::DATE,\n    '{{ $json.body.mother_address }}',\n    '{{ $json.body.spouse_name }}',\n    NULLIF('{{ $json.body.spouse_dob }}', '')::DATE,\n    '{{ $json.body.spouse_address }}',\n    '{{ $json.body.child1_name }}',\n    NULLIF('{{ $json.body.child1_dob }}', '')::DATE,\n    '{{ $json.body.child1_address }}',\n    '{{ $json.body.child2_name }}',\n    NULLIF('{{ $json.body.child2_dob }}', '')::DATE,\n    '{{ $json.body.child2_address }}',\n    NOW(),\n    NOW()\n)\nON CONFLICT (candidate_id) \nDO UPDATE SET\n    name = EXCLUDED.name,\n    dob = EXCLUDED.dob,\n    blood_group = EXCLUDED.blood_group,\n    pf_number = EXCLUDED.pf_number,\n    uan_number = EXCLUDED.uan_number,\n    bank_account = EXCLUDED.bank_account,\n    marital_status = EXCLUDED.marital_status,\n    permanent_address = EXCLUDED.permanent_address,\n    temporary_address = EXCLUDED.temporary_address,\n    father_name = EXCLUDED.father_name,\n    father_dob = EXCLUDED.father_dob,\n    father_address = EXCLUDED.father_address,\n    mother_name = EXCLUDED.mother_name,\n    mother_dob = EXCLUDED.mother_dob,\n    mother_address = EXCLUDED.mother_address,\n    spouse_name = EXCLUDED.spouse_name,\n    spouse_dob = EXCLUDED.spouse_dob,\n    spouse_address = EXCLUDED.spouse_address,\n    child1_name = EXCLUDED.child1_name,\n    child1_dob = EXCLUDED.child1_dob,\n    child1_address = EXCLUDED.child1_address,\n    child2_name = EXCLUDED.child2_name,\n    child2_dob = EXCLUDED.child2_dob,\n    child2_address = EXCLUDED.child2_address,\n    updated_at = NOW();",
+        "options": {}
+      },
+      "id": "d289484e-1ab2-4022-bccf-63a5b9a8d037",
+      "name": "Insert/Update PF Registration",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"message\": \"PF Registration saved successfully\" } }}",
+        "options": {}
+      },
+      "id": "c6e10361-cd53-45e4-be3e-ecd247dc83c3",
+      "name": "Respond to Webhook - Success1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        16,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook - Receive PF Form": {
+      "main": [
+        [
+          {
+            "node": "Insert/Update PF Registration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert/Update PF Registration": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook - Success1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "1b3e73a6-06ee-48d5-9481-1495b116c0bc",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-12-11T12:26:25.486Z",
+      "updatedAt": "2025-12-11T12:26:25.486Z",
+      "role": "workflow:owner",
+      "workflowId": "B3zWJ9bxrZS7Y0aq",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
