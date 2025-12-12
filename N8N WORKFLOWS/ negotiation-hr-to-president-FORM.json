@@ -1,0 +1,438 @@
+{
+  "createdAt": "2025-12-04T06:30:52.009Z",
+  "updatedAt": "2025-12-08T06:40:40.000Z",
+  "id": "frOJcPxOr4rI2U7s",
+  "name": "negotiation-hr-to-president-FORM",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Negotiation Response ",
+        "formFields": {
+          "values": [
+            {
+              "fieldType": "html",
+              "elementName": "logo",
+              "html": "<div style=\"display: flex; justify-content: center; margin-bottom: 24px;\">\n  <img \n    src=\"https://th.bing.com/th/id/OIP.8R4QF8SOdc_oBPjUhJmeIAAAAA?rs=1&pid=ImgDetMain\" \n    alt=\"Form Image\"\n    style=\"\n      max-width: 100%;\n      height: auto;\n      max-height: 100px;\n      object-fit: contain;\n      border-radius: var(--border-radius-card);\n    \"\n  />\n</div>\n"
+            },
+            {
+              "fieldLabel": "Candidate_Name"
+            },
+            {
+              "fieldLabel": "Candidate_personal_mail"
+            },
+            {
+              "fieldLabel": "Candidate_Request"
+            },
+            {
+              "fieldLabel": "Possible_Negotiation",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldLabel": "Response",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Approve"
+                  },
+                  {
+                    "option": "Reject"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Reason "
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "Submit",
+          "path": "response",
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Thank You! Your response has been recorded"
+            }
+          },
+          "customCss": ":root {\n\t--font-family: 'Open Sans', sans-serif;\n\t--font-weight-normal: 400;\n\t--font-weight-bold: 600;\n\t--font-size-body: 12px;\n\t--font-size-label: 14px;\n\t--font-size-test-notice: 12px;\n\t--font-size-input: 14px;\n\t--font-size-header: 20px;\n\t--font-size-paragraph: 14px;\n\t--font-size-link: 12px;\n\t--font-size-error: 12px;\n\t--font-size-html-h1: 28px;\n\t--font-size-html-h2: 20px;\n\t--font-size-html-h3: 16px;\n\t--font-size-html-h4: 14px;\n\t--font-size-html-h5: 12px;\n\t--font-size-html-h6: 10px;\n\t--font-size-subheader: 14px;\n\n\t/* Colors */\n\t--color-background: #fbfcfe;\n\t--color-test-notice-text: #e6a23d;\n\t--color-test-notice-bg: #fefaf6;\n\t--color-test-notice-border: #f6dcb7;\n\t--color-card-bg: #ffffff;\n\t--color-card-border: #dbdfe7;\n\t--color-card-shadow: rgba(99, 77, 255, 0.06);\n\t--color-link: #7e8186;\n\t--color-header: #525356;\n\t--color-label: #555555;\n\t--color-input-border: #dbdfe7;\n\t--color-input-text: #71747A;\n\t--color-focus-border: rgb(90, 76, 194);\n\t--color-submit-btn-bg: #ff6d5a;\n\t--color-submit-btn-text: #ffffff;\n\t--color-error: #ea1f30;\n\t--color-required: #ff6d5a;\n\t--color-clear-button-bg: #7e8186;\n\t--color-html-text: #555;\n\t--color-html-link: #ff6d5a;\n\t--color-header-subtext: #7e8186;\n\n\t/* Border Radii */\n\t--border-radius-card: 8px;\n\t--border-radius-input: 6px;\n\t--border-radius-clear-btn: 50%;\n\t--card-border-radius: 8px;\n\n\t/* Spacing */\n\t--padding-container-top: 24px;\n\t--padding-card: 24px;\n\t--padding-test-notice-vertical: 12px;\n\t--padding-test-notice-horizontal: 24px;\n\t--margin-bottom-card: 16px;\n\t--padding-form-input: 12px;\n\t--card-padding: 24px;\n\t--card-margin-bottom: 16px;\n\n\t/* Dimensions */\n\t--container-width: 448px;\n\t--submit-btn-height: 48px;\n\t--checkbox-size: 18px;\n\n\t/* Others */\n\t--box-shadow-card: 0px 4px 16px 0px var(--color-card-shadow);\n\t--opacity-placeholder: 0.5;\n}"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -1216,
+        -48
+      ],
+      "id": "16667625-ef5e-47c2-92d1-030ac3c7c896",
+      "name": "On form submission",
+      "webhookId": "d3abb05c-91f5-413e-93bb-3929fdd56052"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -928,
+        336
+      ],
+      "id": "9fc16d37-a883-4040-8757-b8204094c4c4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "EDKQjccT9Ythpx7J",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get raw LLM output where \\n are literal characters (escaped newlines)\nconst rawText = $input.first().json.text|| \"\";\n\n// Convert escaped \\n\\n to real double line breaks\nconst decodedText = rawText.replace(/\\\\n\\\\n/g, '\\n\\n').replace(/\\\\n/g, '\\n');\n\n// Split at real double line breaks and wrap each paragraph in <p> tags\nconst htmlParagraphs = decodedText\n  .split(/\\n{2,}/)  // Real newlines now\n  .map(p => `<p>${p.trim()}</p>`)\n  .join(\"\\n\");\n\nreturn {\n  htmlBody: htmlParagraphs\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        112
+      ],
+      "id": "ef8f085e-f9a6-499b-889a-ab0dfd9522c4",
+      "name": "html "
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an HR professional at Rencata, responding to a candidate’s salary negotiation request.\nUsing the details below, write a professional and courteous email body (not the subject).\n\nInput Details:\nCandidate Name: {{ $json.formQueryParameters.Candidate_Name }}\n\nCandidate Request: {{ $json.Candidate_Request }}\n\nPossible Negotiation Accepted: {{ $json.Possible_Negotiation }}\n\nDecision: {{ $json.Response }}\n\nReason (if rejected): {{ $json['Reason '] }}\n\nHR contact information : hr@rencata.com \nInstruction:\nStart with a warm greeting and thank the candidate for their negotiation request.\n\nMention the candidate’s specific request briefly.\n\nBased on the Decision field:\n\nIf \"Approved\":\n\nConfirm the acceptance professionally.\n\nIf Possible Negotiation is available, include the new terms.\n\nIf no reason is given, skip it.\n\nIf \"Rejected\":\n\nPolitely inform them of the rejection.\n\nInclude the Reason in a respectful tone.\n\nExpress appreciation for their interest and professionalism.\n\nEnd with a warm, open-ended closing and provide HR contact availability.\n\nConstraints:\nKeep the tone professional yet warm.\nNo job titles or role names should be included.\n\nDo not include subject lines.\n\nResponse should be concise (3–4 short paragraphs max).\n\n\nOnly generate the email body content, not any additional commentary.\n\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        -928,
+        112
+      ],
+      "id": "497db569-128f-4a5b-8c58-ccb0992f40a3",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "toRecipients": "Ananthkarthick.m@rencata.com",
+        "subject": "Negotiation Request - Response ",
+        "bodyContent": "=<p><strong>Please review the draft below and make any necessary changes before sending it to the candidate:</strong></p>\n<p><strong>Candidate Email:</strong> <a href=\"mailto:{{ $('On form submission').item.json.Candidate_personal_mail }}\" style=\"color: #007bff; text-decoration: none;\">{{ $('On form submission').item.json.Candidate_personal_mail }}</a></p>\n{{ $('html ').item.json.htmlBody }}\n<div style=\"margin-top: 30px; margin-bottom: 30px;\">\n  <table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"margin: 0 auto;\">\n    <tr>\n      <!-- Edit Button -->\n      <td align=\"center\" style=\"padding-right: 10px;\">\n        <a href=\"https://192.168.50.120:5670/webhook/edit?Edit_Response={{ encodeURIComponent($json.plainText) }}&email={{ encodeURIComponent($('On form submission').item.json.Candidate_personal_mail) }}\"\n           target=\"_blank\"\n           style=\"\n             display: inline-block;\n             padding: 14px 30px;\n             background-color: #007bff;\n             color: white;\n             font-weight: bold;\n             text-align: center;\n             text-decoration: none;\n             border: none;\n             border-radius: 8px;\n             font-size: 16px;\n             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n           \">\n           Edit\n        </a>\n      </td>\n      <!-- Send Button -->\n      <td align=\"center\" style=\"padding-left: 10px;\">\n        <a href=\"https://192.168.50.120:5670/webhook/Approval?content={{ encodeURIComponent($('html ').item.json.htmlBody) }}&to={{ encodeURIComponent($('On form submission').item.json.Candidate_personal_mail) }}\"\n           style=\"\n             display: inline-block;\n             padding: 14px 30px;\n             background-color: #28a745;\n             color: white;\n             font-weight: bold;\n             text-align: center;\n             text-decoration: none;\n             border: none;\n             border-radius: 8px;\n             font-size: 16px;\n             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n           \">\n           Send\n        </a>\n      </td>\n    </tr>\n  </table>\n</div>\n<p>Regards,<br>HR team.</p>",
+        "additionalFields": {
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        288,
+        112
+      ],
+      "id": "216cf2ab-07c5-4b93-ae7e-da113636de6c",
+      "name": "review mail 1",
+      "webhookId": "8a7f082e-1319-485e-8cb2-1d4de9b7ef07",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const html = $input.first().json.htmlBody || \"\";\n\n// Remove HTML tags and decode\nconst text = html\n  .replace(/<br\\s*\\/?>/gi, \"\\n\")\n  .replace(/<\\/p>/gi, \"\\n\\n\")\n  .replace(/<[^>]*>/g, \"\")\n  .replace(/\\\\n/g, \"\\n\") // handle encoded newlines\n  .replace(/&nbsp;/g, \" \")\n  .replace(/&amp;/g, \"&\")\n  .replace(/&lt;/g, \"<\")\n  .replace(/&gt;/g, \">\");\n\nreturn [{ plainText: text }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        112
+      ],
+      "id": "adc94257-196b-4dc6-8d56-83bb0417eb7e",
+      "name": "text "
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Response }}",
+                    "rightValue": "Approve",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "8886679e-63a9-4aa5-907b-62e3366ae46e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Approve"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "586e6eaf-2f76-44ff-b5d0-9641de1f57c6",
+                    "leftValue": "={{ $json.Response }}",
+                    "rightValue": "Reject",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Reject"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -912,
+        -288
+      ],
+      "id": "26314312-f8e9-4d34-80bf-4a2eb42fdcc6",
+      "name": "update_flags"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = jsonb_set(\n                   jsonb_set(templates::jsonb, '{offer_accepted}', 'true'::jsonb, false),\n                   '{offer_declined}', 'false'::jsonb, false\n               )::json,\n    updated_at = NOW()\nWHERE personal_email = '{{ $('On form submission').item.json.Candidate_personal_mail }}';\nSELECT * FROM onboarding.candidates\nWHERE personal_email = '{{ $('On form submission').item.json.Candidate_personal_mail }}';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -512,
+        -448
+      ],
+      "id": "91b61df9-bab9-4f78-8c47-66f84d61ace6",
+      "name": "accepted_flag",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = jsonb_set(\n                   jsonb_set(templates::jsonb, '{offer_accepted}', 'true'::jsonb, false),\n                   '{offer_declined}', 'false'::jsonb, false\n               )::json,\n    updated_at = NOW()\nWHERE personal_email = '{{ $json.formQueryParameters.Candidate_personal_mail }}';\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -512,
+        -192
+      ],
+      "id": "550ba95d-56ff-4655-8536-5c599277dfb7",
+      "name": "decline_flag",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "PRESIDENT FORM",
+        "height": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1280,
+        -160
+      ],
+      "id": "bb3c5902-782f-45a7-90de-22a6f31f87f0",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "html ": {
+      "main": [
+        [
+          {
+            "node": "text ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "update_flags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "html ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "text ": {
+      "main": [
+        [
+          {
+            "node": "review mail 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update_flags": {
+      "main": [
+        [
+          {
+            "node": "accepted_flag",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "decline_flag",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "decline_flag": {
+      "main": [
+        []
+      ]
+    },
+    "accepted_flag": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "1d02a2f3-7b0e-43eb-8d3a-f69f7aed1675",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-12-04T06:30:52.013Z",
+      "updatedAt": "2025-12-04T06:30:52.013Z",
+      "role": "workflow:owner",
+      "workflowId": "frOJcPxOr4rI2U7s",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
