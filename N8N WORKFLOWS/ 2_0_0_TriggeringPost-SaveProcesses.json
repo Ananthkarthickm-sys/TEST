@@ -1,0 +1,260 @@
+{
+  "createdAt": "2025-11-19T09:29:35.269Z",
+  "updatedAt": "2025-11-20T09:28:37.000Z",
+  "id": "7zzhxQZWuouS4s7B",
+  "name": "2.0.0 TriggeringPost-SaveProcesses",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "ivJ0Qf3FYIBtGMvZ"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -672,
+        176
+      ],
+      "id": "a202c5bc-7ea9-4e2f-b0f4-836147ecf74a",
+      "name": "Sending Offer Letter"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "NCuR26NOjDIgFlh5",
+          "mode": "list",
+          "cachedResultName": "Collect Proof of Joining"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -448,
+        176
+      ],
+      "id": "5d0db61e-4c50-474d-9120-58ccde168d65",
+      "name": "Collect Proof of Joining"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "NCuR26NOjDIgFlh5",
+          "mode": "list",
+          "cachedResultName": "Collect Proof of Joining"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -256,
+        -64
+      ],
+      "id": "b1a2e179-dc27-435b-8d92-6e6e82c3cb18",
+      "name": "Documentation & Personal Details",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "NCuR26NOjDIgFlh5",
+          "mode": "list",
+          "cachedResultName": "Collect Proof of Joining"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -32,
+        -64
+      ],
+      "id": "562a681b-7718-4f82-a623-0919c8ac335f",
+      "name": "System and physical setup",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -896,
+        176
+      ],
+      "id": "d1c1859f-f605-44b1-a5cd-cb197faa72cb",
+      "name": "from DB"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "DELETE FROM onboarding.salary_structures WHERE candidate_id = 'CA1003';\nDELETE FROM onboarding.candidates WHERE id = '1003';\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -848,
+        -32
+      ],
+      "id": "d5a007fb-1564-4c66-b361-276dcb6f46c6",
+      "name": "Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Sending Offer Letter": {
+      "main": [
+        [
+          {
+            "node": "Collect Proof of Joining",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Documentation & Personal Details": {
+      "main": [
+        [
+          {
+            "node": "System and physical setup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        []
+      ]
+    },
+    "from DB": {
+      "main": [
+        [
+          {
+            "node": "Sending Offer Letter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "291fb391-5d5e-4cd6-bb19-707f3c0438ab",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-11-19T09:29:35.273Z",
+      "updatedAt": "2025-11-19T09:29:35.273Z",
+      "role": "workflow:owner",
+      "workflowId": "7zzhxQZWuouS4s7B",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-12T04:24:19.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-12",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
