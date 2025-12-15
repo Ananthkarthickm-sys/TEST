@@ -1,0 +1,520 @@
+{
+  "createdAt": "2025-12-03T05:18:13.718Z",
+  "updatedAt": "2025-12-15T05:39:45.000Z",
+  "id": "PYkl0SumHQVqNMBs",
+  "name": "4.0Sending offer letter to candidate",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "confirmsend",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -3472,
+        480
+      ],
+      "id": "b6a9ad3f-0811-4638-8d6b-e0346b3a88e3",
+      "name": "Webhook",
+      "webhookId": "b1067bad-179a-420d-b0b8-d5aa0f0a4f54",
+      "alwaysOutputData": true,
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "=1165"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -3248,
+        480
+      ],
+      "id": "d162dea8-d42e-4df0-b658-1f1e71710b48",
+      "name": "details",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = jsonb_set(templates::jsonb, '{offer_letter_sent_to_candidate}', 'true'::jsonb, false)::json,\n    updated_at = NOW()\nWHERE id = {{ $('Webhook').item.json.query.id }};\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1872,
+        560
+      ],
+      "id": "f87e6c52-f5b0-41a4-9b9a-6aaf3b9739ba",
+      "name": "update offer_letter_sent_to_candidate1",
+      "credentials": {
+        "postgres": {
+          "id": "0CwtQcnj9v3qZLce",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toRecipients": "=Ananthkarthick.m@rencata.com",
+        "subject": "Offer Letter - Rencata",
+        "bodyContent": "={{ $('format mail content').item.json.htmlEmail }}\n<p style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n  Hi <strong>HR Team</strong>,\n</p>\n<p style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n  Kindly take a moment to review the attached offer letter and the email content prepared for the candidate. Please <strong>accept</strong> to send the offer or <strong>reject</strong> if changes are needed.\n</p>\n\n<!-- Centered Light Gray Box -->\n<div style=\"margin: 0 auto; width: 800px; max-width: 100%; background-color: #fafafa; border: 1px solid #ccc; border-radius: 12px; padding: 24px; font-family: Arial, sans-serif; font-size: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); text-align: left;\">\n  \n  <p style=\"margin-top: 0; margin-bottom: 16px;\">\n    📎 <strong>Attached:</strong> {{ $json.filename }}\n  </p>\n  \n  <div style=\"margin-top: 16px; padding: 16px; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px;\">\n    {{ $json.email_content }}\n  </div>\n</div>\n\n<!-- HR Buttons -->\n<div style=\"text-align: center; margin-top: 24px;\">\n  <a href=\"https://192.168.50.120:5670/webhook/ADFG?id={{ $json.id }}&action=reject\"\n     style=\"display:inline-block;margin-right:12px;padding:12px 24px;background-color:#d32f2f;\n     color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;\">\n     ✕ Reject\n  </a>\n  <a href=\"https://192.168.50.120:5670/webhook/ADFG?id={{ $json.id }}&action=accept\"\n   style=\"display:inline-block;padding:12px 24px;background-color:#388e3c;\n   color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;\">\n   ✓ Accept & Send to Candidate\n</a>\n</div>\n\n<p style=\"font-family: Arial, sans-serif; font-size: 14px; margin-top: 20px;\">\n  Thank you,<br>\n  <strong>Agentic AI</strong>\n</p>\n\n<p style=\"margin-top: 20px; text-align: center;\">\n  <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" \n       alt=\"Rencata Logo\" \n       style=\"width: 200px; height: auto; display: block; margin: 0 auto;\">\n</p>\n<p style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n  Dear <strong>{{ $json.candidate_name }}</strong>,\n</p>\n\n<p style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n  Congratulations! We are pleased to offer you the position of <strong>{{ $json.position }}</strong> at <strong>{{ $json.company }}</strong>.\n</p>\n\n<p style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n  Please find the complete offer letter attached to this email, which includes details about your compensation, benefits, and joining formalities.\n</p>\n\n<p style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n  Kindly review the offer and let us know your decision by clicking one of the buttons below:\n</p>\n\n<!-- Candidate Buttons -->\n<div style=\"text-align: center; margin: 30px 0;\">\n  <a href=\"https://192.168.50.120:5670/webhook/candidate-response?id={{ $json.id }}&email={{ $json.candidate_email }}&action=reject\"\n     style=\"display:inline-block;margin-right:12px;padding:14px 28px;background-color:#d32f2f;\n     color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;\">\n     Decline Offer\n  </a>\n  <a href=\"https://192.168.50.120:5670/webhook/candidate-response?id={{ $json.id }}&email={{ $json.candidate_email }}&action=accept\"\n   style=\"display:inline-block;padding:14px 28px;background-color:#388e3c;\n   color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;\">\n   Accept Offer\n</a>\n</div>\n\n<p style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n  We are excited about the possibility of you joining our team and look forward to your response.\n</p>\n\n<p style=\"font-family: Arial, sans-serif; font-size: 14px; margin-top: 30px;\">\n  Best regards,<br>\n  <strong>HR Team</strong><br>\n  {{ $json.company }}\n</p>\n\n<p style=\"margin-top: 20px; text-align: center;\">\n  <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" \n       alt=\"Rencata Logo\" \n       style=\"width: 200px; height: auto; display: block; margin: 0 auto;\">\n</p>\n",
+        "additionalFields": {
+          "attachments": {
+            "attachments": [
+              {
+                "binaryPropertyName": "data"
+              }
+            ]
+          },
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -2352,
+        400
+      ],
+      "id": "2b6af3e4-a774-46cb-8f92-acd7f72ecd05",
+      "name": "mail candidate",
+      "webhookId": "620e7d95-51be-4409-ac47-83b86cea17c4",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  htmlEmail: $('Webhook').first().json.query.email_content.replace(/\\n/g, \"<br>\"),\n  plainTextEmail: $('Webhook').first().json.query.email_content\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3024,
+        480
+      ],
+      "id": "694eed3e-c067-4864-8cb1-a786109020fe",
+      "name": "format mail content"
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/home/node/offertemp/esigned/{{ $('details').first().json.filename }}.pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -2576,
+        400
+      ],
+      "id": "4e58dc33-c39c-4e9b-b7a4-cd2eb5ce4ebe",
+      "name": "offerletter",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2096,
+        592
+      ],
+      "id": "2a2936c3-acac-41f0-adb3-c00992048615",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0241bca9-9e24-4c22-bbfd-469937ab614e",
+              "name": "id",
+              "value": "={{ $('details').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "7e884a74-4a85-4006-a80c-6a367090ef86",
+              "name": "process",
+              "value": "Send offer letter to the candidate",
+              "type": "string"
+            },
+            {
+              "id": "acf3f767-7bc0-417d-9439-fdd98af62a5c",
+              "name": "email content",
+              "value": "={{ $json.htmlEmail }}",
+              "type": "string"
+            },
+            {
+              "id": "ddf38094-8017-4b4e-98e7-735ea0c66f49",
+              "name": "sent to",
+              "value": "={{ $('details').item.json.personal_email }}",
+              "type": "string"
+            },
+            {
+              "id": "cbaee099-4a8c-4f47-bbbd-2844651b7afa",
+              "name": "created_by",
+              "value": "n8n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2800,
+        480
+      ],
+      "id": "66de8bf7-dfca-494f-a5f2-189f5c8df3f5",
+      "name": "contents2"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>Thank You</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <style>\n    body {\n      font-family: \"Segoe UI\", sans-serif;\n      background-color: #eef2f7;\n      margin: 0;\n      padding: 0;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      height: 100vh;\n    }\n\n    .popup-box {\n      text-align: center;\n      padding: 40px;\n      background-color: #ffffff;\n      border-radius: 12px;\n      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);\n      max-width: 600px;\n    }\n\n    .popup-box h2 {\n      font-size: 28px;\n      color: #2e7d32;\n      margin-bottom: 10px;\n    }\n\n    .popup-box p {\n      font-size: 16px;\n      color: #333;\n      margin: 5px 0;\n    }\n\n    .popup-box .icon {\n      font-size: 48px;\n      color: #4caf50;\n      margin-bottom: 20px;\n    }\n  </style>\n</head>\n<body>\n\n<div class=\"popup-box\">\n  <h2>Thank You!</h2>\n  <p>Offer Letter sent to the candidate.</p>\n  <p>This window will close automatically.</p>\n</div>\n\n<script>\n  setTimeout(() => {\n    window.close();\n  }, 3000); // Closes after 3 seconds\n</script>\n\n</body>\n</html>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        -2096,
+        240
+      ],
+      "id": "28626a02-5519-48d8-97a0-ba94905fa0c0",
+      "name": "thank you page1"
+    },
+    {
+      "parameters": {
+        "content": "Receives the candidate ID and email when HR clicks to send the offer letter.",
+        "height": 256,
+        "width": 176
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3520,
+        384
+      ],
+      "id": "5a1a583c-577e-4838-b71d-4bbd2a391c22",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Fetches the candidate’s full details from the database using the received ID.",
+        "height": 256,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3296,
+        384
+      ],
+      "id": "dc420580-7204-46df-afb0-a74509b9f47a",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Prepares the email content in HTML and plain text format for sending.",
+        "height": 272,
+        "width": 176
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3072,
+        368
+      ],
+      "id": "75c16039-3c50-4ee8-8615-9a8bc456f249",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Organizes email content and metadata, like recipient and process info, for the next steps.",
+        "height": 272,
+        "width": 176
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2832,
+        352
+      ],
+      "id": "57c6c02a-9021-4676-86a5-6940a4b3c7e6",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "Retrieves the finalized PDF of the offer letter to attach to the email.",
+        "height": 272,
+        "width": 176
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2624,
+        272
+      ],
+      "id": "eeeed4a6-8404-419e-b3fc-ae81b46243f3",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "Sends the offer letter email to the candidate with Accept/Decline buttons for response.",
+        "height": 272,
+        "width": 176
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2368,
+        224
+      ],
+      "id": "33b32a9c-f31e-4378-9f30-b8f2d5a51dd5",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "Combines candidate data and email content before updating the database.",
+        "height": 272,
+        "width": 176
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2128,
+        464
+      ],
+      "id": "eec6250b-2cd1-491c-ad4a-d51d7aa1fe0a",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "Updates the candidate record to mark the offer letter as sent.",
+        "height": 320,
+        "width": 208
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1936,
+        416
+      ],
+      "id": "f162ff59-639d-49a9-a581-a0949fc8db90",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "Shows HR a confirmation page after the offer letter is successfully sent.",
+        "height": 256,
+        "width": 208
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2144,
+        112
+      ],
+      "id": "b72074bd-cda9-48f9-917f-a7e7559d7986",
+      "name": "Sticky Note8"
+    }
+  ],
+  "connections": {
+    "details": {
+      "main": [
+        [
+          {
+            "node": "format mail content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update offer_letter_sent_to_candidate1": {
+      "main": [
+        []
+      ]
+    },
+    "mail candidate": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "thank you page1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format mail content": {
+      "main": [
+        [
+          {
+            "node": "contents2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "offerletter": {
+      "main": [
+        [
+          {
+            "node": "mail candidate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "update offer_letter_sent_to_candidate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "contents2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "offerletter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "e54a0793-9cad-4cc7-a9d9-618e864a3a7a",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-12-03T05:18:13.721Z",
+      "updatedAt": "2025-12-03T05:18:13.721Z",
+      "role": "workflow:owner",
+      "workflowId": "PYkl0SumHQVqNMBs",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-15T04:41:56.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-15",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
