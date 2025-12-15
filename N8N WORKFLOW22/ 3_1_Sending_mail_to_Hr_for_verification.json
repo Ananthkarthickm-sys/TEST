@@ -1,0 +1,531 @@
+{
+  "createdAt": "2025-11-20T09:52:34.407Z",
+  "updatedAt": "2025-12-15T07:31:27.000Z",
+  "id": "NcfYJjUw84wwBK7z",
+  "name": "3.1.Sending mail to Hr for verification",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1504,
+        832
+      ],
+      "id": "6619b50b-d77f-42a6-ab86-085edd3c221f",
+      "name": "data"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET \n  templates = jsonb_set(\n      CASE \n          WHEN jsonb_typeof(templates::jsonb) = 'object' THEN templates::jsonb\n          ELSE '{}'::jsonb\n      END,\n      '{offer_letter_sent_to_hr_verification}', \n      'true'::jsonb, \n      false\n  )::json,\n  updated_at = NOW()\nWHERE id = {{ $('details').item.json.id }};\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        432,
+        784
+      ],
+      "id": "4a6f321d-8160-444e-b83f-cc7c5a38575a",
+      "name": "update offer_letter_generated",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $('data').first().json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "templates"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        896,
+        832
+      ],
+      "id": "53ad7478-55b4-449f-b440-93507d8fddcb",
+      "name": "offer_letter_generated done",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/home/node/offertemp/esigned/{{ $('details').first().json.filename }}.pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        832
+      ],
+      "id": "f8322569-ec24-4d73-a4b1-01894ce15484",
+      "name": "offer letter1"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "personal_email"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1232,
+        832
+      ],
+      "id": "dabd1bf0-9756-49b8-944b-ec8dcc1b6089",
+      "name": "details",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "781128e3-da14-412c-8a4e-0e9cffc46864",
+              "name": "email_content",
+              "value": "=<p>\n  Dear <strong>{{ $('details').item.json.first_name }} {{ $('details').item.json.last_name }}</strong>,\n</p>\n\n<p>We are pleased to share your offer letter for the position of <strong>{{ $('details').item.json.position }}</strong> at <strong>{{ $('details').item.json.customer_name }}</strong>.\n</p>\n\n<p>Please take a moment to carefully go through the attached offer letter, which outlines the terms of your employment, including <strong>compensation</strong>, <strong>benefits</strong>, and <strong>joining formalities</strong>.\n</p>\n\n{{ $('details').item.json.templates.relocation_required ? `\n  <p>Additionally, we would like to highlight that your offered location is <strong>${$('details').item.json.offeredlocation}</strong>, while your current location is <strong>${$('details').item.json.currentlocation}</strong>. <strong>This role requires relocation.</strong>\n  </p>\n\n  <p>Kindly confirm your willingness to relocate.\n  </p>\n` : '' }}\n\n<p>We are excited to have you on board and look forward to working with you.\n</p>\n\n<p>Best regards,<br><strong>HR Team</strong>\n</p>\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -880,
+        832
+      ],
+      "id": "feffa5e7-f965-486c-a5d4-f3fbeca716c1",
+      "name": "email content"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0241bca9-9e24-4c22-bbfd-469937ab614e",
+              "name": "id",
+              "value": "={{ $('details').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "7e884a74-4a85-4006-a80c-6a367090ef86",
+              "name": "process",
+              "value": "HR verification of offer letter",
+              "type": "string"
+            },
+            {
+              "id": "acf3f767-7bc0-417d-9439-fdd98af62a5c",
+              "name": "email content",
+              "value": "=<p style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n  Hi <strong>HR Team</strong>,\n</p>\n<p style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n  Kindly take a moment to review the attached offer letter and the email content prepared for the candidate. Please <strong>confirm</strong> to continue the process or edit if any changes are needed.\n</p>\n\n<!-- Centered Light Gray Box -->\n<div style=\"margin: 0 auto; width: 800px; max-width: 100%; background-color: #fafafa; border: 1px solid #ccc; border-radius: 12px; padding: 24px; font-family: Arial, sans-serif; font-size: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); text-align: left;\">\n  \n  <p style=\"margin-top: 0; margin-bottom: 16px;\">\n    📎 <strong>Attached:</strong> {{ $('details').item.json.filename }}\n  </p>\n  \n  <div style=\"margin-top: 16px; padding: 16px; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px;\">\n    {{ $('email content').item.json.email_content }}\n  </div>\n</div>\n\n<!-- Centered Buttons -->\n<div style=\"text-align: center; margin-top: 24px;\">\n  <a href=\"https://192.168.50.120:5670/webhook/edit-content?id={{ $('details').item.json.id }}&email_content={{ $('email content').item.json.email_content }}\"\n     style=\"display:inline-block;margin-right:12px;padding:12px 24px;background-color:#388e3c;\n     color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;\">\n     Edit Content\n  </a>\n  <a href=\"https://192.168.50.120:5670/webhook/confirmsend?id={{ $('details').item.json.id }}&email_content={{ $('email content').item.json.email_content }}\"\n   style=\"display:inline-block;padding:12px 24px;background-color:#1976d2;\n   color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;\">\n   Confirm Send\n</a>\n</div>\n\n<p style=\"font-family: Arial, sans-serif; font-size: 14px; margin-top: 20px;\">\n  Thank you,<br>\n  <strong>Agentic AI</strong>\n</p>\n\n<p style=\"margin-top: 20px;\">\n    <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" \n         alt=\"Rencata Logo\" \n         style=\"width: 200px; height: auto; display: block;\">\n  </p>",
+              "type": "string"
+            },
+            {
+              "id": "ddf38094-8017-4b4e-98e7-735ea0c66f49",
+              "name": "sent to",
+              "value": "ananya.js@rencata.com",
+              "type": "string"
+            },
+            {
+              "id": "cbaee099-4a8c-4f47-bbbd-2844651b7afa",
+              "name": "created_by",
+              "value": "n8n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -544,
+        832
+      ],
+      "id": "b8ae77f0-f2dd-4b02-9719-0d3f0414abfd",
+      "name": "contents"
+    },
+    {
+      "parameters": {
+        "toRecipients": "Ananthkarthick.m@rencata.com",
+        "subject": "=Confirmation Required to Send Verified Offer Letter to {{ $('details').item.json.first_name }} {{ $('details').item.json.last_name }}",
+        "bodyContent": "={{ $('contents').item.json['email content'] }}",
+        "additionalFields": {
+          "attachments": {
+            "attachments": [
+              {
+                "binaryPropertyName": "data"
+              }
+            ]
+          },
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        80,
+        832
+      ],
+      "id": "0051d992-424d-4eb6-a28f-3b2bec709f63",
+      "name": "mail HR",
+      "webhookId": "205afcda-7bb7-4e9e-9deb-bd3a6541a8b9",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "▶️ WORKFLOW STARTS HERE\n━━━━━━━━━━━━━━━━━━━\nThis workflow is automatically triggered by the previous e-signature validation workflow.\n\nReceives candidate ID from the previous workflow.\n\n🔗 Input: Candidate data\n⚡ Trigger: Automatic\n📥 From: [E-sign validation workflow](https://192.168.50.120:5670/workflow/7mdJ3uOram4Vq7RJ)",
+        "height": 400,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1616,
+        576
+      ],
+      "id": "8e7b6ac0-ecc7-4e03-9880-787613c3fed7",
+      "name": "▶️ Workflow Start Note"
+    },
+    {
+      "parameters": {
+        "content": "✅ UPDATE DATABASE STATUS\n━━━━━━━━━━━━━━━━━━━\nUpdates candidate record in database:\n\n✓ offer_letter_sent_to_hr_verification = TRUE\n✓ updated_at = NOW()\n\nMarks that HR review email has been sent successfully.\n\n📊 Status: HR review requested",
+        "height": 436,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        320,
+        528
+      ],
+      "id": "6fb0ed57-d21f-4081-9868-c08c9a4ae2ea",
+      "name": "✅ Update Database Note"
+    },
+    {
+      "parameters": {
+        "content": "✓ CONFIRM DATABASE UPDATE\n━━━━━━━━━━━━━━━━━━━\nVerifies that the database was updated successfully.\n\nRetrieves the updated templates field to confirm status.\n\n🎉 WORKFLOW COMPLETE!\n⏸️ Now waiting for HR action...\n\n🔜 Next: HR clicks button in email",
+        "height": 500,
+        "width": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        784,
+        512
+      ],
+      "id": "87c5b933-cbdf-4f20-8b8d-bc65eaaace04",
+      "name": "✓ Confirm Update Note"
+    },
+    {
+      "parameters": {
+        "content": "📖 READ OFFER LETTER FILE\n━━━━━━━━━━━━━━━━━━━\nReads the validated offer letter PDF from the server.\n\n📁 Location:\n/home/node/offertemp/esigned/\n\n📄 File: Uses filename from database\n\nThis PDF will be attached to the HR review email.",
+        "height": 404,
+        "width": 284
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        576
+      ],
+      "id": "ede77596-e0ab-4c35-9b76-53f248bf4f1e",
+      "name": "📖 Read File Note"
+    },
+    {
+      "parameters": {
+        "content": "📋 GET CANDIDATE DETAILS\n━━━━━━━━━━━━━━━━━━━\nRetrieves complete candidate information from the database:\n\n✓ First name & Last name\n✓ Personal email\n✓ Position & Customer name\n✓ Current & Offered location\n✓ Relocation requirement\n✓ Filename of offer letter\n\nThis data personalizes the email.",
+        "height": 424,
+        "width": 272
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1264,
+        560
+      ],
+      "id": "46fe7510-b703-4dc3-9753-07542e975a34",
+      "name": "📋 Get Details Note"
+    },
+    {
+      "parameters": {
+        "content": "✉️ PREPARE CANDIDATE EMAIL\n━━━━━━━━━━━━━━━━━━━\nCreates the email that will be sent to the candidate (after HR approves).\n\nEmail includes:\n📄 Position details\n🏢 Company name\n💰 Compensation & benefits reference\n📍 Relocation notice (if applicable)\n\n⚠️ NOT sent yet! HR reviews first.",
+        "height": 424,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -976,
+        560
+      ],
+      "id": "ffb83db8-a3f4-4686-a143-a4854c3cce47",
+      "name": "✉️ Email Content Note"
+    },
+    {
+      "parameters": {
+        "content": "📧 PREPARE HR REVIEW EMAIL\n━━━━━━━━━━━━━━━━━━━\nCreates the email for HR with:\n\n1️⃣ Preview of candidate email\n2️⃣ Attached offer letter PDF\n3️⃣ Two action buttons:\n   🟢 \"Edit Content\" - Make changes\n   🔵 \"Confirm Send\" - Approve and send\n\nHR reviews everything before it goes to candidate!",
+        "height": 424,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        560
+      ],
+      "id": "4a00d58d-c502-4c55-bf7f-496ac0c2086f",
+      "name": "📧 Prepare HR Email Note"
+    },
+    {
+      "parameters": {
+        "content": "📬 SEND EMAIL TO HR\n━━━━━━━━━━━━━━━━━━━\nSends review request email to HR:\n\n📧 To: Ananthkarthick.m@rencata.com\n📋 Subject: \"Confirmation Required to Send Verified Offer Letter to [Name]\"\n📎 Attachment: Validated offer letter PDF\n✉️ Body: Preview + Action buttons\n\n⏸️ PROCESS PAUSES HERE\nWaits for HR to click a button!",
+        "height": 424,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        560
+      ],
+      "id": "2a586527-07f7-40a0-b65c-6bf069388b36",
+      "name": "📬 Send HR Email Note"
+    },
+    {
+      "parameters": {
+        "content": "════════════════════════════════════════════════════════════════\n📊 WORKFLOW OVERVIEW: HR VERIFICATION OF OFFER LETTER\n════════════════════════════════════════════════════════════════\n\n🎯 PURPOSE:\nSends validated offer letter to HR for final review before sending to candidate.\nHR can preview, edit, and approve the email content.\n\n⚡ TRIGGER: Called automatically by e-signature validation workflow\n\n✅ PROCESS FLOW:\n1. Receive candidate data from previous workflow\n2. Get complete candidate details from database\n3. Prepare personalized email for candidate (NOT sent yet)\n4. Prepare review email for HR with preview and buttons\n5. Read validated offer letter PDF from server\n6. Send email to HR with attachment and action buttons\n7. Update database to track HR review request\n8. Wait for HR to click Edit or Confirm button\n\n📧 EMAIL TO HR CONTAINS:\n✓ Preview of candidate email\n✓ Attached offer letter PDF\n✓ Two action buttons:\n  🟢 Edit Content - Modify email before sending\n  🔵 Confirm Send - Approve and send to candidate\n\n⏸️ IMPORTANT:\nWorkflow pauses here and waits for HR action.\nNext workflow triggers when HR clicks a button.\n\n🔐 SPECIAL FEATURES:\n✓ Automatic relocation detection and notification\n✓ Dynamic content based on candidate data\n✓ Interactive buttons with embedded data\n✓ Email preview before sending to candidate\n\n════════════════════════════════════════════════════════════════",
+        "height": 600,
+        "width": 720
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        1376
+      ],
+      "id": "3e7b6369-915f-41f5-8126-30e94c08fe87",
+      "name": "📊 Workflow Overview"
+    }
+  ],
+  "connections": {
+    "data": {
+      "main": [
+        [
+          {
+            "node": "details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update offer_letter_generated": {
+      "main": [
+        [
+          {
+            "node": "offer_letter_generated done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "offer letter1": {
+      "main": [
+        [
+          {
+            "node": "mail HR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "details": {
+      "main": [
+        [
+          {
+            "node": "email content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "email content": {
+      "main": [
+        [
+          {
+            "node": "contents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "contents": {
+      "main": [
+        [
+          {
+            "node": "offer letter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "mail HR": {
+      "main": [
+        [
+          {
+            "node": "update offer_letter_generated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "881c9513-33ce-4386-8bab-b8168518fdc7",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-11-20T09:52:34.410Z",
+      "updatedAt": "2025-11-20T09:52:34.410Z",
+      "role": "workflow:owner",
+      "workflowId": "NcfYJjUw84wwBK7z",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-15T04:41:56.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-15",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
