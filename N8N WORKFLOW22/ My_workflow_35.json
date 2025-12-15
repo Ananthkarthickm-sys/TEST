@@ -1,0 +1,283 @@
+{
+  "createdAt": "2025-12-04T11:56:04.494Z",
+  "updatedAt": "2025-12-15T07:23:54.000Z",
+  "id": "GNY5lILcMox7AUtH",
+  "name": "My workflow 35",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hr-submit",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1952,
+        -592
+      ],
+      "id": "ed4e09ab-8c9b-4e42-a225-83df659fe387",
+      "name": "Webhook",
+      "webhookId": "066c8c22-314c-4f96-8b18-84a9b2d4f8cb"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"body\": {\n      \"type\": \"string\",\n      \"description\": \"The complete email body content ready to send\"\n    }\n  },\n  \"required\": [\"body\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1488,
+        -224
+      ],
+      "id": "053a57f6-db74-4309-91f9-f20090c50dca",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1728,
+        -352
+      ],
+      "id": "000d8d43-bc5f-4432-9f8a-e5861ee25c3c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "EDKQjccT9Ythpx7J",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional HR communication assistant. Your task is to generate polite, professional email responses to job candidates based on the provided candidate request and HR response information.\n\n## Context Information:\n- Candidate Name: {{ $json.body.candidate_name }}\n- Candidate Request: {{ $json.body.candidate_request }}\n- HR Response: {{ $json.body.hr_response }}\nsalutation : Regards,\nHr team.\n\n## Instructions:\n1. Analyze the candidate's request and the HR team's response\n2. Generate a professional, empathetic, and clear email body\n3. Maintain a warm but professional tone\n4. Be specific about next steps or decisions when applicable\n5. Always thank the candidate for their interest/time\n6. Keep the response concise but comprehensive\n\n## Email Body Requirements:\n- Address the candidate by name\n- Address the candidate's specific request or inquiry\n- Incorporate the HR response information naturally\n- Provide clear next steps or timeline when applicable\n- End with professional closing sentiment\n- Maintain positive tone even for rejections\n- Use proper email etiquette\n\n## Response Format:\nGenerate ONLY the email body content. Do not include subject lines, signatures, or email headers. The response should be ready to insert into an email template.\n\n## Tone Guidelines:\n- Professional yet warm\n- Empathetic and respectful\n- Clear and direct\n- Encouraging when appropriate\n- Grateful for their interest\n\nGenerate the email body content now:",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -1728,
+        -592
+      ],
+      "id": "5da16643-a40d-404d-aefc-dd48fc8451c1",
+      "name": "EMAIL"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>HR Email Review</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <style>\n    body {\n      font-family: \"Segoe UI\", sans-serif;\n      background-color: #eef2f7;\n      padding: 30px;\n      margin: 0;\n    }\n\n    .container {\n      max-width: 800px;\n      background-color: #ffffff;\n      padding: 30px;\n      margin: auto;\n      border-radius: 12px;\n      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);\n    }\n\n    h2 {\n      font-size: 24px;\n      color: #333;\n      margin-bottom: 20px;\n      border-bottom: 1px solid #ccc;\n      padding-bottom: 10px;\n    }\n\n    #emailPreview, #emailEditor {\n      white-space: pre-wrap;\n      font-size: 16px;\n      color: #333;\n      background: #f9f9f9;\n      padding: 20px;\n      border-radius: 8px;\n      border: 1px solid #ddd;\n      margin-bottom: 20px;\n    }\n\n    textarea {\n      width: 100%;\n      height: 300px;\n      font-size: 16px;\n      font-family: inherit;\n      padding: 15px;\n      border-radius: 8px;\n      border: 1px solid #ccc;\n      resize: vertical;\n    }\n\n    .btn-group {\n      display: flex;\n      gap: 10px;\n      justify-content: flex-end;\n    }\n\n    button {\n      padding: 10px 20px;\n      font-size: 15px;\n      border: none;\n      border-radius: 4px;\n      cursor: pointer;\n    }\n\n    .edit-btn { background-color: #0078D4; color: white; }\n    .send-btn { background-color: #107C10; color: white; }\n    .cancel-btn { background-color: #888; color: white; }\n\n    .signature {\n      margin-top: 30px;\n      text-align: left;\n    }\n\n    .signature img {\n      width: 150px;\n      height: auto;\n      margin-top: 10px;\n    }\n\n    #thankYouBox {\n      display: none;\n      text-align: center;\n    }\n\n    #thankYouBox h2 {\n      font-size: 26px;\n      color: #2e7d32;\n    }\n\n    #thankYouBox .icon {\n      font-size: 48px;\n      color: #4caf50;\n      margin-bottom: 20px;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <h2>HR Email Review</h2>\n\n    <!-- Edit Area -->\n    <div id=\"editorSection\" style=\"display: none;\">\n      <textarea id=\"emailTextArea\">{{ $json.output.body }}</textarea>\n      <div class=\"btn-group\">\n        <button class=\"send-btn\" onclick=\"showPreview()\">Send</button>\n      </div>\n    </div>\n\n    <!-- Preview -->\n    <div id=\"previewSection\">\n      <div id=\"emailPreview\">{{ $json.output.body }}</div>\n      <div class=\"signature\">\n        <p>Regards,<br>HR team.</p>\n        <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" alt=\"Rencata Logo\" />\n      </div>\n      <div class=\"btn-group\">\n        <button class=\"edit-btn\" onclick=\"editEmail()\">Edit</button>\n        <button class=\"send-btn\" onclick=\"showConfirm()\">Send</button>\n      </div>\n    </div>\n\n    <!-- Confirm Preview -->\n    <div id=\"confirmSection\" style=\"display: none;\">\n      <div id=\"finalPreview\"></div>\n      <div class=\"signature\">\n        <p>Regards,<br>HR team.</p>\n        <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" alt=\"Rencata Logo\" />\n      </div>\n      <div class=\"btn-group\">\n        <button class=\"cancel-btn\" onclick=\"backToEdit()\">Cancel</button>\n        <button class=\"send-btn\" onclick=\"finalSend()\">Confirm & Send</button>\n      </div>\n    </div>\n\n    <!-- Thank You Message -->\n    <div id=\"thankYouBox\">\n      <div class=\"icon\">✅</div>\n      <h2>Thank You!</h2>\n      <p>Your response has been sent to the candidate.</p>\n      <p>This window will close automatically.</p>\n    </div>\n\n    <!-- Hidden form to submit edited content -->\n    <form id=\"submitForm\" method=\"POST\" action=\"https://192.168.16.160:5678/webhook/hr-submit-mail?email={{ $('Webhook').item.json.body.personal_mail }}\" style=\"display: none;\">\n      <input type=\"hidden\" name=\"edited_response\" id=\"editedResponseField\">\n      <input type=\"hidden\" name=\"session_id\" value=\"{{ $json.query.session_id || '' }}\">\n      <input type=\"hidden\" name=\"hr_email\" value=\"{{ $json.query.hr_email || '' }}\">\n    </form>\n  </div>\n\n  <script>\n    function editEmail() {\n      document.getElementById('previewSection').style.display = 'none';\n      document.getElementById('editorSection').style.display = 'block';\n      document.getElementById('emailTextArea').focus();\n    }\n\n    function showPreview() {\n      const edited = document.getElementById('emailTextArea').value;\n      document.getElementById('editorSection').style.display = 'none';\n      document.getElementById('previewSection').style.display = 'block';\n      document.getElementById('emailPreview').innerText = edited;\n    }\n\n    function showConfirm() {\n      const final = document.getElementById('emailPreview').innerText;\n      document.getElementById('previewSection').style.display = 'none';\n      document.getElementById('confirmSection').style.display = 'block';\n      document.getElementById('finalPreview').innerText = final;\n    }\n\n    function backToEdit() {\n      document.getElementById('confirmSection').style.display = 'none';\n      document.getElementById('editorSection').style.display = 'block';\n    }\n\n    function finalSend() {\n      const finalContent = document.getElementById('finalPreview').innerText;\n      document.getElementById('editedResponseField').value = finalContent;\n\n      // Submit the form to webhook\n      document.getElementById('submitForm').submit();\n\n      // Show thank you message and close\n      document.getElementById('confirmSection').style.display = 'none';\n      document.getElementById('thankYouBox').style.display = 'block';\n\n      setTimeout(() => {\n        window.close();\n      }, 3000);\n    }\n  </script>\n</body>\n</html>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -1360,
+        -592
+      ],
+      "id": "796a9092-a5c0-48fd-b517-35de87a48b40",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "toRecipients": "Venupriya.arunkumar@rencata.com ",
+        "subject": "test neg",
+        "bodyContent": "={{ $json.query.content }}\n\n<p>Regards,<br> HR team.</p>\n\n<p>\n  <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" \n       alt=\"Rencata Logo\" \n       style=\"width: 150px; height: auto;\">\n</p>\n",
+        "additionalFields": {
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -736,
+        -416
+      ],
+      "id": "ada5177b-e237-4f1d-925b-8ba7b55e76a3",
+      "name": "Candidate_mail",
+      "webhookId": "b7a91bdd-7713-4f5f-a3e5-5f777b7128e1",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>Email Preview</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <style>\n    body {\n      font-family: \"Segoe UI\", sans-serif;\n      background-color: #f3f6fb;\n      margin: 0;\n      padding: 0;\n      display: flex;\n      justify-content: center;\n    }\n\n    .container {\n      background-color: #fff;\n      margin-top: 40px;\n      width: 700px;\n      padding: 30px;\n      box-shadow: 0 2px 8px rgba(0,0,0,0.1);\n      border-radius: 8px;\n    }\n\n    .header {\n      font-weight: 600;\n      margin-bottom: 20px;\n      font-size: 18px;\n    }\n\n    .field {\n      margin-bottom: 20px;\n    }\n\n    .label {\n      font-weight: bold;\n      color: #444;\n      display: block;\n      margin-bottom: 6px;\n    }\n\n    input[type=\"email\"] {\n      width: 100%;\n      padding: 10px;\n      border: 1px solid #ccc;\n      border-radius: 6px;\n      font-size: 14px;\n      background-color: #f5f5f5;\n    }\n\n    .email-content {\n      border-top: 1px solid #ddd;\n      padding-top: 20px;\n    }\n\n    .email-content p {\n      line-height: 1.6;\n      font-size: 15px;\n      color: #333;\n      margin: 12px 0;\n    }\n\n    .popup {\n      position: fixed;\n      top: 50%;\n      left: 50%;\n      transform: translate(-50%, -50%);\n      background: white;\n      border-radius: 10px;\n      padding: 40px;\n      box-shadow: 0 10px 30px rgba(0,0,0,0.2);\n      text-align: center;\n      z-index: 1000;\n      display: none;\n    }\n\n    .popup h2 {\n      color: #2e7d32;\n      margin-bottom: 10px;\n    }\n\n    .popup p {\n      color: #333;\n      font-size: 16px;\n    }\n  </style>\n</head>\n<body>\n\n  <div class=\"container\">\n    <div class=\"header\">From: <strong>Agentic AI</strong></div>\n\n    <div class=\"field\">\n      <label class=\"label\">To:</label>\n      <input type=\"email\" id=\"toField\" readonly>\n    </div>\n\n    <div class=\"email-content\" id=\"emailPreview\">\n      <!-- Message will be injected here -->\n    </div>\n  </div>\n\n  <div class=\"popup\" id=\"thankYouPopup\">\n    <h2>✅ Thank You!</h2>\n    <p>Your response has been recorded successfully.</p>\n    <p>This window will close automatically.</p>\n  </div>\n\n  <script>\n    function decodeHTML(html) {\n      const txt = document.createElement('textarea');\n      txt.innerHTML = html;\n      return txt.value;\n    }\n\n    function getQueryParams() {\n      const params = new URLSearchParams(window.location.search);\n      return {\n        to: params.get(\"to\") || \"\",\n        content: params.get(\"content\") || \"<p>No content provided.</p>\",\n        mailid: params.get(\"mailid\") || \"\"\n      };\n    }\n\n    window.onload = () => {\n      const { to, content, mailid } = getQueryParams();\n\n      // Set To field\n      document.getElementById(\"toField\").value = to;\n\n      // Set email content and append default footer\n      const emailContent = decodeHTML(content);\n      const footer = `\n        <p>Regards,<br> HR team.</p>\n        <p>\n          <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" \n               alt=\"Rencata Logo\" \n               style=\"width: 150px; height: auto;\">\n        </p>\n      `;\n      document.getElementById(\"emailPreview\").innerHTML = emailContent + footer;\n\n      // Auto popup after 20 seconds, close after 10 seconds\n      setTimeout(() => {\n        document.getElementById(\"thankYouPopup\").style.display = \"block\";\n        setTimeout(() => window.close(), 10000); // Close after 10 seconds\n      }, 20000); // Show popup after 20 seconds\n    };\n  </script>\n\n</body>\n</html>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        -976,
+        -416
+      ],
+      "id": "a1c6185d-3fcc-4674-8e60-fca6773da078",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "path": "Approval",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1232,
+        -416
+      ],
+      "id": "fead87c6-4865-4848-9135-f3fea33be337",
+      "name": "Webhook1",
+      "webhookId": "5c8a32e9-2d85-4e62-82ec-daa00bc56fc1"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "EMAIL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "EMAIL",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "EMAIL",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EMAIL": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Candidate_mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "462f23ba-9027-4628-95e9-700ac0dcd06a",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-12-04T11:56:04.497Z",
+      "updatedAt": "2025-12-04T11:56:04.497Z",
+      "role": "workflow:owner",
+      "workflowId": "GNY5lILcMox7AUtH",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-15T04:41:56.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-15",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
