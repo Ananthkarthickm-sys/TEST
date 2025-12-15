@@ -1,0 +1,1093 @@
+{
+  "createdAt": "2025-12-04T04:43:34.220Z",
+  "updatedAt": "2025-12-15T07:27:39.000Z",
+  "id": "ksuOisPoVdA3R0pq",
+  "name": "Collect_Proof_of_Joining",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "d7ae21e5-b9b2-410e-8e53-d321cdd9ab95",
+      "typeVersion": 1.1,
+      "name": "data",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -272,
+        512
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = items[0].json;\nconst Id = data.id;\nconst templates = data.templates || {};\n\nconst taskSequence = [\n  \"resignation_proof_received\",\n  \"hr_acceptance_received\",\n  \"relocation_required\",\n  \"resignation_reminder_sent\",\n  \"hr_acceptance_reminder_sent\"\n];\n\n// Check if we have a previously completed task to mark\nconst previous_completed_task = data.previous_task || null;\nif (previous_completed_task && taskSequence.includes(previous_completed_task)) {\n  templates[previous_completed_task] = true;\n}\n\n// Find the next incomplete task\nlet next_task = null;\nfor (const task of taskSequence) {\n  if (templates[task] !== true) {\n    next_task = task;\n    break;\n  }\n}\n\nconst incompleteCount = taskSequence.reduce((count, task) => {\n  return count + (templates[task] !== true ? 1 : 0);\n}, 0);\n\nconst process_paused = incompleteCount === 1;\n\nreturn [{\n  json: {\n    id: Id,\n    next_task,\n    process_paused,\n    templates,\n    previous_task: next_task // This will be marked complete on next run\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        512
+      ],
+      "id": "f050843c-700a-483f-bcb1-38c9c259ec47",
+      "name": "Pending task"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "=1150"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "templates",
+            "id",
+            "first_name",
+            "last_name"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -32,
+        512
+      ],
+      "id": "c6482d53-50fb-40bc-88ec-53e0d667a728",
+      "name": "Tasks",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8f026d55-32fc-431e-9d27-64f4e6bb8d34",
+                    "leftValue": "={{ $json.next_task }}",
+                    "rightValue": "resignation_proof_received",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "resignation_proof_received"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c45bb257-7f29-47c3-b609-23e5f008d066",
+                    "leftValue": "={{ $json.next_task }}",
+                    "rightValue": "hr_acceptance_received",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "hr_acceptance_received"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e62ccedf-4180-460c-8055-b0e20e9a3a41",
+                    "leftValue": "={{ $json.next_task }}",
+                    "rightValue": "relocation_required",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "relocation_required"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "87f67bcb-c256-4714-a4e6-a08c917d30db",
+                    "leftValue": "={{ $json.next_task }}",
+                    "rightValue": "resignation_reminder_sent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "resignation_reminder_sent"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "83c37721-3f1a-4a58-8dc5-4bf11451649d",
+                    "leftValue": "={{ $json.next_task }}",
+                    "rightValue": "hr_acceptance_reminder_sent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "hr_acceptance_reminder_sent"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0f6e78f5-a38f-4b2e-911a-6d230dbfe085",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "fallbackOutput": "none",
+          "allMatchingOutputs": true
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1040,
+        496
+      ],
+      "id": "d409fcad-009b-43aa-8e95-3681745d1233",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "rUF2HFDb0u4SUgnI",
+          "mode": "list",
+          "cachedResultName": "relocation_required_check"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1520,
+        416
+      ],
+      "id": "077e6239-6a15-4642-8c7a-631c68f883e7",
+      "name": "relocation_required"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VcIuXhHjXWURXtrL",
+          "mode": "list",
+          "cachedResultName": "flow__resignation_proof_received_"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1088,
+        96
+      ],
+      "id": "69326c8f-4eb0-4650-85ae-48443f13b099",
+      "name": "resignation_proof_received"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "QfONoGdYRWtFmOM7",
+          "mode": "list",
+          "cachedResultName": "hr acceptance received"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        160
+      ],
+      "id": "edf8de6f-679d-4ee2-bbaa-bf2cb7027a17",
+      "name": "hr_acceptance_received1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "26cfbb04-86c1-4b08-ace5-f3f9d86e6864",
+              "leftValue": "={{ $json.process_paused }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "a351691f-c72e-4e11-a252-cdbdd3634fae",
+              "leftValue": "={{ $('Tasks').item.json.id }}",
+              "rightValue": "={{ $('Tasks').item.json.id }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        512
+      ],
+      "id": "7a5539d5-a63a-4461-95ce-e3c7eb38a739",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "jCFNio1oT4TpIFs9",
+          "mode": "list",
+          "cachedResultName": "flow (hr_acceptance_received)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1232,
+        1264
+      ],
+      "id": "71769512-e5ee-4c5e-a429-401a13bf35f8",
+      "name": "hr_acceptance_received"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "kZp9jqlbAWyV0llo",
+          "mode": "list",
+          "cachedResultName": "flow (resignation_proof_received)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        944,
+        1152
+      ],
+      "id": "6ee0ef49-a7cb-4f35-9639-223837c55911",
+      "name": "resignation_proof_received1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "19jssexHNzmnbs2O",
+          "mode": "list",
+          "cachedResultName": "flow (relocation_required)"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1056,
+        1408
+      ],
+      "id": "dcf52961-2c09-41dc-8ffe-a86408337802",
+      "name": "relocation_required1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8f026d55-32fc-431e-9d27-64f4e6bb8d34",
+                    "leftValue": "={{ $json.next_task }}",
+                    "rightValue": "resignation_proof_received",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "resignation_proof_received"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c45bb257-7f29-47c3-b609-23e5f008d066",
+                    "leftValue": "={{ $json.next_task }}",
+                    "rightValue": "hr_acceptance_received",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "hr_acceptance_received"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e62ccedf-4180-460c-8055-b0e20e9a3a41",
+                    "leftValue": "={{ $json.next_task }}",
+                    "rightValue": "relocation_required",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "relocation_required"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e9486b1b-10a6-41fe-98ce-bb926bcf2845",
+                    "leftValue": "={{ $json.next_task }}",
+                    "rightValue": "relocation_confirmed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "relocation_confirmed"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "911ece8e-aa37-4ba9-bf32-f5c12d610e02",
+                    "leftValue": "={{ $json.next_task }}",
+                    "rightValue": "resignation_reminder_sent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "resignation_reminder_sent"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "87f67bcb-c256-4714-a4e6-a08c917d30db",
+                    "leftValue": "={{ $json.next_task }}",
+                    "rightValue": "hr_acceptance_reminder_sent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "hr_acceptance_reminder_sent"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "39977be7-def9-453b-8780-23bc5acaef6a",
+                    "leftValue": "={{ $json.next_task }}",
+                    "rightValue": "relocation_reminder_sent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "relocation_reminder_sent"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9559dae4-4914-445a-83c4-22a60be6078a",
+                    "leftValue": "={{ $json.next_task }}",
+                    "rightValue": "onboarding_complete",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "onboarding_complete"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        528,
+        1520
+      ],
+      "id": "f4ef1c33-7c41-497b-885e-d52df13f2a51",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $json.body.id }}"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "templates"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -272,
+        1528
+      ],
+      "id": "9e961d6d-b06a-46fa-8012-a93cb61f6453",
+      "name": "Tasks1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = items[0].json;\nconst Id = $('data').first().json.body.id;\n\nconst templates = data.templates || {};\n\n// Only core offer process tasks\nconst taskSequence = [\"resignation_proof_received\",\n  \"hr_acceptance_received\",\n  \"relocation_required\",\n  \"relocation_confirmed\",\n  \"resignation_reminder_sent\",\n  \"hr_acceptance_reminder_sent\",\n  \"relocation_reminder_sent\",\n];\n\n// Find the next incomplete task in the sequence\nlet next_task = null;\nfor (const task of taskSequence) {\n  if (templates[task] !== true) {\n    next_task = task;\n    break;\n  }\n}\n\n// Count how many tasks are still incomplete\nconst incompleteCount = taskSequence.reduce((count, task) => {\n  return count + (templates[task] !== true ? 1 : 0);\n}, 0);\n\n// Pause the process if only one task remains incomplete\nconst process_paused = incompleteCount === 1;\n\nreturn [{\n  json: {\n    id: Id,\n    next_task,\n    process_paused\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        1528
+      ],
+      "id": "e9aa228f-0fdd-49a6-95ab-4d7b446c3a7c",
+      "name": "Pending task1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Use this AFTER the task completes (in a separate node)\nconst data = items[0].json;\nconst completed_task = data.next_task;\n\n// Mark the task as complete\ndata.templates[completed_task] = true;\n\nreturn [{\n  json: {\n    id: data.id,\n    templates: data.templates\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1152,
+        -224
+      ],
+      "id": "79f19b6c-4645-4873-9b2e-6129f143f58d",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = jsonb_set(\n    COALESCE(templates::jsonb, '{}'::jsonb),\n    '{{ $json.next_task }}',\n    'true'::jsonb,\n    true\n)::json,\n    updated_at = NOW()\nWHERE id = {{ $json.id }}",
+        "additionalFields": {}
+      },
+      "name": "Update Database",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        128
+      ],
+      "id": "e9ecc508-b47c-4326-a68a-f7eba19aa690",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toRecipients": "ananya.js@rencata.com",
+        "subject": "Relocation Required",
+        "bodyContent": "=<div style=\"font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; color: #333; padding: 20px;\">\n  <p>Dear HR Team,</p>\n\n  <p>This is to inform you that the onboarding process for the candidate \n  <strong>{{ $('Tasks').item.json.first_name }} {{ $('Tasks').item.json.last_name }}</strong> \n  (Candidate ID: <strong>{{ $('Tasks').item.json.id }}</strong>) has been <strong>paused</strong>.\n\n  <p>Kindly review the candidate's status and take the necessary action to resume or close the onboarding process.</p>\n\n  <p>Best regards,<br>\n  <strong>Onboarding AI</strong></p>\n</div>\n",
+        "additionalFields": {
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        896,
+        32
+      ],
+      "id": "b1e4d2a9-ac5c-4c7f-a4b0-574d82ceba4f",
+      "name": "Microsoft Outlook3",
+      "webhookId": "433d2fcd-e2bc-49cf-960f-c23b780981cd",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "data": {
+      "main": [
+        [
+          {
+            "node": "Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pending task": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tasks": {
+      "main": [
+        [
+          {
+            "node": "Pending task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "resignation_proof_received",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "hr_acceptance_received1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "relocation_required",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "resignation_proof_received": {
+      "main": [
+        [
+          {
+            "node": "Update Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "relocation_required": {
+      "main": [
+        [
+          {
+            "node": "Update Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "hr_acceptance_received1": {
+      "main": [
+        [
+          {
+            "node": "Update Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Microsoft Outlook3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "hr_acceptance_received": {
+      "main": [
+        [
+          {
+            "node": "Pending task1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "resignation_proof_received1": {
+      "main": [
+        [
+          {
+            "node": "Pending task1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "relocation_required1": {
+      "main": [
+        [
+          {
+            "node": "Pending task1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "resignation_proof_received1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "hr_acceptance_received",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "relocation_required1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tasks1": {
+      "main": [
+        [
+          {
+            "node": "Pending task1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pending task1": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        []
+      ]
+    },
+    "Update Database": {
+      "main": [
+        [
+          {
+            "node": "Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "data": [
+      {
+        "json": {
+          "headers": {
+            "content-type": "application/json",
+            "user-agent": "PostmanRuntime/7.44.0",
+            "accept": "*/*",
+            "postman-token": "eab22b4d-3c33-4434-9f89-6d5cc913e029",
+            "host": "192.168.50.202:5678",
+            "accept-encoding": "gzip, deflate, br",
+            "connection": "keep-alive",
+            "content-length": "20"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "id": 1003
+          },
+          "webhookUrl": "https://192.168.50.202:5678/webhook-test/onboarding",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "versionId": "3c809e4b-838a-4bc4-a8bc-158d4717fac8",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-12-04T04:43:34.223Z",
+      "updatedAt": "2025-12-04T04:43:34.223Z",
+      "role": "workflow:owner",
+      "workflowId": "ksuOisPoVdA3R0pq",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-15T04:41:56.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-15",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
