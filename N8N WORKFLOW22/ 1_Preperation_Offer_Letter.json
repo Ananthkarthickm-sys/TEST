@@ -1,0 +1,884 @@
+{
+  "createdAt": "2025-11-19T10:18:19.542Z",
+  "updatedAt": "2025-11-20T10:02:04.000Z",
+  "id": "ivJ0Qf3FYIBtGMvZ",
+  "name": "1 Preperation_Offer_Letter",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "2b4b077e-ad55-40cb-9b9d-53850a2bd34c",
+      "typeVersion": 1.1,
+      "name": "data",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -2448,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2336,
+        128
+      ],
+      "id": "73dcf37b-763b-47bc-8bd9-d1921caf0454",
+      "name": "When chat message received",
+      "webhookId": "b773450e-b36a-430c-a77f-d1b7252ac457"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $json.chatInput }}"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "id",
+            "candidate_id",
+            "first_name",
+            "last_name",
+            "templates"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -2128,
+        128
+      ],
+      "id": "b72be1f2-6044-411a-aba8-54097ec0a630",
+      "name": "Get Candidate",
+      "credentials": {
+        "postgres": {
+          "id": "0CwtQcnj9v3qZLce",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toRecipients": "Surendar.Rajendiran@rencata.com",
+        "subject": "=Process Paused - {{ $json.first_name }} {{ $json.last_name }} ({{ $json.candidate_id }})",
+        "bodyContent": "=<p>Process paused for candidate {{ $json.first_name }} {{ $json.last_name }} ({{ $json.candidate_id }}). Please review.</p>",
+        "additionalFields": {
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        -1648,
+        208
+      ],
+      "id": "342b3269-7dc8-435d-bff6-0832d01f94da",
+      "name": "Send Pause Email",
+      "webhookId": "6166ab8c-a70f-4cb3-b83b-2f8aa78a7bcb",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "H0uRrHrJgQ7jbWpu",
+          "mode": "list",
+          "cachedResultName": "2 InitiateOfferLetterGenerate"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -1376,
+        592
+      ],
+      "id": "a3de870e-ee1f-4f8d-a097-7288a3580631",
+      "name": "Generate Offer"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "task2_check",
+              "leftValue": "={{ $json.templates.offer_letter_generated }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            },
+            {
+              "id": "task2_check2",
+              "leftValue": "={{ $json.templates.offer_letter_sent_for_esigning }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEqual"
+              }
+            },
+            {
+              "id": "3830e87e-83b4-4538-aa73-936baa5ed73e",
+              "leftValue": "={{ $json.templates.offer_letter_sent_for_esigning }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1072,
+        128
+      ],
+      "id": "4250add1-e14b-4a98-87b5-f016ccd17925",
+      "name": "Need Send for eSigning?"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "NZ0Axgeqt41MvkFH",
+          "mode": "list",
+          "cachedResultName": "2 Initiate Offer Letter E-Signing"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -1232,
+        384
+      ],
+      "id": "a75b3b2e-4a1d-453b-ab7b-f2e536bb90a3",
+      "name": "Send for eSigning"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "task3_check",
+              "leftValue": "={{ $json.templates.offer_letter_sent_for_esigning }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            },
+            {
+              "id": "task3_check2",
+              "leftValue": "={{ $json.templates.offer_letter_esigned }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEqual"
+              }
+            },
+            {
+              "id": "2c7d9547-010e-4ca4-9582-1316bd36a481",
+              "leftValue": "={{ $json.templates.offer_letter_sent_for_esigning }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1024,
+        384
+      ],
+      "id": "f8d63521-af7b-4bf8-8630-84cd9609ef9f",
+      "name": "Need Validate eSigned?"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "1CGdxQnEpSxqnmWW",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -704,
+        288
+      ],
+      "id": "6a57fbf2-b83e-429c-befd-779c083e34e3",
+      "name": "Validate eSigned"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $('Get Candidate').first().json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "id",
+            "candidate_id",
+            "first_name",
+            "last_name",
+            "templates"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -480,
+        384
+      ],
+      "id": "e1e9b9b9-18b9-449e-b51c-1fb300d941b0",
+      "name": "Refresh for Task4",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "task4_check",
+              "leftValue": "={{ $json.templates.offer_letter_esigned }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            },
+            {
+              "id": "task4_check2",
+              "leftValue": "={{ $json.templates.offer_letter_sent_to_candidate }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEqual"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -256,
+        384
+      ],
+      "id": "d7118e8d-3af1-40d3-a810-d07bff73cc3f",
+      "name": "Need Send to Candidate?"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "send_to_candidate_id",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        368
+      ],
+      "id": "f9abc1a7-ab3d-43a1-ac00-fd1540e2bc6d",
+      "name": "Send to Candidate"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "task1_check",
+              "leftValue": "={{ $json.templates.offer_letter_generated }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEqual"
+              }
+            },
+            {
+              "id": "806c94da-2e79-4f22-ada3-68f801110748",
+              "leftValue": "={{ $json.templates.offer_letter_generated }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2576,
+        608
+      ],
+      "id": "edb56014-c052-4d24-997e-d1c5b45956d9",
+      "name": "Need Generate Offer?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d17dd96c-ef83-46a7-87a1-61e1019a053a",
+              "leftValue": "={{ $json.templates.process_paused }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1920,
+        320
+      ],
+      "id": "5b8d5309-9091-472d-892f-909aa11d1691",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d17dd96c-ef83-46a7-87a1-61e1019a053a",
+              "leftValue": "={{ $json.templates.offer_letter_generated }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1648,
+        416
+      ],
+      "id": "9971e402-e5a0-4bdb-8ec0-ae26cd75c3dc",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "templates"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -2192,
+        320
+      ],
+      "id": "be1b2b32-39be-4c34-9005-c18eda53834e",
+      "name": "Tasks2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "data": {
+      "main": [
+        [
+          {
+            "node": "Tasks2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Get Candidate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Candidate": {
+      "main": [
+        []
+      ]
+    },
+    "Send for eSigning": {
+      "main": [
+        [
+          {
+            "node": "Need Validate eSigned?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Need Validate eSigned?": {
+      "main": [
+        [
+          {
+            "node": "Validate eSigned",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Refresh for Task4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate eSigned": {
+      "main": [
+        [
+          {
+            "node": "Refresh for Task4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refresh for Task4": {
+      "main": [
+        [
+          {
+            "node": "Need Send to Candidate?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Need Send to Candidate?": {
+      "main": [
+        [
+          {
+            "node": "Send to Candidate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send Pause Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send for eSigning",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate Offer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tasks2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "data": [
+      {
+        "json": {
+          "id": 1006,
+          "candidate_id": "CA1006",
+          "first_name": "Anu",
+          "last_name": "Jack",
+          "personal_email": "ananya.js@rencata.com",
+          "mobile_number": "9876543210",
+          "hiring_department": "Development",
+          "start_date": "2025-06-19T18:30:00.000Z",
+          "customer_name": "Rencata",
+          "project_name": "OnboardingAI",
+          "created_by": "admin",
+          "created_at": "2025-06-19T04:40:19.000Z",
+          "updated_at": "2025-06-19T04:40:19.000Z",
+          "templates": {
+            "salary_structure_generated": false,
+            "salary_structure_validated": false,
+            "doj_calculated": false,
+            "offer_letter_generated": false,
+            "offer_letter_sent_for_esigning": false,
+            "offer_letter_esigned": false,
+            "offer_letter_sent_to_candidate": false,
+            "offer_accepted": false,
+            "offer_declined": false,
+            "offer_response_date": null,
+            "resignation_proof_received": false,
+            "resignation_proof_date": null,
+            "hr_acceptance_received": false,
+            "hr_acceptance_date": null,
+            "relocation_required": false,
+            "relocation_confirmed": false,
+            "relocation_confirmation_date": null,
+            "resignation_reminder_sent": false,
+            "resignation_last_reminder": null,
+            "hr_acceptance_reminder_sent": false,
+            "hr_acceptance_last_reminder": null,
+            "relocation_reminder_sent": false,
+            "relocation_last_reminder": null,
+            "onboarding_complete": false,
+            "process_paused": false,
+            "created_at": null,
+            "updated_at": null
+          },
+          "currentlocation": "chennai",
+          "offeredlocation": "Mumbai",
+          "experience": 5,
+          "ctc": 1800000,
+          "position": "Senior Software Engineer",
+          "doj": "2025-06-19T18:30:00.000Z",
+          "notice_period": 61
+        }
+      },
+      {
+        "json": {
+          "id": 1006,
+          "candidate_id": "CA1006",
+          "fixed_component": "0.00",
+          "variable_component": "0.00",
+          "basic_salary": "600000.00",
+          "hra": "240000.00",
+          "other_allowances": "0.00",
+          "pf_amount": "72000.00",
+          "esi_eligible": false,
+          "esi_amount": "0.00",
+          "gross_salary": "0.00",
+          "net_salary": "0.00",
+          "created_at": "2025-06-18T23:10:19.000Z",
+          "gratuity": "28845.00",
+          "flexi_benefits": "300000.00",
+          "total_annual_performance_incentive": "240000.00",
+          "pf_company_contribution": "0.00",
+          "annual_ctc": "1800000.00"
+        }
+      }
+    ],
+    "Get Candidate": [
+      {
+        "json": {
+          "id": 1004,
+          "candidate_id": "CA1004",
+          "first_name": "Amit",
+          "last_name": "Sharma",
+          "templates": {
+            "created_at": null,
+            "updated_at": null,
+            "doj_calculated": true,
+            "network_access": false,
+            "offer_accepted": true,
+            "offer_declined": false,
+            "process_paused": false,
+            "hr_acceptance_date": "2025-06-23",
+            "offer_response_date": "2025-06-24",
+            "onboarding_complete": false,
+            "relocation_required": false,
+            "offer_letter_esigned": true,
+            "relocation_confirmed": false,
+            "hr_acceptance_received": true,
+            "offer_letter_generated": true,
+            "resignation_proof_date": null,
+            "relocation_last_reminder": null,
+            "relocation_reminder_sent": false,
+            "resignation_last_reminder": null,
+            "resignation_reminder_sent": false,
+            "resignation_proof_received": false,
+            "salary_structure_generated": true,
+            "salary_structure_validated": true,
+            "hr_acceptance_last_reminder": null,
+            "hr_acceptance_reminder_sent": false,
+            "relocation_confirmation_date": null,
+            "offer_letter_sent_for_esigning": true,
+            "offer_letter_sent_to_candidate": true
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "19a62981-32dc-4c13-8f8e-2b11fb7020bb",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-11-19T10:18:19.547Z",
+      "updatedAt": "2025-11-19T10:18:19.547Z",
+      "role": "workflow:owner",
+      "workflowId": "ivJ0Qf3FYIBtGMvZ",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-15T04:41:56.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-15",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
