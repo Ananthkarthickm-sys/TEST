@@ -1,0 +1,603 @@
+{
+  "createdAt": "2025-11-25T12:31:38.845Z",
+  "updatedAt": "2025-12-03T06:57:42.000Z",
+  "id": "Nu2xrYFHi9mjMFMN",
+  "name": "My workflow 29",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.microsoftOneDrive",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        -224
+      ],
+      "id": "e8d8e050-84c7-428c-b0f7-1373ab38a771",
+      "name": "Download a file"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "folderId": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.microsoftOneDrive",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        -224
+      ],
+      "id": "68442eee-5fa6-4e15-b00d-3739cc189cd2",
+      "name": "Get items in a folder"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "operation": "search",
+        "query": "Automated API Testing Framework"
+      },
+      "type": "n8n-nodes-base.microsoftOneDrive",
+      "typeVersion": 1,
+      "position": [
+        640,
+        -224
+      ],
+      "id": "d3021e26-b0b0-4c73-8c46-f907a2bae7f2",
+      "name": "Search a folder"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        -224
+      ],
+      "id": "d0cd6104-e15a-41f4-92a7-d8ee1137e823",
+      "name": "Extract from File_001"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.filter(item => item.json.name === 'Automated API Testing Framework');"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        -224
+      ],
+      "id": "d67ff205-ec17-449f-af3a-f2714db99e9b",
+      "name": "Identify Source Folder"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        4016,
+        1040
+      ],
+      "id": "e5bfc4ff-2e41-4d89-b7d9-8cb6e62779e8",
+      "name": "Merge Request + Response"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// Separate requests and responses\nconst requests = items.filter(i => i.json.TestcaseId);\nconst responses = items.filter(i => i.json.result);\n\nlet results = [];\n\nfunction maskFileContent(bodyObj) {\n  if (!bodyObj) return bodyObj;\n\n  try {\n    const parsed = typeof bodyObj === \"string\" ? JSON.parse(bodyObj) : bodyObj;\n\n    if (parsed.file && parsed.file.content) {\n      return {\n        file: {\n          filename: parsed.file.filename || \"\",\n          binary: \"<binary data>\"\n        }\n      };\n    }\n\n    return parsed;\n  } catch (e) {\n    return bodyObj;\n  }\n}\n\n// NEW: Extracts first 3-digit status code from expected text\nfunction extractStatusCode(text) {\n  if (!text) return \"\";\n  const match = text.match(/\\b\\d{3}\\b/); // Match any 3-digit number\n  return match ? match[0] : \"\";\n}\n\nfor (let i = 0; i < requests.length; i++) {\n  const request = requests[i]?.json || {};\n  const responseItem = responses[i]?.json || {};\n\n  let responseData = {};\n  try {\n    const text = responseItem?.result?.content?.[0]?.text;\n    if (text) responseData = JSON.parse(text);\n  } catch (err) {\n    responseData = { error: \"Invalid JSON in response\", raw: responseItem };\n  }\n\n  const statusCode = responseData.status_code || \"\";\n  const responseBody = responseData.body ? JSON.stringify(responseData.body) : \"\";\n\n  // MASK file content in request.body\n  let safeBody = maskFileContent(request.body);\n\n  // --------------------------------------------\n  // NEW: Compute Pass/Fail\n  // --------------------------------------------\n  const expectedRaw = request[\"Expected Results\"];             // full expected text\n  const expected = extractStatusCode(expectedRaw);             // extract \"200\" etc\n  const actual = String(statusCode);\n\n  const testStatus =\n    expected && actual\n      ? (expected === actual ? \"Pass\" : \"Fail\")\n      : \"Unknown\";\n\n  // --------------------------------------------\n  // Existing result output (unchanged)\n  // --------------------------------------------\n  results.push({\n    json: {\n      TestcaseId: request.TestcaseId || \"\",\n      \"Test Scenario\": request[\"Test Scenario\"] || \"\",\n      Testcase: request.Testcase || \"\",\n      API_EndPoint: request.url || \"\",\n      Controller: request.Controller || \"\",\n      Method: request.method || \"\",\n      Body: JSON.stringify(safeBody),\n      ContentType: request.contentType || \"\",\n      \"Expected Results\": request[\"Expected Results\"] || \"\",\n      \"Actual_StatusCode\": String(statusCode),\n\n      // NEW FIELD\n      \"Test_Status\": testStatus,\n\n      \"Response_Body\": responseBody\n    }\n  });\n}\n\nreturn results;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3520,
+        464
+      ],
+      "id": "eac3db9d-4961-446c-a63e-dacc6d25be3e",
+      "name": "Convert to Formatted Data For CSV"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// helper: download URL to base64 using n8n helper (no external modules)\nasync function downloadUrlToBase64(url, self) {\n  if (!url || !url.toString().startsWith('http')) {\n    throw new Error('Invalid download URL: ' + url);\n  }\n\n  // Download as buffer, do not follow redirects (prevents example.com fallback)\n  const binary = await self.helpers.request({\n    method: 'GET',\n    url,\n    encoding: null,        // return Buffer\n    followRedirect: false, // important to detect bad URLs\n    timeout: 20000\n  }).catch(err => {\n    // Wrap error for clarity\n    throw new Error(`Failed to download ${url}: ${err.message}`);\n  });\n\n  const buffer = Buffer.from(binary);\n  const base64 = buffer.toString('base64');\n  const filename = url.split('/').pop()?.split('?')[0] || 'file.bin';\n  return { base64, filename };\n}\n\nreturn await Promise.all(items.map(async item => {\n  const data = item.json;\n\n  try {\n    // Normalize header key name variants\n    const ctKey = (data.contentType ? 'contentType' : (data.contenttype ? 'contenttype' : null));\n    const contentTypeValue = ctKey ? data[ctKey] : (data.headers && (data.headers['Content-Type'] || data.headers['content-type']));\n\n    // ---------------------------\n    // 1) MULTIPART handling\n    // ---------------------------\n    if (contentTypeValue && contentTypeValue.toString().toLowerCase().includes('multipart/form-data')) {\n      // Build formFields from different possible inputs\n      const formFields = {};\n\n      // If body is a string like \"file=https://...\"\n      if (typeof data.body === 'string' && data.body.trim()) {\n        const bodyStr = data.body.trim();\n        for (const part of bodyStr.split(/[,&]/)) {\n          const [key, value] = part.split('=');\n          if (key && value !== undefined) formFields[key.trim()] = value.trim();\n        }\n      }\n\n      // If body is object e.g. from earlier parsing, merge keys\n      if (data.body && typeof data.body === 'object' && !Array.isArray(data.body)) {\n        for (const k of Object.keys(data.body)) {\n          // avoid overriding parsed file object if already set below\n          if (!(k in formFields)) formFields[k] = data.body[k];\n        }\n      }\n\n      // if explicit data.file provided (top-level)\n      if (data.file && !( 'file' in formFields )) {\n        formFields['file'] = data.file;\n      }\n\n      // Now ensure we have a file entry\n      if (!('file' in formFields)) {\n        throw new Error('multipart/form-data requested but no file field found');\n      }\n\n      // Handle different file input shapes:\n      // - string URL (http...)\n      // - object with { content: \"<base64>\" , filename: \"...\" } (already base64)\n      // - object with { data: <Buffer-like> } not expected here but preserve\n      const fileInput = formFields['file'];\n\n      if (typeof fileInput === 'string') {\n        // If it starts with '@' strip it\n        const maybeUrl = fileInput.startsWith('@') ? fileInput.slice(1) : fileInput;\n\n        if (maybeUrl.startsWith('http')) {\n          // Download then convert to base64\n          const dl = await downloadUrlToBase64(maybeUrl, this);\n          formFields['file'] = {\n            content: dl.base64,\n            filename: dl.filename\n          };\n        } else {\n          // Not an http URL. Might be a local path — we cannot read local path in Function node.\n          // So pass it through as a content path; MCP must handle reading local path if allowed.\n          formFields['file'] = {\n            content: maybeUrl,\n            filename: maybeUrl.split(/[\\\\/]/).pop()\n          };\n        }\n      } else if (fileInput && typeof fileInput === 'object') {\n        // If already base64-style { content, filename } - pass through\n        if ('content' in fileInput && fileInput.content) {\n          // keep as-is\n          formFields['file'] = {\n            content: fileInput.content,\n            filename: fileInput.filename || (typeof fileInput.content === 'string' ? 'file.bin' : 'upload.bin')\n          };\n        } else if ('data' in fileInput && fileInput.data) {\n          // If caller provided raw binary-like in .data, convert to base64 if needed\n          // In Function node we shouldn't receive raw Buffer objects normally; attempt safe handling:\n          try {\n            const b = Buffer.isBuffer(fileInput.data) ? fileInput.data : Buffer.from(fileInput.data);\n            formFields['file'] = {\n              content: b.toString('base64'),\n              filename: fileInput.filename || 'file.bin'\n            };\n          } catch (e) {\n            throw new Error('Invalid file.data format; expected Buffer-ish: ' + e.message);\n          }\n        } else {\n          throw new Error('Unsupported file object shape; expected string URL or {content,filename}');\n        }\n      } else {\n        throw new Error('Unsupported file input type for multipart');\n      }\n\n      // Keep other non-file fields too\n      const finalFields = {};\n      for (const k of Object.keys(formFields)) {\n        if (k === 'file') finalFields[k] = formFields[k];\n        else finalFields[k] = formFields[k];\n      }\n\n      // Replace data.body with MCP-friendly body: file as base64 content and filename\n      data.body = finalFields;\n\n      // Ensure header indicates multipart so MCP does actual multipart formatting\n      data.headers = {\n        ...(data.headers || {}),\n        'Content-Type': 'multipart/form-data'\n      };\n    } // end multipart\n    else {\n      // ---------------------------\n      // 2) Normal body parsing (JSON or key=value)\n      // ---------------------------\n      if (typeof data.body === 'string' && data.body.trim()) {\n        let parsed;\n        const bodyStr = data.body.trim();\n        try {\n          parsed = JSON.parse(bodyStr.replace(/'/g, '\"'));\n        } catch {\n          parsed = {};\n          for (const part of bodyStr.split(/[,&]/)) {\n            const [key, value] = part.split('=');\n            if (key && value !== undefined) parsed[key.trim()] = value.trim();\n          }\n        }\n        data.body = parsed;\n      }\n    }\n\n    // ---------------------------\n    // 3) Parse pathParams if needed (string or JSON)\n    // ---------------------------\n    if (typeof data.pathParams === 'string' && data.pathParams.trim()) {\n      let parsedPathParams;\n      try {\n        parsedPathParams = JSON.parse(data.pathParams.replace(/'/g, '\"'));\n      } catch {\n        parsedPathParams = {};\n        for (const part of data.pathParams.split(/[,&]/)) {\n          const [key, value] = part.split('=');\n          if (key && value !== undefined) parsedPathParams[key.trim()] = value.trim();\n        }\n      }\n      data.pathParams = parsedPathParams;\n    }\n\n    // ---------------------------\n    // 4) Replace placeholders in URL (keep this logic)\n    // ---------------------------\n    if (data.url && typeof data.url === 'string' && data.pathParams) {\n      for (const key in data.pathParams) {\n        // protect RegExp construction from special characters\n        const safeKey = key.replace(/[-\\/\\\\^$*+?.()|[\\]{}]/g, '\\\\$&');\n        const regex = new RegExp(`{${safeKey}}`, 'g');\n        data.url = data.url.replace(regex, encodeURIComponent(data.pathParams[key]));\n      }\n    }\n\n    // ---------------------------\n    // 5) Append query string if present\n    // ---------------------------\n    if (data['Query String'] && typeof data['Query String'] === 'string') {\n      const queryPart = data['Query String'].trim();\n      if (queryPart) {\n        data.url += (data.url.includes('?') ? '&' : '?') + queryPart;\n      }\n    }\n\n  } catch (err) {\n    data.body = { error: 'Error processing input', message: err.message };\n  }\n\n  return { json: data };\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3600,
+        736
+      ],
+      "id": "3bd2252c-889f-43c6-99f3-a8fd4a892ad6",
+      "name": "Format the Body As Json"
+    },
+    {
+      "parameters": {
+        "options": {
+          "fileName": "=TestResults_{{ new Date().toISOString().replace(/[:T]/g, \"-\").split(\".\")[0] }}.csv"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        3888,
+        256
+      ],
+      "id": "3725aa42-eb76-4b58-8350-1ebc6eb095a7",
+      "name": "Convert Json Data to CSV"
+    },
+    {
+      "parameters": {
+        "fileName": "={{ $binary.data.fileName.trim() }}",
+        "parentId": "01EFHBZKVUOD42HAHINVAYXWSIKAS7FKMJ",
+        "binaryData": true
+      },
+      "type": "n8n-nodes-base.microsoftOneDrive",
+      "typeVersion": 1,
+      "position": [
+        4224,
+        256
+      ],
+      "id": "9ed4afcc-92bd-40f2-b3ca-6b69d67fc050",
+      "name": "Upload a CSV File to One Drive"
+    },
+    {
+      "parameters": {
+        "operation": "executeTool",
+        "toolName": "call_api",
+        "toolParameters": "={{ $json }}"
+      },
+      "type": "n8n-nodes-mcp.mcpClient",
+      "typeVersion": 1,
+      "position": [
+        3680,
+        1088
+      ],
+      "id": "c26f00c1-60a9-4a1b-83a4-a0bb9c0dfc8d",
+      "name": "API Testing Tool"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3024,
+        672
+      ],
+      "id": "7d80aa35-8928-4faf-b363-7c37c8c81e99",
+      "name": "Read Excel Row"
+    },
+    {
+      "parameters": {
+        "requestMethod": "=GET",
+        "url": "={{ $json.finalUrl }}",
+        "responseFormat": "string",
+        "options": {
+          "bodyContentType": "json",
+          "fullResponse": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        2688,
+        -224
+      ],
+      "id": "94259f42-f7ad-4b65-b196-8ce0d2acdc9c",
+      "name": "Check API Health"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.statusCode }}",
+              "operation": "equal",
+              "value2": 200
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        2992,
+        -224
+      ],
+      "id": "e740e001-0f18-4bc3-a0a9-fa5440d07c8b",
+      "name": "IF API Healthy"
+    },
+    {
+      "parameters": {
+        "jsCode": "throw new Error('API is down. Testcase execution skipped.');"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        3408,
+        -208
+      ],
+      "id": "d5383fa4-6b24-462d-8c07-ab80ae929578",
+      "name": "Stop Execution"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        400,
+        -224
+      ],
+      "id": "2df4f1bd-6680-4739-af94-31afcae5b961",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "jsCode": "// New input structure: [{ data: [ ...testcases... ] }]\nconst root = $input.item.json;\n\n// Safety check\nif (!root || !Array.isArray(root.data)) {\n  return [{\n    json: { error: \"Input must contain { data: [...] }\" }\n  }];\n}\n\n// Extract the array of test cases\nconst items = root.data;\n\n// 1) Filter GET methods with NO pathParams\nconst getItemsNoPathParams = items.filter(i => {\n  const isGet = i.method && i.method.toUpperCase() === \"GET\";\n\n  if (!isGet) return false;\n\n  // Treat missing or empty pathParams as NO params\n  if (!i.pathParams || i.pathParams.trim() === \"\") return true;\n\n  try {\n    const parsed = JSON.parse(i.pathParams);\n    return Object.keys(parsed).length === 0;\n  } catch (e) {\n    return false; // invalid JSON → exclude\n  }\n});\n\n// Pick the first valid GET\nconst firstGet = getItemsNoPathParams[0];\n\nif (!firstGet) {\n  return [{\n    json: { finalUrl: null, error: \"No GET method without pathParams found\" }\n  }];\n}\n\n// 2) Build Base URL\nlet finalUrl = firstGet.url;\n\n// 3) Append Query String if exists\nif (firstGet[\"Query String\"] && firstGet[\"Query String\"].trim() !== \"\") {\n  const qs = firstGet[\"Query String\"].trim();\n\n  finalUrl += finalUrl.includes(\"?\") ? \"&\" + qs : \"?\" + qs;\n}\n\n// 4) Output\nreturn [\n  {\n    json: { finalUrl }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2384,
+        -224
+      ],
+      "id": "a774475d-dec9-45f7-b03e-068a4ae9509d",
+      "name": "Get the GET Method URL"
+    },
+    {
+      "parameters": {
+        "jsCode": "const all = $input.all();\nreturn [\n  {\n    json: {\n      data: all.map(i => i.json)  // Collect all rows as an array\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1872,
+        -224
+      ],
+      "id": "36f113eb-ee67-4bf0-aab0-229ac7325f69",
+      "name": "Group All Items"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "excelDataNew",
+        "value": "={{ JSON.stringify($json.data) }}\n"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2112,
+        -224
+      ],
+      "id": "677cd271-bbf9-461b-b9e5-78a94f0d20b6",
+      "name": "Store in Redis"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "key": "=excelDataNew",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2976,
+        64
+      ],
+      "id": "2787b7bc-8589-4852-9a7d-40c54961e33a",
+      "name": "Get From Redis"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Read raw string\nconst raw = $input.item.json.propertyName;\n\n// Clean the string: remove trailing unwanted characters\nlet cleaned = raw.trim();\n\n// Remove invalid trailing characters like `r]`, `]r`, etc.\ncleaned = cleaned.replace(/r]$/i, ']'); \ncleaned = cleaned.replace(/]r$/i, ']');\n\n// Parse the JSON string safely\nlet parsed;\n\ntry {\n  parsed = JSON.parse(cleaned);\n} catch (e) {\n  return [{\n    json: { error: \"Invalid JSON after cleaning\", raw: cleaned }\n  }];\n}\n\n// Return parsed array as output items\nreturn parsed.map(x => ({ json: x }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2976,
+        400
+      ],
+      "id": "769eb637-fef6-4dbf-b7c5-033fcb5da234",
+      "name": "Format To Json"
+    }
+  ],
+  "connections": {
+    "Download a file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File_001",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get items in a folder": {
+      "main": [
+        [
+          {
+            "node": "Download a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search a folder": {
+      "main": [
+        [
+          {
+            "node": "Identify Source Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File_001": {
+      "main": [
+        [
+          {
+            "node": "Group All Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Identify Source Folder": {
+      "main": [
+        [
+          {
+            "node": "Get items in a folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Request + Response": {
+      "main": [
+        [
+          {
+            "node": "Read Excel Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to Formatted Data For CSV": {
+      "main": [
+        [
+          {
+            "node": "Convert Json Data to CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format the Body As Json": {
+      "main": [
+        [
+          {
+            "node": "API Testing Tool",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge Request + Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Json Data to CSV": {
+      "main": [
+        [
+          {
+            "node": "Upload a CSV File to One Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API Testing Tool": {
+      "main": [
+        [
+          {
+            "node": "Merge Request + Response",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Read Excel Row": {
+      "main": [
+        [
+          {
+            "node": "Convert to Formatted Data For CSV",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format the Body As Json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check API Health": {
+      "main": [
+        [
+          {
+            "node": "IF API Healthy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF API Healthy": {
+      "main": [
+        [
+          {
+            "node": "Get From Redis",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop Execution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Search a folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get the GET Method URL": {
+      "main": [
+        [
+          {
+            "node": "Check API Health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Group All Items": {
+      "main": [
+        [
+          {
+            "node": "Store in Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store in Redis": {
+      "main": [
+        [
+          {
+            "node": "Get the GET Method URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get From Redis": {
+      "main": [
+        [
+          {
+            "node": "Format To Json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format To Json": {
+      "main": [
+        [
+          {
+            "node": "Read Excel Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "fa890eec-435a-4f06-8627-329113fad01d",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-11-25T12:31:38.849Z",
+      "updatedAt": "2025-11-25T12:31:38.849Z",
+      "role": "workflow:owner",
+      "workflowId": "Nu2xrYFHi9mjMFMN",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-15T04:41:56.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-15",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
