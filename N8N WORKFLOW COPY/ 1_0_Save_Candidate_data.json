@@ -1,0 +1,2114 @@
+{
+  "createdAt": "2025-11-20T09:28:51.279Z",
+  "updatedAt": "2025-12-15T07:41:45.000Z",
+  "id": "CsS25PC1yU7fohqq",
+  "name": "1.0.Save Candidate data",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "kfI0FkHVcHwPfFJE",
+          "mode": "list",
+          "cachedResultName": "2.0.Preperation_Offer_Letter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -128,
+        -496
+      ],
+      "id": "ed5b3087-3187-4bf9-ab05-9b5d79e05c51",
+      "name": "Execute Workflow",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "last_name": "=nesh",
+            "personal_email": "=Vetrivel.Ramesh@rencata.com",
+            "mobile_number": "=23345446445",
+            "hiring_department": "={{$json[\"hiring_department\"]}}",
+            "start_date": "={{$json[\"doj\"]}}",
+            "customer_name": "={{$json[\"customer_name\"]}}",
+            "project_name": "={{$json[\"project_name\"]}}",
+            "created_by": "={{$json[\"created_by\"]}}",
+            "created_at": "={{$json[\"created_at\"]}}",
+            "updated_at": "={{$json[\"updated_at\"]}}",
+            "templates": "={{$json[\"templates\"]}}",
+            "currentlocation": "={{$json[\"currentlocation\"]}}",
+            "offeredlocation": "={{$json[\"offeredlocation\"]}}",
+            "experience": "={{$json[\"experience\"]}}",
+            "ctc": "={{ $json.body.salary_structure.annual_ctc }}",
+            "doj": "={{$json[\"doj\"]}}",
+            "notice_period": "={{$json[\"notice_period\"]}}",
+            "Assets": "={{ $json.body.Assets }}",
+            "software": "={{ $json.body.software }}",
+            "position": "={{ $json.position }}",
+            "jobId": "={{ $json.body.jobId }}",
+            "first_name": "vig"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "candidate_id",
+              "displayName": "candidate_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "personal_email",
+              "displayName": "personal_email",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "mobile_number",
+              "displayName": "mobile_number",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "hiring_department",
+              "displayName": "hiring_department",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "start_date",
+              "displayName": "start_date",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customer_name",
+              "displayName": "customer_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "project_name",
+              "displayName": "project_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_by",
+              "displayName": "created_by",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "templates",
+              "displayName": "templates",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "currentlocation",
+              "displayName": "currentlocation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "offeredlocation",
+              "displayName": "offeredlocation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "experience",
+              "displayName": "experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ctc",
+              "displayName": "ctc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "position",
+              "displayName": "position",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "doj",
+              "displayName": "doj",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "notice_period",
+              "displayName": "notice_period",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Assets",
+              "displayName": "Assets",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "software",
+              "displayName": "software",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "jobId",
+              "displayName": "jobId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "offer_letter_file_name",
+              "displayName": "offer_letter_file_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "outputColumns": [
+            "id",
+            "candidate_id",
+            "personal_email",
+            "mobile_number",
+            "jobId",
+            "templates"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -576,
+        -496
+      ],
+      "id": "a71eca07-fe38-4076-9686-5cffceaa3838",
+      "name": "candidate1",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "salary_structures",
+          "mode": "list",
+          "cachedResultName": "salary_structures"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "esi_eligible": "=0",
+            "basic_salary": "={{ $('Edit Fields1').item.json.body.salary_structure.basic_salary }}",
+            "hra": "={{ $('Edit Fields1').item.json.body.salary_structure.hra }}",
+            "other_allowances": 0,
+            "esi_amount": "={{ $('Edit Fields1').item.json.body.salary_structure.esi_amount }}",
+            "net_salary": 0,
+            "flexi_benefits": "={{ $('Edit Fields1').item.json.body.salary_structure.flexi_benefits }}",
+            "pf_company_contribution": 0,
+            "annual_ctc": "={{ $('Edit Fields1').item.json.body.salary_structure.annual_ctc }}",
+            "created_at": "={{ $('RECIEVING FORM DATA VIA WEBHOOK').item.json.body.created_at }}",
+            "candidate_id": "={{ $json.candidate_id }}",
+            "id": "={{ $json.id }}",
+            "pf_amount": "={{ $('Edit Fields1').item.json.body.salary_structure.pf_amount }}",
+            "fixed_component": "={{ $('Edit Fields1').item.json.body.salary_structure.fixed_component }}",
+            "variable_component": "={{ $('Edit Fields1').item.json.body.salary_structure.variable_component }}",
+            "gross_salary": "={{ $('Edit Fields1').item.json.body.salary_structure.gross_salary }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "candidate_id",
+              "displayName": "candidate_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fixed_component",
+              "displayName": "fixed_component",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "variable_component",
+              "displayName": "variable_component",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "basic_salary",
+              "displayName": "basic_salary",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "hra",
+              "displayName": "hra",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "other_allowances",
+              "displayName": "other_allowances",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pf_amount",
+              "displayName": "pf_amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "esi_eligible",
+              "displayName": "esi_eligible",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "esi_amount",
+              "displayName": "esi_amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "gross_salary",
+              "displayName": "gross_salary",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "net_salary",
+              "displayName": "net_salary",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "gratuity",
+              "displayName": "gratuity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "flexi_benefits",
+              "displayName": "flexi_benefits",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "total_annual_performance_incentive",
+              "displayName": "total_annual_performance_incentive",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "pf_company_contribution",
+              "displayName": "pf_company_contribution",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "annual_ctc",
+              "displayName": "annual_ctc",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -352,
+        -496
+      ],
+      "id": "5b530899-2276-4b36-b1f4-59daf2c4d8bd",
+      "name": "salary_structure1",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "56dbab90-d35f-4d92-83c1-fc4cf7f15215",
+              "name": "mobile_number",
+              "value": "=2345678901",
+              "type": "string"
+            },
+            {
+              "id": "503c5c8e-d541-4c4d-a9d0-aa41bfb078a1",
+              "name": "=hiring_department",
+              "value": "={{ $json.body.hiring_department }}",
+              "type": "string"
+            },
+            {
+              "id": "76e6e22a-8f9e-4a60-8a41-e5cbeb3bc30a",
+              "name": "=start_date",
+              "value": "={{ $json.body.doj }}",
+              "type": "string"
+            },
+            {
+              "id": "8d40b04f-4620-4a50-9ce5-32d55d798cc4",
+              "name": "customer_name",
+              "value": "={{ $json.body.customer_name }}",
+              "type": "string"
+            },
+            {
+              "id": "7001ba3a-8fce-498f-b7ef-c26c3c34b907",
+              "name": "project_name",
+              "value": "={{ $json.body.project_name }}",
+              "type": "string"
+            },
+            {
+              "id": "cc4eb87d-413c-4635-8689-b72de84e4a02",
+              "name": "created_by",
+              "value": "={{ $json.body.created_by }}",
+              "type": "string"
+            },
+            {
+              "id": "e58f12bd-bf5a-4da1-b58f-f8b301df07a2",
+              "name": "created_at",
+              "value": "={{ $json.body.created_at }}",
+              "type": "string"
+            },
+            {
+              "id": "92ecb694-e914-4589-af7a-053333433074",
+              "name": "updated_at",
+              "value": "={{ $json.body.updated_at }}",
+              "type": "string"
+            },
+            {
+              "id": "7000af44-8548-4754-865a-98a2cf82c2f3",
+              "name": "templates",
+              "value": "={{ $json.body.templates }}",
+              "type": "object"
+            },
+            {
+              "id": "64bff392-4806-4cc4-8d46-34c63b6827ee",
+              "name": "currentlocation",
+              "value": "={{ $json.body.currentlocation }}",
+              "type": "string"
+            },
+            {
+              "id": "1bb2a22a-5bfa-4b5e-897d-2aa5074b6d85",
+              "name": "offeredlocation",
+              "value": "={{ $json.body.offeredlocation }}",
+              "type": "string"
+            },
+            {
+              "id": "1242d612-f941-44b6-9cb7-fa98695645a1",
+              "name": "experience",
+              "value": "={{ $json.body.experience }}",
+              "type": "number"
+            },
+            {
+              "id": "54d5ba7e-e973-4cd3-921d-c0292d3a91dd",
+              "name": "doj",
+              "value": "={{ $json.body.doj }}",
+              "type": "string"
+            },
+            {
+              "id": "00a23399-b067-41bf-98f7-e2ed81d0b0c8",
+              "name": "notice_period",
+              "value": "={{ $json.body.notice_period }}",
+              "type": "number"
+            },
+            {
+              "id": "01c5cfbe-ee38-4ae4-b51b-11329613ee11",
+              "name": "headers.content-type",
+              "value": "={{ $json.headers.content-type }}",
+              "type": "string"
+            },
+            {
+              "id": "d5c35a81-7b2b-4a85-95ee-d932acd3973d",
+              "name": "headers.user-agent",
+              "value": "={{ $json.headers.user-agent }}",
+              "type": "string"
+            },
+            {
+              "id": "e57138ce-99e9-4b57-bb10-9162b4a82547",
+              "name": "headers.accept",
+              "value": "={{ $json.headers.accept }}",
+              "type": "string"
+            },
+            {
+              "id": "34178211-5077-4bc4-8a26-334888a9271d",
+              "name": "headers.postman-token",
+              "value": "={{ $json.headers.postman-token }}",
+              "type": "string"
+            },
+            {
+              "id": "1e252ba8-41df-42a3-8d23-50a77bd69b84",
+              "name": "headers.host",
+              "value": "={{ $json.headers.host }}",
+              "type": "string"
+            },
+            {
+              "id": "0bc4e378-6827-4cb0-abc6-e58aa28c14e7",
+              "name": "headers.accept-encoding",
+              "value": "={{ $json.headers.accept-encoding }}",
+              "type": "string"
+            },
+            {
+              "id": "eed0b38d-e373-46fe-b625-bac46171d462",
+              "name": "headers.connection",
+              "value": "={{ $json.headers.connection }}",
+              "type": "string"
+            },
+            {
+              "id": "40246c5c-102e-45c8-8f1a-f7440405c071",
+              "name": "headers.content-length",
+              "value": "={{ $json.headers.content-length }}",
+              "type": "string"
+            },
+            {
+              "id": "7d83dd8f-8606-4acf-baf8-a98dc72bb1b0",
+              "name": "body.personal_email",
+              "value": "=Vetrivel.Ramesh@rencata.com",
+              "type": "string"
+            },
+            {
+              "id": "aa67344e-69be-4fae-b99d-fc0222ea6545",
+              "name": "body.templates.offer_letter_generated",
+              "value": "={{ $json.body.templates.offer_letter_generated }}",
+              "type": "boolean"
+            },
+            {
+              "id": "b5d33cf6-cf0c-42a4-aaaf-7c7b0e69d143",
+              "name": "body.templates.offer_letter_sent_for_esigning",
+              "value": "={{ $json.body.templates.offer_letter_sent_for_esigning }}",
+              "type": "boolean"
+            },
+            {
+              "id": "9905edf3-1823-4daf-b3d8-324cdce32b4c",
+              "name": "body.templates.offer_letter_esigned",
+              "value": "={{ $json.body.templates.offer_letter_esigned }}",
+              "type": "boolean"
+            },
+            {
+              "id": "95f92ba3-2582-492c-99d1-a50cf1ab5a55",
+              "name": "body.templates.offer_letter_sent_to_candidate",
+              "value": "={{ $json.body.templates.offer_letter_sent_to_candidate }}",
+              "type": "boolean"
+            },
+            {
+              "id": "10e67ea4-8f52-43f0-94fc-be8065a4156f",
+              "name": "body.salary_structure.fixed_component",
+              "value": "={{ $json.body.salary_details.fixed_salary }}",
+              "type": "number"
+            },
+            {
+              "id": "fc241280-e009-4652-8a22-ab3acf26d2ff",
+              "name": "body.salary_structure.variable_component",
+              "value": "={{ $json.body.salary_details.variable_salary }}",
+              "type": "number"
+            },
+            {
+              "id": "e67f57ce-204c-488d-8120-80fc50d11bb3",
+              "name": "body.salary_structure.basic_salary",
+              "value": "={{ $json.body.salary_details.basic_salary }}",
+              "type": "number"
+            },
+            {
+              "id": "6ca2181d-36b3-4eed-b166-a54594f62d26",
+              "name": "body.salary_structure.hra",
+              "value": "={{ $json.body.salary_details.hra }}",
+              "type": "number"
+            },
+            {
+              "id": "e98a49ef-7f54-4193-b208-d925e1c01eaa",
+              "name": "body.salary_structure.pf_amount",
+              "value": "={{ $json.body.salary_details.pf_amount }}",
+              "type": "number"
+            },
+            {
+              "id": "bc3dead1-8c8d-4b1d-b7f9-6528105e0453",
+              "name": "body.salary_structure.esi_eligible",
+              "value": "={{ $json.body.salary_details.esi_eligible }}",
+              "type": "boolean"
+            },
+            {
+              "id": "f91d3d31-5069-4d67-8a5d-9ab356b67280",
+              "name": "body.salary_structure.esi_amount",
+              "value": "={{ $json.body.salary_details.esi_amount }}",
+              "type": "number"
+            },
+            {
+              "id": "12a98120-d212-44a3-a2c4-3e47dce3ddfe",
+              "name": "body.salary_structure.gross_salary",
+              "value": "={{ $json.body.salary_details.gross_salary }}",
+              "type": "number"
+            },
+            {
+              "id": "05e8624e-2087-4053-ba92-2ac4d7418671",
+              "name": "body.salary_structure.flexi_benefits",
+              "value": "={{ $json.body.salary_details.flexi_benefits }}",
+              "type": "number"
+            },
+            {
+              "id": "750e8b51-3a12-4acc-b26d-a851b0fdeb69",
+              "name": "body.salary_structure.annual_ctc",
+              "value": "={{ $json.body.salary_details.annual_ctc }}",
+              "type": "number"
+            },
+            {
+              "id": "e5b002a2-5223-4323-9483-a86844e8eb60",
+              "name": "body.software[0]",
+              "value": "={{ $json.body.software[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "5d4fa378-78cc-4298-b760-2ca4915ef0a0",
+              "name": "body.software[1]",
+              "value": "={{ $json.body.software[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "5f3e988f-69c8-45c3-908d-98c94fe230bd",
+              "name": "body.software[2]",
+              "value": "={{ $json.body.software[2] }}",
+              "type": "string"
+            },
+            {
+              "id": "4ea64715-072a-40e3-b33f-ef04d474b24a",
+              "name": "body.Assets[0].item",
+              "value": "={{ $json.body.hardware[0].item }}",
+              "type": "string"
+            },
+            {
+              "id": "46b12d49-e0db-4ccd-ae6c-e5076134eb54",
+              "name": "body.Assets[0].quantity",
+              "value": "={{ $json.body.hardware[0].quantity }}",
+              "type": "number"
+            },
+            {
+              "id": "874fff5c-97d8-4559-8499-f48d213dcb2e",
+              "name": "body.Assets[1].item",
+              "value": "={{ $json.body.hardware[1].item }}",
+              "type": "string"
+            },
+            {
+              "id": "b29af46d-2c77-4d27-b124-81dfd23e8ec8",
+              "name": "body.Assets[1].quantity",
+              "value": "={{ $json.body.hardware[1].quantity }}",
+              "type": "number"
+            },
+            {
+              "id": "017e3b44-2c8e-4365-b764-12a5070894c8",
+              "name": "body.Assets[2].item",
+              "value": "={{ $json.body.hardware[2].item }}",
+              "type": "string"
+            },
+            {
+              "id": "2cc632f2-624d-42c3-9cb0-e387e93d4796",
+              "name": "body.Assets[2].quantity",
+              "value": "={{ $json.body.hardware[2].quantity }}",
+              "type": "number"
+            },
+            {
+              "id": "a6f452fe-fa7f-4184-99d6-71d8d86b2836",
+              "name": "body.job_id",
+              "value": "={{ $json.body.jobId }}",
+              "type": "string"
+            },
+            {
+              "id": "2b564fc0-6101-42f4-8dad-218a5cf65653",
+              "name": "webhookUrl",
+              "value": "={{ $json.webhookUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "e1e39abe-b672-48ec-83bd-97d7e6d87cba",
+              "name": "executionMode",
+              "value": "={{ $json.executionMode }}",
+              "type": "string"
+            },
+            {
+              "id": "06a706fb-4fa5-4a8f-aa30-7e26c3b05190",
+              "name": "position",
+              "value": "={{ $json.body.designation }}",
+              "type": "string"
+            },
+            {
+              "id": "e7ba4110-badd-4a5b-bb65-e52de5dc0fcb",
+              "name": "position",
+              "value": "={{ $json.body.jobTitle }}",
+              "type": "string"
+            },
+            {
+              "id": "a83c5d8b-ace3-42ab-9e1c-9d4c404835d0",
+              "name": "headers.host",
+              "value": "={{ $json.headers.host }}",
+              "type": "string"
+            },
+            {
+              "id": "acaf1370-4eaa-4061-9f01-1b198464814a",
+              "name": "headers.connection",
+              "value": "={{ $json.headers.connection }}",
+              "type": "string"
+            },
+            {
+              "id": "dd7224dc-f6ff-45e7-9ac7-276a1d0fdc38",
+              "name": "headers.content-length",
+              "value": "={{ $json.headers.content-length }}",
+              "type": "string"
+            },
+            {
+              "id": "5fcd223a-1545-4e6e-b524-bca2865adfd6",
+              "name": "headers.sec-ch-ua-platform",
+              "value": "={{ $json.headers.sec-ch-ua-platform }}",
+              "type": "string"
+            },
+            {
+              "id": "cc6f2bfc-efce-47a6-9119-cee1bdc6fda8",
+              "name": "headers.user-agent",
+              "value": "={{ $json.headers.user-agent }}",
+              "type": "string"
+            },
+            {
+              "id": "c982640e-ee67-409b-ba89-c82300c72002",
+              "name": "headers.sec-ch-ua",
+              "value": "={{ $json.headers.sec-ch-ua }}",
+              "type": "string"
+            },
+            {
+              "id": "deeb71ed-ac73-48ac-8f97-8d83584efab0",
+              "name": "headers.content-type",
+              "value": "={{ $json.headers.content-type }}",
+              "type": "string"
+            },
+            {
+              "id": "16c901f5-65e7-47f5-b3c5-110e1397f21d",
+              "name": "headers.sec-ch-ua-mobile",
+              "value": "={{ $json.headers.sec-ch-ua-mobile }}",
+              "type": "string"
+            },
+            {
+              "id": "f0f616d2-4710-4347-b870-9697e68ec1ee",
+              "name": "headers.accept",
+              "value": "={{ $json.headers.accept }}",
+              "type": "string"
+            },
+            {
+              "id": "daf3d8a0-630e-49de-a3a7-4d766fa7b1d9",
+              "name": "headers.origin",
+              "value": "={{ $json.headers.origin }}",
+              "type": "string"
+            },
+            {
+              "id": "542c192b-3aae-4e27-8771-430f31d7befb",
+              "name": "headers.sec-fetch-site",
+              "value": "={{ $json.headers.sec-fetch-site }}",
+              "type": "string"
+            },
+            {
+              "id": "77d686e3-f57a-4001-b51f-bbc238804e93",
+              "name": "headers.sec-fetch-mode",
+              "value": "={{ $json.headers.sec-fetch-mode }}",
+              "type": "string"
+            },
+            {
+              "id": "8f84f1cd-f2e6-421e-a9b6-18b18514129f",
+              "name": "headers.sec-fetch-dest",
+              "value": "={{ $json.headers.sec-fetch-dest }}",
+              "type": "string"
+            },
+            {
+              "id": "a4f75140-253b-4552-bec7-232dac8fd048",
+              "name": "headers.referer",
+              "value": "={{ $json.headers.referer }}",
+              "type": "string"
+            },
+            {
+              "id": "b46c58ba-5f94-4ca1-bba6-affbaf88553d",
+              "name": "headers.accept-encoding",
+              "value": "={{ $json.headers.accept-encoding }}",
+              "type": "string"
+            },
+            {
+              "id": "8eb42835-aa69-4c5d-ae6e-42d100a21f3b",
+              "name": "headers.accept-language",
+              "value": "={{ $json.headers.accept-language }}",
+              "type": "string"
+            },
+            {
+              "id": "95af12f8-fc67-40f0-85a6-5eced28b88ce",
+              "name": "body.mobile_number",
+              "value": "={{ $json.body.mobile_number }}",
+              "type": "string"
+            },
+            {
+              "id": "75e25c74-dfea-4da9-a32a-f14a1b639d70",
+              "name": "body.personal_email",
+              "value": "={{ $json.body.personal_email }}",
+              "type": "string"
+            },
+            {
+              "id": "e1f74512-d8e5-4b21-94f9-8ecb6abb63c4",
+              "name": "body.hiring_department",
+              "value": "={{ $json.body.hiring_department }}",
+              "type": "string"
+            },
+            {
+              "id": "93feac89-cd1b-47a7-96b1-1733417dabec",
+              "name": "body.customer_name",
+              "value": "={{ $json.body.customer_name }}",
+              "type": "string"
+            },
+            {
+              "id": "6eff277c-71cb-4b39-8a9b-ff25dc844bfd",
+              "name": "body.project_name",
+              "value": "={{ $json.body.project_name }}",
+              "type": "string"
+            },
+            {
+              "id": "0b584f8e-9f43-44ad-b940-25f8d27e444f",
+              "name": "body.templates.created_at",
+              "value": "={{ $json.body.templates.created_at }}",
+              "type": "string"
+            },
+            {
+              "id": "e0685791-e5fe-40dd-bd3f-628e9f363792",
+              "name": "body.templates.updated_at",
+              "value": "={{ $json.body.templates.updated_at }}",
+              "type": "string"
+            },
+            {
+              "id": "5d3b6201-147c-42e3-859c-641af552a4cb",
+              "name": "body.templates.doj_calculated",
+              "value": "={{ $json.body.templates.doj_calculated }}",
+              "type": "boolean"
+            },
+            {
+              "id": "1acbc542-e846-45c7-9b41-4fc88da715e1",
+              "name": "body.templates.offer_accepted",
+              "value": "={{ $json.body.templates.offer_accepted }}",
+              "type": "boolean"
+            },
+            {
+              "id": "113388c5-4e75-464f-8c77-2acc9b7ba24f",
+              "name": "body.templates.offer_declined",
+              "value": "={{ $json.body.templates.offer_declined }}",
+              "type": "boolean"
+            },
+            {
+              "id": "67bf788e-a4e7-456c-94b8-e10ff04511cc",
+              "name": "body.templates.process_paused",
+              "value": "={{ $json.body.templates.process_paused }}",
+              "type": "boolean"
+            },
+            {
+              "id": "d6164c0f-8f67-4d89-94b0-8fe0a95180f5",
+              "name": "body.templates.hr_acceptance_date",
+              "value": "={{ $json.body.templates.hr_acceptance_date }}",
+              "type": "string"
+            },
+            {
+              "id": "10c76970-e2bc-45b3-818c-4ebf4559164c",
+              "name": "body.templates.offer_response_date",
+              "value": "={{ $json.body.templates.offer_response_date }}",
+              "type": "string"
+            },
+            {
+              "id": "2762658d-6f34-40d0-8b96-81e51b17e459",
+              "name": "body.templates.onboarding_complete",
+              "value": "={{ $json.body.templates.onboarding_complete }}",
+              "type": "boolean"
+            },
+            {
+              "id": "8e542090-8e8b-45b7-b822-cc8e50dfe31d",
+              "name": "body.templates.relocation_required",
+              "value": "={{ $json.body.templates.relocation_required }}",
+              "type": "boolean"
+            },
+            {
+              "id": "ec65f54f-c433-4961-9fca-5c74cb9dcd28",
+              "name": "body.templates.offer_letter_esigned",
+              "value": "={{ $json.body.templates.offer_letter_esigned }}",
+              "type": "boolean"
+            },
+            {
+              "id": "f4644a03-19dc-4b3a-9eb5-82491d8889b5",
+              "name": "body.templates.relocation_confirmed",
+              "value": "={{ $json.body.templates.relocation_confirmed }}",
+              "type": "boolean"
+            },
+            {
+              "id": "c4f623a7-a3e6-4d59-b715-f17c8460f887",
+              "name": "body.templates.hr_acceptance_received",
+              "value": "={{ $json.body.templates.hr_acceptance_received }}",
+              "type": "boolean"
+            },
+            {
+              "id": "c7a62315-1b46-4da8-9a24-eba534a6a052",
+              "name": "body.templates.offer_letter_generated",
+              "value": "={{ $json.body.templates.offer_letter_generated }}",
+              "type": "boolean"
+            },
+            {
+              "id": "473c3269-71ee-4a11-a9a0-1be317914501",
+              "name": "body.templates.resignation_proof_date",
+              "value": "={{ $json.body.templates.resignation_proof_date }}",
+              "type": "string"
+            },
+            {
+              "id": "2fbe1669-ed83-4df2-bade-b43d55dbe541",
+              "name": "body.templates.relocation_last_reminder",
+              "value": "={{ $json.body.templates.relocation_last_reminder }}",
+              "type": "string"
+            },
+            {
+              "id": "0d5600aa-d71c-4b9d-8e98-6788c96902c8",
+              "name": "body.templates.relocation_reminder_sent",
+              "value": "={{ $json.body.templates.relocation_reminder_sent }}",
+              "type": "boolean"
+            },
+            {
+              "id": "2c4f3321-56f3-420a-a0f3-356dc3281333",
+              "name": "body.templates.resignation_last_reminder",
+              "value": "={{ $json.body.templates.resignation_last_reminder }}",
+              "type": "string"
+            },
+            {
+              "id": "e9d81e50-fbd2-43ce-b8e7-ed7b3714d024",
+              "name": "body.templates.resignation_reminder_sent",
+              "value": "={{ $json.body.templates.resignation_reminder_sent }}",
+              "type": "boolean"
+            },
+            {
+              "id": "7b6183c2-ae07-4635-a906-aa8ea14cd80c",
+              "name": "body.templates.resignation_proof_received",
+              "value": "={{ $json.body.templates.resignation_proof_received }}",
+              "type": "boolean"
+            },
+            {
+              "id": "e9a532d8-4873-435c-ad75-c68121c6dca7",
+              "name": "body.templates.salary_structure_generated",
+              "value": "={{ $json.body.templates.salary_structure_generated }}",
+              "type": "boolean"
+            },
+            {
+              "id": "99edaf33-3580-40a4-ad42-35d189f4a6b2",
+              "name": "body.templates.salary_structure_validated",
+              "value": "={{ $json.body.templates.salary_structure_validated }}",
+              "type": "boolean"
+            },
+            {
+              "id": "3a7c4c59-afb2-456a-8d5a-9c80f0e3d55e",
+              "name": "body.templates.hr_acceptance_last_reminder",
+              "value": "={{ $json.body.templates.hr_acceptance_last_reminder }}",
+              "type": "string"
+            },
+            {
+              "id": "e913e420-4d36-4f35-ba2f-1f9ebee1a6f8",
+              "name": "body.templates.hr_acceptance_reminder_sent",
+              "value": "={{ $json.body.templates.hr_acceptance_reminder_sent }}",
+              "type": "boolean"
+            },
+            {
+              "id": "df7effb5-3522-45d0-bcbc-10650a485e3c",
+              "name": "body.templates.relocation_confirmation_date",
+              "value": "={{ $json.body.templates.relocation_confirmation_date }}",
+              "type": "string"
+            },
+            {
+              "id": "3abd7bd5-d5df-428a-b506-43b38c15440b",
+              "name": "body.templates.offer_letter_sent_for_esigning",
+              "value": "={{ $json.body.templates.offer_letter_sent_for_esigning }}",
+              "type": "boolean"
+            },
+            {
+              "id": "a5b47f00-40d4-4e76-8e00-b23249660d07",
+              "name": "body.templates.offer_letter_sent_to_candidate",
+              "value": "={{ $json.body.templates.offer_letter_sent_to_candidate }}",
+              "type": "boolean"
+            },
+            {
+              "id": "15df0a86-1270-4b34-bf13-883d52f42160",
+              "name": "body.currentlocation",
+              "value": "={{ $json.body.currentlocation }}",
+              "type": "string"
+            },
+            {
+              "id": "25f48036-3d4d-42d9-a964-73834bc73f8a",
+              "name": "body.offeredlocation",
+              "value": "={{ $json.body.offeredlocation }}",
+              "type": "string"
+            },
+            {
+              "id": "c4eb5fbe-59a6-4b27-a425-a5e83bc3b797",
+              "name": "body.experience",
+              "value": "={{ $json.body.experience }}",
+              "type": "string"
+            },
+            {
+              "id": "a5c0ca79-e4fd-44d5-bfbe-0df56d828682",
+              "name": "body.designation",
+              "value": "={{ $json.body.designation }}",
+              "type": "string"
+            },
+            {
+              "id": "5e2b838c-3fbe-4acc-8481-c77c4977847f",
+              "name": "body.doj",
+              "value": "={{ $json.body.doj }}",
+              "type": "string"
+            },
+            {
+              "id": "4927abc8-33ab-4b46-9f57-b4646ccfda1f",
+              "name": "body.notice_period",
+              "value": "={{ $json.body.notice_period }}",
+              "type": "string"
+            },
+            {
+              "id": "81fe605f-1ed9-4783-b319-8b265bf96c69",
+              "name": "body.salary_details.fixed_salary",
+              "value": "={{ $json.body.salary_details.fixed_salary }}",
+              "type": "number"
+            },
+            {
+              "id": "f20195a0-10a9-41fd-9299-44556ff80c3e",
+              "name": "body.salary_details.variable_salary",
+              "value": "={{ $json.body.salary_details.variable_salary }}",
+              "type": "number"
+            },
+            {
+              "id": "43fd6daa-4a44-45c4-9a23-f16f0a1ea59f",
+              "name": "body.salary_details.basic_salary",
+              "value": "={{ $json.body.salary_details.basic_salary }}",
+              "type": "number"
+            },
+            {
+              "id": "0fad445c-fb32-45e7-8664-d784ed240c27",
+              "name": "body.salary_details.hra",
+              "value": "={{ $json.body.salary_details.hra }}",
+              "type": "number"
+            },
+            {
+              "id": "cc1a29b6-c384-420b-a3b4-5b9a2e619d37",
+              "name": "body.salary_details.pf_amount",
+              "value": "={{ $json.body.salary_details.pf_amount }}",
+              "type": "number"
+            },
+            {
+              "id": "e9e32d14-7abb-4f6d-bc93-8ed9a2c94169",
+              "name": "body.salary_details.esi_eligible",
+              "value": "={{ $json.body.salary_details.esi_eligible }}",
+              "type": "string"
+            },
+            {
+              "id": "dbeaece9-4836-4308-8533-9b16b9f8d4cd",
+              "name": "body.salary_details.esi_amount",
+              "value": "={{ $json.body.salary_details.esi_amount }}",
+              "type": "string"
+            },
+            {
+              "id": "54123915-e1c2-4f76-b0db-c5df4d95cd16",
+              "name": "body.salary_details.gross_salary",
+              "value": "={{ $json.body.salary_details.gross_salary }}",
+              "type": "number"
+            },
+            {
+              "id": "a9b12868-f3c3-4f79-b20d-cd6e954a70b0",
+              "name": "body.salary_details.flexi_benefits",
+              "value": "={{ $json.body.salary_details.flexi_benefits }}",
+              "type": "number"
+            },
+            {
+              "id": "d3c86447-534b-4bc9-879c-388f2a98f7f1",
+              "name": "body.salary_details.annual_ctc",
+              "value": "={{ $json.body.salary_details.annual_ctc }}",
+              "type": "number"
+            },
+            {
+              "id": "0bcb840c-48b0-4c36-8d75-5555d2321596",
+              "name": "body.software[0]",
+              "value": "={{ $json.body.software[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "01f7f344-7e62-4eef-bbb7-8474cd79bc89",
+              "name": "body.software[1]",
+              "value": "={{ $json.body.software[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "206b6ed6-6e72-4585-b8e2-04fb09cb344c",
+              "name": "body.software[2]",
+              "value": "={{ $json.body.software[2] }}",
+              "type": "string"
+            },
+            {
+              "id": "a9df55a6-08cb-475e-8cac-5786b8dc5663",
+              "name": "body.hardware[0].item",
+              "value": "={{ $json.body.hardware[0].item }}",
+              "type": "string"
+            },
+            {
+              "id": "bfe7ef6a-8d91-4d85-8329-e3e8632f51bc",
+              "name": "body.hardware[0].quantity",
+              "value": "={{ $json.body.hardware[0].quantity }}",
+              "type": "number"
+            },
+            {
+              "id": "255e2288-5756-49b6-8148-ff103c2bec19",
+              "name": "body.hardware[1].item",
+              "value": "={{ $json.body.hardware[1].item }}",
+              "type": "string"
+            },
+            {
+              "id": "6366030c-9b0f-4d99-a7b0-30e810e37b66",
+              "name": "body.hardware[1].quantity",
+              "value": "={{ $json.body.hardware[1].quantity }}",
+              "type": "number"
+            },
+            {
+              "id": "0be4bad9-52ea-463a-9208-b418e000a175",
+              "name": "body.hardware[2].item",
+              "value": "={{ $json.body.hardware[2].item }}",
+              "type": "string"
+            },
+            {
+              "id": "52df7f2d-328f-44d2-8340-5c4d6c490f32",
+              "name": "body.hardware[2].quantity",
+              "value": "={{ $json.body.hardware[2].quantity }}",
+              "type": "number"
+            },
+            {
+              "id": "7bc43648-a57e-4bc6-86c2-6b6d964a7f1d",
+              "name": "body.jobId",
+              "value": "={{ $json.body.jobId }}",
+              "type": "string"
+            },
+            {
+              "id": "e4ebafbf-f8c2-4527-9e71-8e9eaf160b44",
+              "name": "body.jobTitle",
+              "value": "={{ $json.body.jobTitle }}",
+              "type": "string"
+            },
+            {
+              "id": "017d7236-a9b5-4359-90cc-cf8880cec3fc",
+              "name": "body.hiringManager",
+              "value": "={{ $json.body.hiringManager }}",
+              "type": "string"
+            },
+            {
+              "id": "bdf95648-addd-4282-9b5e-36b8c6dfcc3e",
+              "name": "body.client",
+              "value": "={{ $json.body.client }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f393c0-2191-432b-a863-ea047fa98568",
+              "name": "body.recruiter",
+              "value": "={{ $json.body.recruiter }}",
+              "type": "string"
+            },
+            {
+              "id": "0bdb91a9-cac4-4238-9ee0-ea8ba8cf0eb8",
+              "name": "body.created_by",
+              "value": "={{ $json.body.created_by }}",
+              "type": "string"
+            },
+            {
+              "id": "87d4ac6b-86a7-41b9-a2fc-cd9193a7551e",
+              "name": "body.created_at",
+              "value": "={{ $json.body.created_at }}",
+              "type": "string"
+            },
+            {
+              "id": "b7214ba9-8b8e-433e-8415-625f98348096",
+              "name": "body.updated_at",
+              "value": "={{ $json.body.updated_at }}",
+              "type": "string"
+            },
+            {
+              "id": "ba1c4e97-6e00-428a-b9ca-78d532df414f",
+              "name": "body.idProofType",
+              "value": "={{ $json.body.idProofType }}",
+              "type": "string"
+            },
+            {
+              "id": "cfd1d9ca-9b3f-4d39-a688-058af2fba579",
+              "name": "body.idProof",
+              "value": "={{ $json.body.idProof }}",
+              "type": "string"
+            },
+            {
+              "id": "0e49c4b6-1eef-4f03-aef7-719b419bb5bb",
+              "name": "webhookUrl",
+              "value": "={{ $json.webhookUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "e98099e9-32f1-4718-aaaf-6d8f7b56443a",
+              "name": "executionMode",
+              "value": "={{ $json.executionMode }}",
+              "type": "string"
+            },
+            {
+              "id": "d9f766f8-d182-4aa7-a3b8-b2cb9570da56",
+              "name": "headers.host",
+              "value": "={{ $json.headers.host }}",
+              "type": "string"
+            },
+            {
+              "id": "ee78639b-9dab-4720-8566-08e3215ade6d",
+              "name": "headers.connection",
+              "value": "={{ $json.headers.connection }}",
+              "type": "string"
+            },
+            {
+              "id": "5df9c85e-848a-4e9a-b3e5-1552a2c4950e",
+              "name": "headers.content-length",
+              "value": "={{ $json.headers.content-length }}",
+              "type": "string"
+            },
+            {
+              "id": "8e584f43-2178-43eb-ae25-c9ed142e1c90",
+              "name": "headers.sec-ch-ua-platform",
+              "value": "={{ $json.headers.sec-ch-ua-platform }}",
+              "type": "string"
+            },
+            {
+              "id": "560db8f4-90ca-42d6-b036-3654d98509a9",
+              "name": "headers.user-agent",
+              "value": "={{ $json.headers.user-agent }}",
+              "type": "string"
+            },
+            {
+              "id": "fda8dd08-b099-4289-9043-31587ef8aa9e",
+              "name": "headers.sec-ch-ua",
+              "value": "={{ $json.headers.sec-ch-ua }}",
+              "type": "string"
+            },
+            {
+              "id": "477227d0-3b4a-481e-ab1f-04a4158da1a1",
+              "name": "headers.content-type",
+              "value": "={{ $json.headers.content-type }}",
+              "type": "string"
+            },
+            {
+              "id": "25062dc5-afe1-43b3-8725-f606f295a4fc",
+              "name": "headers.sec-ch-ua-mobile",
+              "value": "={{ $json.headers.sec-ch-ua-mobile }}",
+              "type": "string"
+            },
+            {
+              "id": "f8ab9f7e-3ad3-4d45-9b2c-495451de1ee8",
+              "name": "headers.accept",
+              "value": "={{ $json.headers.accept }}",
+              "type": "string"
+            },
+            {
+              "id": "36bd499b-2253-4f53-9d52-85879b22a363",
+              "name": "headers.origin",
+              "value": "={{ $json.headers.origin }}",
+              "type": "string"
+            },
+            {
+              "id": "8794f46f-7e29-4d2c-81b9-460c38f9aea1",
+              "name": "headers.sec-fetch-site",
+              "value": "={{ $json.headers.sec-fetch-site }}",
+              "type": "string"
+            },
+            {
+              "id": "df65c564-3166-443f-a4e2-79f76847c0bc",
+              "name": "headers.sec-fetch-mode",
+              "value": "={{ $json.headers.sec-fetch-mode }}",
+              "type": "string"
+            },
+            {
+              "id": "0a86f3fa-0988-4594-a448-a1ff01fc86cb",
+              "name": "headers.sec-fetch-dest",
+              "value": "={{ $json.headers.sec-fetch-dest }}",
+              "type": "string"
+            },
+            {
+              "id": "9ebbe06e-5a70-4501-8b28-21940a8ce54a",
+              "name": "headers.referer",
+              "value": "={{ $json.headers.referer }}",
+              "type": "string"
+            },
+            {
+              "id": "501efcf9-07d6-48e6-900d-4c68654bab4b",
+              "name": "headers.accept-encoding",
+              "value": "={{ $json.headers.accept-encoding }}",
+              "type": "string"
+            },
+            {
+              "id": "752423ba-c4bb-4c25-a43a-52723929eb36",
+              "name": "headers.accept-language",
+              "value": "={{ $json.headers.accept-language }}",
+              "type": "string"
+            },
+            {
+              "id": "e284a37a-f8bb-447c-9f40-5b13c2d5fc29",
+              "name": "body.mobile_number",
+              "value": "={{ $json.body.mobile_number }}",
+              "type": "string"
+            },
+            {
+              "id": "bc61c093-58fd-4ff6-849e-73e377779c99",
+              "name": "body.personal_email",
+              "value": "={{ $json.body.personal_email }}",
+              "type": "string"
+            },
+            {
+              "id": "91740a0d-795d-44a5-8d6f-38f121165f89",
+              "name": "body.hiring_department",
+              "value": "={{ $json.body.hiring_department }}",
+              "type": "string"
+            },
+            {
+              "id": "ba0b1acd-96fd-4100-ad35-d7bab1959550",
+              "name": "body.customer_name",
+              "value": "={{ $json.body.customer_name }}",
+              "type": "string"
+            },
+            {
+              "id": "556a8ba7-c912-46b5-9cec-f18c128fa40b",
+              "name": "body.project_name",
+              "value": "={{ $json.body.project_name }}",
+              "type": "string"
+            },
+            {
+              "id": "b69f9d65-7246-4863-83d1-ff82d5c54570",
+              "name": "body.templates.created_at",
+              "value": "={{ $json.body.templates.created_at }}",
+              "type": "string"
+            },
+            {
+              "id": "524ef269-fade-42cf-8248-7d16db4ef461",
+              "name": "body.templates.updated_at",
+              "value": "={{ $json.body.templates.updated_at }}",
+              "type": "string"
+            },
+            {
+              "id": "954598cd-8b05-440b-b836-415ea8ff02c1",
+              "name": "body.templates.doj_calculated",
+              "value": "={{ $json.body.templates.doj_calculated }}",
+              "type": "boolean"
+            },
+            {
+              "id": "985b0487-5cb4-4d94-bd63-eb7652f7f36f",
+              "name": "body.templates.offer_accepted",
+              "value": "={{ $json.body.templates.offer_accepted }}",
+              "type": "boolean"
+            },
+            {
+              "id": "67a49c6b-ef2f-4b9a-89be-55019e80f699",
+              "name": "body.templates.offer_declined",
+              "value": "={{ $json.body.templates.offer_declined }}",
+              "type": "boolean"
+            },
+            {
+              "id": "c195612c-49aa-4284-b1ae-94555fc773aa",
+              "name": "body.templates.process_paused",
+              "value": "={{ $json.body.templates.process_paused }}",
+              "type": "boolean"
+            },
+            {
+              "id": "fbcb3b56-4ec3-4114-b7a7-d3a2471f3ee9",
+              "name": "body.templates.hr_acceptance_date",
+              "value": "={{ $json.body.templates.hr_acceptance_date }}",
+              "type": "string"
+            },
+            {
+              "id": "538900a2-cbe5-4b45-878f-848dc58ebfb6",
+              "name": "body.templates.offer_response_date",
+              "value": "={{ $json.body.templates.offer_response_date }}",
+              "type": "string"
+            },
+            {
+              "id": "00ecdab1-c051-40e2-bcfc-18e94b53cd1d",
+              "name": "body.templates.onboarding_complete",
+              "value": "={{ $json.body.templates.onboarding_complete }}",
+              "type": "boolean"
+            },
+            {
+              "id": "fdcd6a7a-959b-40d8-8119-7f12449f10e2",
+              "name": "body.templates.relocation_required",
+              "value": "={{ $json.body.templates.relocation_required }}",
+              "type": "boolean"
+            },
+            {
+              "id": "ceb51e5c-b01a-44d1-ab17-f3b579f8bc53",
+              "name": "body.templates.offer_letter_esigned",
+              "value": "={{ $json.body.templates.offer_letter_esigned }}",
+              "type": "boolean"
+            },
+            {
+              "id": "86e1e892-5def-48ca-ad06-4b8023bf84d4",
+              "name": "body.templates.relocation_confirmed",
+              "value": "={{ $json.body.templates.relocation_confirmed }}",
+              "type": "boolean"
+            },
+            {
+              "id": "3c446e0b-eb1b-4ad5-82ec-5d93d27a7c4c",
+              "name": "body.templates.hr_acceptance_received",
+              "value": "={{ $json.body.templates.hr_acceptance_received }}",
+              "type": "boolean"
+            },
+            {
+              "id": "8fe4e5ff-f6ea-4688-adc8-c574116b0f9f",
+              "name": "body.templates.offer_letter_generated",
+              "value": "={{ $json.body.templates.offer_letter_generated }}",
+              "type": "boolean"
+            },
+            {
+              "id": "71b1566a-0d66-40d6-9340-329797b47f39",
+              "name": "body.templates.resignation_proof_date",
+              "value": "={{ $json.body.templates.resignation_proof_date }}",
+              "type": "string"
+            },
+            {
+              "id": "37b45d87-653f-4505-8bbd-374cf4445dc3",
+              "name": "body.templates.relocation_last_reminder",
+              "value": "={{ $json.body.templates.relocation_last_reminder }}",
+              "type": "string"
+            },
+            {
+              "id": "49217ec0-9e8e-42cc-9cfd-1c6a2e11f6c6",
+              "name": "body.templates.relocation_reminder_sent",
+              "value": "={{ $json.body.templates.relocation_reminder_sent }}",
+              "type": "boolean"
+            },
+            {
+              "id": "5cb925c8-9980-4c4e-9985-09d4958140ce",
+              "name": "body.templates.resignation_last_reminder",
+              "value": "={{ $json.body.templates.resignation_last_reminder }}",
+              "type": "string"
+            },
+            {
+              "id": "d33b5b3d-b17f-43cb-93e0-b561cb4be1a5",
+              "name": "body.templates.resignation_reminder_sent",
+              "value": "={{ $json.body.templates.resignation_reminder_sent }}",
+              "type": "boolean"
+            },
+            {
+              "id": "1c1c4d29-c39b-4c0a-a6c5-229a8c72fc33",
+              "name": "body.templates.resignation_proof_received",
+              "value": "={{ $json.body.templates.resignation_proof_received }}",
+              "type": "boolean"
+            },
+            {
+              "id": "1d41e464-0c22-4e55-bf98-c2acb1419005",
+              "name": "body.templates.salary_structure_generated",
+              "value": "={{ $json.body.templates.salary_structure_generated }}",
+              "type": "boolean"
+            },
+            {
+              "id": "4a805e57-f3ce-4980-80c2-32bceb482c85",
+              "name": "body.templates.salary_structure_validated",
+              "value": "={{ $json.body.templates.salary_structure_validated }}",
+              "type": "boolean"
+            },
+            {
+              "id": "d07eb72f-dcf5-4187-a0bc-47f21a3c1300",
+              "name": "body.templates.hr_acceptance_last_reminder",
+              "value": "={{ $json.body.templates.hr_acceptance_last_reminder }}",
+              "type": "string"
+            },
+            {
+              "id": "65e62fea-79df-4a95-8aa0-bc7af5528ef1",
+              "name": "body.templates.hr_acceptance_reminder_sent",
+              "value": "={{ $json.body.templates.hr_acceptance_reminder_sent }}",
+              "type": "boolean"
+            },
+            {
+              "id": "552650d6-cfab-48b9-97fa-f7cce6dcd511",
+              "name": "body.templates.relocation_confirmation_date",
+              "value": "={{ $json.body.templates.relocation_confirmation_date }}",
+              "type": "string"
+            },
+            {
+              "id": "7c871586-1a31-43a3-bd45-8343bdb56894",
+              "name": "body.templates.offer_letter_sent_for_esigning",
+              "value": "={{ $json.body.templates.offer_letter_sent_for_esigning }}",
+              "type": "boolean"
+            },
+            {
+              "id": "8dcbe3b8-0969-4831-aa95-5f58b71a3bad",
+              "name": "body.templates.offer_letter_sent_to_candidate",
+              "value": "={{ $json.body.templates.offer_letter_sent_to_candidate }}",
+              "type": "boolean"
+            },
+            {
+              "id": "811d7e39-97dc-460f-ad19-1dfe1e0dc2ea",
+              "name": "body.currentlocation",
+              "value": "={{ $json.body.currentlocation }}",
+              "type": "string"
+            },
+            {
+              "id": "c569bef2-e613-4450-bd2e-2e28311336af",
+              "name": "body.offeredlocation",
+              "value": "={{ $json.body.offeredlocation }}",
+              "type": "string"
+            },
+            {
+              "id": "2dc7acaf-05af-4565-8ec3-7035e16ed1bd",
+              "name": "body.experience",
+              "value": "={{ $json.body.experience }}",
+              "type": "string"
+            },
+            {
+              "id": "81feaf0a-6c9c-4875-8d7e-fae9165c5730",
+              "name": "body.designation",
+              "value": "={{ $json.body.designation }}",
+              "type": "string"
+            },
+            {
+              "id": "9f11399f-cc5b-432e-9390-f8e86f5d6155",
+              "name": "body.doj",
+              "value": "={{ $json.body.doj }}",
+              "type": "string"
+            },
+            {
+              "id": "e47709a7-2ffe-44c2-8aa7-508196ad3fa6",
+              "name": "body.notice_period",
+              "value": "={{ $json.body.notice_period }}",
+              "type": "string"
+            },
+            {
+              "id": "ef1c368b-87be-493e-9111-7eea80b8a117",
+              "name": "body.salary_details.fixed_salary",
+              "value": "={{ $json.body.salary_details.fixed_salary }}",
+              "type": "number"
+            },
+            {
+              "id": "585c483f-3173-40fa-8602-9481e8d0fed2",
+              "name": "body.salary_details.variable_salary",
+              "value": "={{ $json.body.salary_details.variable_salary }}",
+              "type": "number"
+            },
+            {
+              "id": "a8b5f7b3-35de-4927-9cab-653852a557e4",
+              "name": "body.salary_details.basic_salary",
+              "value": "={{ $json.body.salary_details.basic_salary }}",
+              "type": "number"
+            },
+            {
+              "id": "0d87db3b-a17f-4e34-a13a-a114ca9b408f",
+              "name": "body.salary_details.hra",
+              "value": "={{ $json.body.salary_details.hra }}",
+              "type": "number"
+            },
+            {
+              "id": "290af97e-45e9-45ff-afac-943904ffe9cc",
+              "name": "body.salary_details.pf_amount",
+              "value": "={{ $json.body.salary_details.pf_amount }}",
+              "type": "number"
+            },
+            {
+              "id": "203af0c5-5572-4f43-8542-ceed97a7fdf9",
+              "name": "body.salary_details.esi_eligible",
+              "value": "={{ $json.body.salary_details.esi_eligible }}",
+              "type": "string"
+            },
+            {
+              "id": "f763e4ed-cbf8-45fb-b776-1b46aacb4aaf",
+              "name": "body.salary_details.esi_amount",
+              "value": "={{ $json.body.salary_details.esi_amount }}",
+              "type": "string"
+            },
+            {
+              "id": "1b7b2987-5804-4409-9e38-85203325fee7",
+              "name": "body.salary_details.gross_salary",
+              "value": "={{ $json.body.salary_details.gross_salary }}",
+              "type": "number"
+            },
+            {
+              "id": "80e63ca7-3e3c-4ea1-a54c-531aa71e26b5",
+              "name": "body.salary_details.flexi_benefits",
+              "value": "={{ $json.body.salary_details.flexi_benefits }}",
+              "type": "number"
+            },
+            {
+              "id": "b1a2b743-9152-4496-9438-424d3b47c077",
+              "name": "body.salary_details.annual_ctc",
+              "value": "={{ $json.body.salary_details.annual_ctc }}",
+              "type": "number"
+            },
+            {
+              "id": "30134fbd-cb25-454a-96e8-0dadb63f6ede",
+              "name": "body.software[0]",
+              "value": "={{ $json.body.software[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "9bd02475-c573-49d6-910c-d52f4432ce71",
+              "name": "body.software[1]",
+              "value": "={{ $json.body.software[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "448573c8-ee3e-4f86-990a-cc6a45579c3c",
+              "name": "body.software[2]",
+              "value": "={{ $json.body.software[2] }}",
+              "type": "string"
+            },
+            {
+              "id": "3f7899b4-7fff-48f7-98c4-611d8e201ef1",
+              "name": "body.hardware[0].item",
+              "value": "={{ $json.body.hardware[0].item }}",
+              "type": "string"
+            },
+            {
+              "id": "5e1ae2a1-00f4-4c1e-b44b-e1eb95553f45",
+              "name": "body.hardware[0].quantity",
+              "value": "={{ $json.body.hardware[0].quantity }}",
+              "type": "number"
+            },
+            {
+              "id": "8391a867-0793-41ba-9c9b-11297512c0e8",
+              "name": "body.hardware[1].item",
+              "value": "={{ $json.body.hardware[1].item }}",
+              "type": "string"
+            },
+            {
+              "id": "4a75cc84-4c81-4ad0-971c-6a4c1079c565",
+              "name": "body.hardware[1].quantity",
+              "value": "={{ $json.body.hardware[1].quantity }}",
+              "type": "number"
+            },
+            {
+              "id": "187f91f4-65f7-4a4a-b2de-5ece1d17365e",
+              "name": "body.hardware[2].item",
+              "value": "={{ $json.body.hardware[2].item }}",
+              "type": "string"
+            },
+            {
+              "id": "c7097c3d-c7cb-4c78-9b6d-d2409b9ab8c4",
+              "name": "body.hardware[2].quantity",
+              "value": "={{ $json.body.hardware[2].quantity }}",
+              "type": "number"
+            },
+            {
+              "id": "d21e455f-8fcc-408d-b944-cee022d03c83",
+              "name": "body.jobId",
+              "value": "={{ $json.body.jobId }}",
+              "type": "string"
+            },
+            {
+              "id": "4d29140a-477d-4a42-8945-3895c018567e",
+              "name": "body.jobTitle",
+              "value": "={{ $json.body.jobTitle }}",
+              "type": "string"
+            },
+            {
+              "id": "9e4f1197-776a-4314-8c8d-d99fb81d86e1",
+              "name": "body.hiringManager",
+              "value": "={{ $json.body.hiringManager }}",
+              "type": "string"
+            },
+            {
+              "id": "d7f9b36a-bfa4-4f99-b955-7b7eb0b753ac",
+              "name": "body.client",
+              "value": "={{ $json.body.client }}",
+              "type": "string"
+            },
+            {
+              "id": "a4da2da2-1334-4bfd-8ded-31b070fd1f81",
+              "name": "body.recruiter",
+              "value": "={{ $json.body.recruiter }}",
+              "type": "string"
+            },
+            {
+              "id": "b540438e-fe23-4244-a855-9b2b37af47e3",
+              "name": "body.created_by",
+              "value": "={{ $json.body.created_by }}",
+              "type": "string"
+            },
+            {
+              "id": "2d9dd6ce-b824-41de-b7a6-cad29eb3b8ce",
+              "name": "body.created_at",
+              "value": "={{ $json.body.created_at }}",
+              "type": "string"
+            },
+            {
+              "id": "aab8d7eb-8b25-49d4-8dc2-8707dddd39c6",
+              "name": "body.updated_at",
+              "value": "={{ $json.body.updated_at }}",
+              "type": "string"
+            },
+            {
+              "id": "619f3642-6c06-4d20-9b5b-20937aa77363",
+              "name": "body.idProofType",
+              "value": "={{ $json.body.idProofType }}",
+              "type": "string"
+            },
+            {
+              "id": "209a15ba-2fb0-4d29-a84b-0acf823d2356",
+              "name": "body.idProof",
+              "value": "={{ $json.body.idProof }}",
+              "type": "string"
+            },
+            {
+              "id": "2df9173f-522e-49eb-83c0-1af336169048",
+              "name": "webhookUrl",
+              "value": "={{ $json.webhookUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "1f10130f-85ff-40a9-8d4d-ce156f5c03c4",
+              "name": "executionMode",
+              "value": "={{ $json.executionMode }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": true,
+          "dotNotation": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -800,
+        -496
+      ],
+      "id": "64962ebb-d6cd-4ad2-9c88-c59c8e557c03",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "content": "\nnote:\n-NAME \n-PERSONAL EMAIL \n-PHONE NO \nHAS BEEN HARDCODED\n",
+        "height": 128,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1072,
+        -752
+      ],
+      "id": "59be1edb-f101-49d3-867c-6fb7e6cd9de6",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "Onboarding",
+        "options": {
+          "ipWhitelist": "40.112.142.148,40.112.137.127, 40.112.139.85, 40.112.142.204, 40.112.139.188, 40.112.142.148,,40.112.137.127, 40.112.139.85, 40.112.142.204, 40.112.139.188, 20.245.233.243, 40.118.206.166, 40.112.249.173, 40.112.131.22, 40.112.249.100, 40.112.249.174, 20.66.53.211, 20.66.53.243, 20.66.53.245, 20.66.53.247, 20.66.54.2, 20.66.54.8, 40.78.30.133, 138.91.195.197, 138.91.146.26, 40.78.31.246, 168.62.22.239, 40.83.252.5, 40.112.142.148,192.168.16.92"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1024,
+        -496
+      ],
+      "id": "0c174fc7-aba0-48b4-8032-2c235d80b6eb",
+      "name": "RECIEVING FORM DATA VIA WEBHOOK",
+      "webhookId": "f3cd6a5c-c6f1-4107-9423-1cc6c4d1d87c"
+    },
+    {
+      "parameters": {
+        "content": "SAVING THE DATA RECIVIED FROM WEBHOOK ",
+        "height": 208,
+        "width": 176
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -840,
+        -544
+      ],
+      "id": "eb206b26-9353-4fd8-b4db-3dbe7574ae0b",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "SAVING CANDIDATE AND SALARY DETAILS IN database using the both nodes",
+        "height": 224,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -616,
+        -560
+      ],
+      "id": "d809354a-aed6-4188-90a2-a52e2c1708aa",
+      "name": "Sticky Note2"
+    }
+  ],
+  "connections": {
+    "Execute Workflow": {
+      "main": [
+        []
+      ]
+    },
+    "candidate1": {
+      "main": [
+        [
+          {
+            "node": "salary_structure1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "salary_structure1": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "candidate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RECIEVING FORM DATA VIA WEBHOOK": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "e0cc6579-b852-427f-bbbf-8e2a2080115c",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-11-20T09:28:51.283Z",
+      "updatedAt": "2025-11-20T09:28:51.283Z",
+      "role": "workflow:owner",
+      "workflowId": "CsS25PC1yU7fohqq",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-15T04:41:56.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-15",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
