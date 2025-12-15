@@ -1,0 +1,121 @@
+{
+  "createdAt": "2025-12-11T10:01:46.430Z",
+  "updatedAt": "2025-12-15T07:18:51.000Z",
+  "id": "Gid1cQoIcA887GWn",
+  "name": "access card middle",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "Access-card",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "3874354a-3053-438c-99c1-8a7e70cd385e",
+      "name": "Webhook - Display Form",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        736,
+        224
+      ],
+      "webhookId": "access-card-get"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Assign Access Card</title>\n    <style>\n        * {\n            margin: 0;\n            padding: 0;\n            box-sizing: border-box;\n        }\n        \n        body {\n            font-family: Arial, sans-serif;\n            background-color: #f0f2f5;\n            padding: 40px 20px;\n        }\n        \n        .container {\n            max-width: 600px;\n            margin: 0 auto;\n            background: white;\n            padding: 40px;\n            border-radius: 8px;\n            box-shadow: 0 2px 8px rgba(0,0,0,0.1);\n        }\n        \n        h1 {\n            color: #2c5aa0;\n            text-align: center;\n            margin-bottom: 30px;\n            font-size: 24px;\n        }\n        \n        .section-title {\n            color: #2c5aa0;\n            font-size: 16px;\n            font-weight: 600;\n            margin-bottom: 20px;\n            padding-bottom: 10px;\n            border-bottom: 2px solid #e0e0e0;\n        }\n        \n        .form-group {\n            margin-bottom: 20px;\n        }\n        \n        label {\n            display: block;\n            color: #333;\n            font-size: 14px;\n            font-weight: 500;\n            margin-bottom: 8px;\n        }\n        \n        .required {\n            color: #dc3545;\n        }\n        \n        input[type=\"text\"],\n        input[type=\"email\"] {\n            width: 100%;\n            padding: 12px;\n            border: 1px solid #ddd;\n            border-radius: 4px;\n            font-size: 14px;\n            background-color: #f8f9fa;\n        }\n        \n        input[readonly] {\n            background-color: #e9ecef;\n            color: #6c757d;\n        }\n        \n        input[type=\"text\"]:not([readonly]):focus {\n            outline: none;\n            border-color: #4A90E2;\n            background-color: white;\n        }\n        \n        .submit-btn {\n            width: 100%;\n            padding: 14px;\n            background-color: #4A90E2;\n            color: white;\n            border: none;\n            border-radius: 4px;\n            font-size: 16px;\n            font-weight: 600;\n            cursor: pointer;\n            margin-top: 30px;\n            transition: background-color 0.3s;\n        }\n        \n        .submit-btn:hover {\n            background-color: #357ABD;\n        }\n        \n        .submit-btn:disabled {\n            background-color: #ccc;\n            cursor: not-allowed;\n        }\n        \n        .success-message {\n            display: none;\n            background-color: #d4edda;\n            color: #155724;\n            padding: 15px;\n            border-radius: 4px;\n            margin-bottom: 20px;\n            text-align: center;\n        }\n        \n        .error-message {\n            display: none;\n            background-color: #f8d7da;\n            color: #721c24;\n            padding: 15px;\n            border-radius: 4px;\n            margin-bottom: 20px;\n            text-align: center;\n        }\n    </style>\n</head>\n<body>\n    <div class=\"container\">\n        <h1>Assign Access Card</h1>\n        \n        <div id=\"successMessage\" class=\"success-message\"></div>\n        <div id=\"errorMessage\" class=\"error-message\"></div>\n        \n        <form id=\"accessCardForm\">\n            <div class=\"section-title\">Employee Details</div>\n            \n            <div class=\"form-group\">\n                <label>First Name</label>\n                <input type=\"text\" id=\"firstName\" name=\"firstName\" readonly>\n            </div>\n            \n            <div class=\"form-group\">\n                <label>Last Name</label>\n                <input type=\"text\" id=\"lastName\" name=\"lastName\" readonly>\n            </div>\n            \n            <div class=\"form-group\">\n                <label>Email</label>\n                <input type=\"email\" id=\"email\" name=\"email\" readonly>\n            </div>\n            \n            <div class=\"form-group\">\n                <label>Position</label>\n                <input type=\"text\" id=\"position\" name=\"position\" readonly>\n            </div>\n            \n            <div class=\"section-title\">Access Card Details</div>\n            \n            <div class=\"form-group\">\n                <label>Access Card Number <span class=\"required\">*</span></label>\n                <input type=\"text\" id=\"accessCardNumber\" name=\"accessCardNumber\" \n                       placeholder=\"Enter access card number\" required>\n            </div>\n            \n            <input type=\"hidden\" id=\"candidateId\" name=\"candidateId\">\n            \n            <button type=\"submit\" class=\"submit-btn\">Submit Access Card</button>\n        </form>\n    </div>\n\n    <script>\n        function getUrlParams() {\n            const params = new URLSearchParams(window.location.search);\n            return {\n                id: params.get('id'),\n                firstName: params.get('firstName'),\n                lastName: params.get('lastName'),\n                email: params.get('email'),\n                position: params.get('position')\n            };\n        }\n\n        window.addEventListener('DOMContentLoaded', function() {\n            const params = getUrlParams();\n            \n            if (params.id) document.getElementById('candidateId').value = params.id;\n            if (params.firstName) document.getElementById('firstName').value = params.firstName;\n            if (params.lastName) document.getElementById('lastName').value = params.lastName;\n            if (params.email) document.getElementById('email').value = params.email;\n            if (params.position) document.getElementById('position').value = params.position;\n        });\n\n        document.getElementById('accessCardForm').addEventListener('submit', async function(e) {\n            e.preventDefault();\n            \n            const submitBtn = this.querySelector('.submit-btn');\n            const successMsg = document.getElementById('successMessage');\n            const errorMsg = document.getElementById('errorMessage');\n            \n            successMsg.style.display = 'none';\n            errorMsg.style.display = 'none';\n            \n            submitBtn.disabled = true;\n            submitBtn.textContent = 'Submitting...';\n            \n            const formData = {\n                id: document.getElementById('candidateId').value,\n                first_name: document.getElementById('firstName').value,\n                last_name: document.getElementById('lastName').value,\n                personal_email: document.getElementById('email').value,\n                position: document.getElementById('position').value,\n                access_card_number: document.getElementById('accessCardNumber').value\n            };\n            \n            try {\n                const response = await fetch('https://192.168.50.120:5670/webhook-test/Access-card-submit', {\n                    method: 'POST',\n                    headers: {\n                        'Content-Type': 'application/json',\n                    },\n                    body: JSON.stringify(formData)\n                });\n                \n                if (response.ok) {\n                    successMsg.textContent = 'Access card assigned successfully!';\n                    successMsg.style.display = 'block';\n                    document.getElementById('accessCardNumber').value = '';\n                    setTimeout(() => {\n                        window.close();\n                    }, 2000);\n                } else {\n                    throw new Error('Failed to submit');\n                }\n            } catch (error) {\n                errorMsg.textContent = 'Error submitting access card. Please try again.';\n                errorMsg.style.display = 'block';\n            } finally {\n                submitBtn.disabled = false;\n                submitBtn.textContent = 'Submit Access Card';\n            }\n        });\n    </script>\n</body>\n</html>",
+        "options": {}
+      },
+      "id": "30bcdf95-af54-45ef-bdae-dcd6a062403c",
+      "name": "Respond to Webhook - Form HTML",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        944,
+        224
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook - Display Form": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook - Form HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "046e2ff0-d1d7-4521-a186-cec2bde4f152",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-12-11T10:01:46.434Z",
+      "updatedAt": "2025-12-11T10:01:46.434Z",
+      "role": "workflow:owner",
+      "workflowId": "Gid1cQoIcA887GWn",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-15T04:41:56.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-15",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
