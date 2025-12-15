@@ -1,0 +1,221 @@
+{
+  "createdAt": "2025-12-12T07:13:26.979Z",
+  "updatedAt": "2025-12-15T07:23:21.000Z",
+  "id": "8OaKZHHT3DcXtoUo",
+  "name": "Id  card confirmation db update",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "IDCONFIRM",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "cb6ef431-939c-477b-b952-954879a906af",
+      "name": "Webhook",
+      "webhookId": "99b4053e-f02f-4ae7-9669-8bb4ae4e51e8"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "candidate_id",
+              "value": "={{ $json.query.employee_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f79b0a6a-d2b8-4e32-8835-995112d9485b",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "0CwtQcnj9v3qZLce",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = templates::jsonb || jsonb_build_object(\n                    'id_request_completed', true,\n                    'id_request_completed_date', NOW()::text\n                ),\n    updated_at = NOW()\nWHERE id ={{ $json.id }} ;  ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        416,
+        0
+      ],
+      "id": "658b9d52-be53-4f5a-b22b-c207d46e783a",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Updates the candidate record to mark id_request_completed as true and logs the timestamp in the templates JSON field. Also updates the updated_at timestamp for record tracking.",
+        "height": 336
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        368,
+        -176
+      ],
+      "id": "adbf73c0-7248-4f25-8e28-c7d72ae37004",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Looks up the candidate in your onboarding.candidates table based on the employee_id received from the webhook.",
+        "height": 336,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        160,
+        -176
+      ],
+      "id": "bce6a839-c8dd-4358-b3fe-e7076a8e69fa",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Triggered when a candidate confirms their ID. The webhook reads the employee_id from the query parameters.",
+        "height": 336,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -176
+      ],
+      "id": "ed52c141-78f7-4d4b-9358-aa3bd19e7a59",
+      "name": "Sticky Note2"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "f3959c86-3dc3-4902-9111-6e2866e39ab1",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-12-12T07:13:26.983Z",
+      "updatedAt": "2025-12-12T07:13:26.983Z",
+      "role": "workflow:owner",
+      "workflowId": "8OaKZHHT3DcXtoUo",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-15T04:41:56.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 1,
+                  "lastShownAt": 1765342775722
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-15",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
