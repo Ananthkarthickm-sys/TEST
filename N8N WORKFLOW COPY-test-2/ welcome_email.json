@@ -1,0 +1,493 @@
+{
+  "createdAt": "2025-12-04T06:22:42.323Z",
+  "updatedAt": "2025-12-15T09:16:48.000Z",
+  "id": "lSDSghA0P8Lj9NWq",
+  "name": "welcome email",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0241bca9-9e24-4c22-bbfd-469937ab614e",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "7e884a74-4a85-4006-a80c-6a367090ef86",
+              "name": "process",
+              "value": "Welcome Email with handbooks",
+              "type": "string"
+            },
+            {
+              "id": "acf3f767-7bc0-417d-9439-fdd98af62a5c",
+              "name": "email content",
+              "value": "=<p>Dear {{ $json.first_name }} {{ $json.last_name }},</p>\n\n<p>Welcome to <b>Rencata!</b></p>\n\n<p>We are delighted to have you join our team and look forward to a successful journey together.</p>\n\n<p>Your fresh perspective and enthusiasm are highly valued, and we are confident that your contributions will positively impact our collective success.</p>\n\n<p>Kindly find the following documents attached for your reference:</p>\n<ul>\n  <li><b>Employee Handbook</b> – Please review this document carefully as it outlines important policies and guidelines.</li>\n  <li><b>Information Handbook</b> – This contains helpful insights about Rencata and our work culture.</li>\n  <li><b>PF Details</b> – Contains key information regarding your Provident Fund and related formalities.</li>\n</ul>\n\n<p>You are kindly requested to update your timesheets on a daily basis without fail, as this is essential for project tracking and reporting.</p>\n\n<p>Should you have any questions or require further assistance, please do not hesitate to get in touch with us. We are here to support you every step of the way.</p>\n\n<p>We are truly excited to welcome you aboard and look forward to growing and achieving great things together.</p>\n\n<br>\n\n<p>Warm regards,</p>\n<p><b>Team Rencata</b></p>\n\n<p>\n  <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" \n       alt=\"Rencata Logo\" \n       style=\"width: 150px; height: auto;\">\n</p>\n",
+              "type": "string"
+            },
+            {
+              "id": "ddf38094-8017-4b4e-98e7-735ea0c66f49",
+              "name": "sent to",
+              "value": "ananya.js@rencata.com",
+              "type": "string"
+            },
+            {
+              "id": "cbaee099-4a8c-4f47-bbbd-2844651b7afa",
+              "name": "created_by",
+              "value": "n8n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        544
+      ],
+      "id": "374f5cc5-35cd-4966-89ce-2c88207a975b",
+      "name": "contents"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        864,
+        512
+      ],
+      "id": "ab16fea5-bc93-4b0a-94af-230a65e610db",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -448,
+        528
+      ],
+      "id": "8e8a5ce8-d0dd-415d-8b72-9649de585614",
+      "name": "data",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "blob",
+        "operation": "get",
+        "container": {
+          "__rl": true,
+          "value": "onboarding-ai",
+          "mode": "list",
+          "cachedResultName": "onboarding-ai"
+        },
+        "blob": {
+          "__rl": true,
+          "value": "handbooks/Employee-Handbook.pdf",
+          "mode": "list",
+          "cachedResultName": "handbooks/Employee-Handbook.pdf"
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.azureStorage",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -16
+      ],
+      "id": "69f1f5d7-1705-4c2d-a749-2a6acd18f577",
+      "name": "Employee-Handbook",
+      "credentials": {
+        "azureStorageOAuth2Api": {
+          "id": "wkCauR87kgf8c1t9",
+          "name": "AnanthKarthickAzureStorageAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "blob",
+        "operation": "get",
+        "container": {
+          "__rl": true,
+          "value": "onboarding-ai",
+          "mode": "list",
+          "cachedResultName": "onboarding-ai"
+        },
+        "blob": {
+          "__rl": true,
+          "value": "handbooks/Employee PF details.pdf",
+          "mode": "list",
+          "cachedResultName": "handbooks/Employee PF details.pdf"
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.azureStorage",
+      "typeVersion": 1,
+      "position": [
+        0,
+        208
+      ],
+      "id": "f491719b-b204-48a4-adde-80b3a549ffc3",
+      "name": "Employee PF details",
+      "credentials": {
+        "azureStorageOAuth2Api": {
+          "id": "wkCauR87kgf8c1t9",
+          "name": "AnanthKarthickAzureStorageAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "blob",
+        "operation": "get",
+        "container": {
+          "__rl": true,
+          "value": "onboarding-ai",
+          "mode": "list",
+          "cachedResultName": "onboarding-ai"
+        },
+        "blob": {
+          "__rl": true,
+          "value": "=handbooks/InformationHandbook.pdf",
+          "mode": "id"
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.azureStorage",
+      "typeVersion": 1,
+      "position": [
+        0,
+        400
+      ],
+      "id": "f5dc4ad2-3dd9-4653-8723-aa3751c3c19a",
+      "name": "Information Handbook",
+      "credentials": {
+        "azureStorageOAuth2Api": {
+          "id": "wkCauR87kgf8c1t9",
+          "name": "AnanthKarthickAzureStorageAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        224,
+        160
+      ],
+      "id": "17caaeda-2a6f-4c0a-a32a-70e5477445c3",
+      "name": "documents"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = {\n  binary: {\n    data1: {\n      ...items[0].binary.data,\n      fileName: \"Employee Handbook.pdf\",\n      mimeType: \"application/pdf\"\n      \n    },\n    data2: {\n      ...items[1].binary.data,\n      fileName: \"Employee PF Details.pdf\",\n      mimeType: \"application/pdf\"\n    },\n    data3: {\n      ...items[2].binary.data,\n      fileName: \"InformationHandbook.pdf\",\n      mimeType: \"application/pdf\"\n      \n    }\n  }\n};\n\nreturn [output];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        480
+      ],
+      "id": "83b5cedb-c20f-40f8-82f3-2e01c9f19217",
+      "name": "binary documents"
+    },
+    {
+      "parameters": {
+        "toRecipients": "=Ananthkarthick.m@rencata.com",
+        "subject": "=Welcome Aboard ",
+        "bodyContent": "={{ $('contents').first().json['email content'] }}",
+        "additionalFields": {
+          "attachments": {
+            "attachments": [
+              {
+                "binaryPropertyName": "data1"
+              },
+              {
+                "binaryPropertyName": "data2"
+              },
+              {
+                "binaryPropertyName": "data3"
+              }
+            ]
+          },
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        480
+      ],
+      "id": "941fe62a-5d56-4e13-a73d-e534b1a4c769",
+      "name": "Welcome mail to candidate",
+      "webhookId": "194f86e4-78e7-4394-b549-1277321fa447",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -640,
+        528
+      ],
+      "id": "937e3a57-a929-4266-b528-439f41b59ad6",
+      "name": "sub node"
+    },
+    {
+      "parameters": {
+        "content": "sub node (Trigger)\n    ↓\ndata (Postgres Query)\n    ↓\ncontents (Set Email Data)\n    ↓\n    ├─→ Employee-Handbook (Azure)\n    ├─→ Employee PF details (Azure)\n    └─→ Information Handbook (Azure)\n         ↓\n    documents (Merge PDFs)\n         ↓\n    binary documents (Code)\n         ↓\n    Merge (Combine with email content)\n         ↓\n    Welcome mail to candidate (Outlook)",
+        "height": 368,
+        "width": 464
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        496,
+        -32
+      ],
+      "id": "eebc5184-ab24-47c5-a80c-d5c56d45340c",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "contents": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Information Handbook",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Employee PF details",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Employee-Handbook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Welcome mail to candidate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "data": {
+      "main": [
+        [
+          {
+            "node": "contents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Employee-Handbook": {
+      "main": [
+        [
+          {
+            "node": "documents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Employee PF details": {
+      "main": [
+        [
+          {
+            "node": "documents",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Information Handbook": {
+      "main": [
+        [
+          {
+            "node": "documents",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "documents": {
+      "main": [
+        [
+          {
+            "node": "binary documents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "binary documents": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Welcome mail to candidate": {
+      "main": [
+        []
+      ]
+    },
+    "sub node": {
+      "main": [
+        [
+          {
+            "node": "data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "dd0898fa-d829-49ed-87ec-9a2b74e1237a",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-12-04T06:22:42.327Z",
+      "updatedAt": "2025-12-04T06:22:42.327Z",
+      "role": "workflow:owner",
+      "workflowId": "lSDSghA0P8Lj9NWq",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-24T03:37:23.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1766038241283
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-24",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
