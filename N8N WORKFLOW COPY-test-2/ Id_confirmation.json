@@ -1,0 +1,144 @@
+{
+  "createdAt": "2025-12-04T06:31:37.737Z",
+  "updatedAt": "2025-12-15T07:23:23.000Z",
+  "id": "GZl47hneiRyNLp76",
+  "name": "Id_confirmation",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "toRecipients": "Ananthkarthick.M@rencata.com",
+        "subject": "ID Card Request for ",
+        "bodyContent": "=<p>Hello Admin,</p>\n\n<p>An ID card request has been initiated for the following employee:</p>\n\n<ul>\n  <li><strong>Name:</strong> {{ $json.first_name }} {{ $json.last_name }}</li>\n  <li><strong>Employee ID:</strong>{{ $json.candidate_id }} </li>\n  <li><strong>Email:</strong> {{ $json.personal_email }}</li>\n  <li><strong>Department:</strong>{{ $json.hiring_department }} </li>\n</ul>\n\n<p>Please click the button below once the ID request is <strong>complete</strong>:</p>\n\n<a href=\"https://192.168.50.120:5670/webhook/IDCONFIRM?employee_id={{ $json.candidate_id }}&name={{ $json.first_name }}{{ $json.last_name }}\"\n   style=\"display:inline-block;padding:10px 20px;background-color:#28a745;color:#ffffff;\n   text-decoration:none;border-radius:5px;font-weight:bold;\">\n   Confirm Completion\n</a>\n",
+        "additionalFields": {
+          "importance": "High",
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "413fa700-54ad-4709-a788-2cc2d14915e4",
+      "name": "Microsoft Outlook",
+      "webhookId": "d577af70-2b16-4fd0-9e1c-0d82ed78b186",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6b09e757-6e96-4502-a77c-dfa51dac9de2",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "content": "SEND MAIL TO ADMIN TEAM FOR ID CARD ASSSIGNING",
+        "height": 432,
+        "width": 448
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        -192
+      ],
+      "id": "0d6a9ff4-406e-472a-86fd-b68c673b3432",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Microsoft Outlook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "f9dff596-0cc6-49e2-a539-7da97d8a0cee",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-12-04T06:31:37.739Z",
+      "updatedAt": "2025-12-04T06:31:37.739Z",
+      "role": "workflow:owner",
+      "workflowId": "GZl47hneiRyNLp76",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-24T03:37:23.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1766038241283
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-24",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
