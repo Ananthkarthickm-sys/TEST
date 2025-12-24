@@ -1,0 +1,234 @@
+{
+  "createdAt": "2025-12-11T09:34:22.256Z",
+  "updatedAt": "2025-12-22T09:55:29.000Z",
+  "id": "YecdNKKWnnu5H6Kl",
+  "name": "resignation remainder",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = templates::jsonb || jsonb_build_object(\n                    'resignation_reminder_sent', true,\n                    'resignation_last_reminder', NOW()::text\n                ),\n    updated_at = NOW()\nWHERE id = {{ $('Execute a SQL query1').item.json.id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        416,
+        -96
+      ],
+      "id": "e4f2ce8a-3c57-4ad7-8d04-e5917ee8e30a",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM onboarding.candidates\nWHERE templates::jsonb->>'offer_accepted' = 'true'\n  AND templates::jsonb->>'resignation_proof_received' = 'false';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -32,
+        -96
+      ],
+      "id": "f25944cd-d34d-41a0-a4f5-aeb86780973e",
+      "name": "Execute a SQL query1",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toRecipients": "=vetrivel.ramesh@rencata.com",
+        "subject": "Pending Document: Resignation Acceptance Letter Required",
+        "bodyContent": "= {{ $json.first_name }} {{ $json.last_name }}\nI hope you are doing well. This is a kind reminder that we have not yet received your resignation acceptance/relieving letter from your previous employer, which is required to complete your onboarding documentation.\n\nPlease share the document at the earliest convenience or let us know if you are facing any challenges in obtaining it.\n\nThank you for your cooperation.\n\nWarm regards,\n[HR Name]\n[Company Name]\n[Contact Details]",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        192,
+        -96
+      ],
+      "id": "3d58b77f-6355-4c1d-839d-ea3ea1cd9e4b",
+      "name": "Send a message",
+      "webhookId": "26296050-162a-427a-a323-37550fc17a51",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "MicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Updates each candidate’s record to mark that a reminder has been sent and logs the timestamp.",
+        "height": 336
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        368,
+        -240
+      ],
+      "id": "d3607e45-87ae-4a6a-845c-e61d1957afd8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Sends a reminder email to the CANDIDATE (currently fixed as Ananthkarthick.m@rencata.com) about pending resignation acceptance letters.",
+        "height": 352,
+        "width": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -272
+      ],
+      "id": "f3111752-bfc1-4a73-870b-69fa184fa193",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -224,
+        -96
+      ],
+      "id": "cdb732d3-e44f-4538-8ec3-985de15e8c56",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "content": "Pulls the list of such candidates from the onboarding.candidates table.",
+        "height": 320,
+        "width": 208
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        -256
+      ],
+      "id": "18323c74-69e6-422e-b907-608caea61ed9",
+      "name": "Sticky Note2"
+    }
+  ],
+  "connections": {
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "49d6b8bc-1dbb-4e9a-8982-f462ebda593f",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-12-11T09:34:22.259Z",
+      "updatedAt": "2025-12-11T09:34:22.259Z",
+      "role": "workflow:owner",
+      "workflowId": "YecdNKKWnnu5H6Kl",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-24T03:37:23.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1766038241283
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-24",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
