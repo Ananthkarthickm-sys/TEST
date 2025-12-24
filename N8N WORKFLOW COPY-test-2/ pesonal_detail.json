@@ -1,0 +1,144 @@
+{
+  "createdAt": "2025-12-04T06:30:17.151Z",
+  "updatedAt": "2025-12-15T10:54:27.000Z",
+  "id": "Xo6t8qhGUDqlzJ8r",
+  "name": "pesonal detail",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "toRecipients": "Ananthkarthick.m@rencata.com",
+        "subject": "Personal detail collection mail ",
+        "bodyContent": "=<p>Hi {{ $json.name }},</p>\n\n<p>Please fill in the details below and send us back for PF registration.<br>\nAlso, please attach the soft copy of your <b>Passport size photo</b> and <b>Aadhaar card</b>.</p>\n\n<table border=\"1\" cellpadding=\"6\" cellspacing=\"0\" style=\"border-collapse: collapse; width: 100%; font-family: Arial, sans-serif;\">\n  <tr style=\"background-color: #f4a460;\">\n    <th colspan=\"2\" style=\"text-align: center;\">PERSONAL INFORMATION</th>\n  </tr>\n  <tr><td style=\"background-color: #add8e6;\"><b>Name</b></td><td></td></tr>\n  <tr><td style=\"background-color: #add8e6;\"><b>DOB</b></td><td></td></tr>\n  <tr><td style=\"background-color: #add8e6;\"><b>Blood Group</b></td><td></td></tr>\n  <tr><td style=\"background-color: #add8e6;\"><b>PF Number</b></td><td></td></tr>\n  <tr><td style=\"background-color: #add8e6;\"><b>UAN Number</b></td><td></td></tr>\n  <tr><td style=\"background-color: #add8e6;\"><b>Bank Account Number<br>(Axis bank – If available)</b></td><td></td></tr>\n  <tr><td style=\"background-color: #add8e6;\"><b>Marital Status</b></td><td></td></tr>\n  <tr><td style=\"background-color: #add8e6;\"><b>Permanent Address</b></td><td></td></tr>\n  <tr><td style=\"background-color: #add8e6;\"><b>Temporary Address</b></td><td></td></tr>\n\n    <tr style=\"background-color: #f4a460;\">\n    <th colspan=\"4\" style=\"text-align: center;\">FAMILY INFORMATION</th>\n  </tr>\n  <tr style=\"background-color: #add8e6;\">\n    <th><b>Relationship</b></th>\n    <th><b>Name</b></th>\n    <th><b>DOB</b></th>\n    <th><b>Address</b></th>\n  </tr>\n  <tr><td>Father</td><td></td><td></td><td></td></tr>\n  <tr><td>Mother</td><td></td><td></td><td></td></tr>\n  <tr><td>Spouse</td><td></td><td></td><td></td></tr>\n  <tr><td>Child 1</td><td></td><td></td><td></td></tr>\n  <tr><td>Child 2</td><td></td><td></td><td></td></tr>\n</table>\n\n<p>Feel free to reach out if you have any questions.<br>\nLooking forward to your response.</p>\n\n<p>Best regards,<br>\nRencata</p>\n",
+        "additionalFields": {
+          "importance": "High",
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        224,
+        32
+      ],
+      "id": "6edc1ba8-5e04-40c6-956b-f6ea2626c177",
+      "name": "Microsoft Outlook",
+      "webhookId": "77e8382c-ad30-49dd-9d2c-9795876d2c8e",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "AnanthKarthickMicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -96,
+        32
+      ],
+      "id": "43d3138c-b201-43a7-851e-52feb05a753e",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "content": "SEND MAIL TO CANDIDATE TO FILL ALL  THE PF DETAILS",
+        "height": 512,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -224
+      ],
+      "id": "acb8a45e-a16f-4aec-9511-dd5cc4da5383",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Microsoft Outlook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "564c9b0e-faca-4b94-9e00-4832169d0663",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-12-04T06:30:17.154Z",
+      "updatedAt": "2025-12-04T06:30:17.154Z",
+      "role": "workflow:owner",
+      "workflowId": "Xo6t8qhGUDqlzJ8r",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-24T03:37:23.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1766038241283
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-24",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
