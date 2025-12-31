@@ -1,0 +1,200 @@
+{
+  "createdAt": "2025-12-05T06:05:20.240Z",
+  "updatedAt": "2025-12-19T10:35:33.000Z",
+  "id": "IDxhO60qJrx5EuDJ",
+  "name": "5.4.0.CandidateNotificationAfterNegotiationApproval",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "Approval",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -432,
+        -96
+      ],
+      "id": "abc7cc61-cc9c-4bb3-8a3b-41d2cfb91fc3",
+      "name": "Webhook",
+      "webhookId": "5c8a32e9-2d85-4e62-82ec-daa00bc56fc1"
+    },
+    {
+      "parameters": {
+        "toRecipients": "={{ $json.query.to }}",
+        "subject": "Negotiation Request - Response",
+        "bodyContent": "={{ $json.query.content }}\n\n<p>Regards,<br> HR team.</p>\n\n<p>\n  <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" \n       alt=\"Rencata Logo\" \n       style=\"width: 150px; height: auto;\">\n</p>\n",
+        "additionalFields": {
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        16,
+        -96
+      ],
+      "id": "5e71c936-6e20-4c93-940a-e6205049eb75",
+      "name": "Candidate_mail",
+      "webhookId": "b7a91bdd-7713-4f5f-a3e5-5f777b7128e1",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "MicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>Email Preview</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <style>\n    body {\n      font-family: \"Segoe UI\", sans-serif;\n      background-color: #f3f6fb;\n      margin: 0;\n      padding: 0;\n      display: flex;\n      justify-content: center;\n    }\n\n    .container {\n      background-color: #fff;\n      margin-top: 40px;\n      width: 700px;\n      padding: 30px;\n      box-shadow: 0 2px 8px rgba(0,0,0,0.1);\n      border-radius: 8px;\n    }\n\n    .header {\n      font-weight: 600;\n      margin-bottom: 20px;\n      font-size: 18px;\n    }\n\n    .field {\n      margin-bottom: 20px;\n    }\n\n    .label {\n      font-weight: bold;\n      color: #444;\n      display: block;\n      margin-bottom: 6px;\n    }\n\n    input[type=\"email\"] {\n      width: 100%;\n      padding: 10px;\n      border: 1px solid #ccc;\n      border-radius: 6px;\n      font-size: 14px;\n      background-color: #f5f5f5;\n    }\n\n    .email-content {\n      border-top: 1px solid #ddd;\n      padding-top: 20px;\n    }\n\n    .email-content p {\n      line-height: 1.6;\n      font-size: 15px;\n      color: #333;\n      margin: 12px 0;\n    }\n\n    .popup {\n      position: fixed;\n      top: 50%;\n      left: 50%;\n      transform: translate(-50%, -50%);\n      background: white;\n      border-radius: 10px;\n      padding: 40px;\n      box-shadow: 0 10px 30px rgba(0,0,0,0.2);\n      text-align: center;\n      z-index: 1000;\n      display: none;\n    }\n\n    .popup h2 {\n      color: #2e7d32;\n      margin-bottom: 10px;\n    }\n\n    .popup p {\n      color: #333;\n      font-size: 16px;\n    }\n  </style>\n</head>\n<body>\n\n  <div class=\"container\">\n    <div class=\"header\">From: <strong>Agentic AI</strong></div>\n\n    <div class=\"field\">\n      <label class=\"label\">To:</label>\n      <input type=\"email\" id=\"toField\" readonly>\n    </div>\n\n    <div class=\"email-content\" id=\"emailPreview\">\n      <!-- Message will be injected here -->\n    </div>\n  </div>\n\n  <div class=\"popup\" id=\"thankYouPopup\">\n    <h2>✅ Thank You!</h2>\n    <p>Your response has been recorded successfully.</p>\n    <p>This window will close automatically.</p>\n  </div>\n\n  <script>\n    function decodeHTML(html) {\n      const txt = document.createElement('textarea');\n      txt.innerHTML = html;\n      return txt.value;\n    }\n\n    function getQueryParams() {\n      const params = new URLSearchParams(window.location.search);\n      return {\n        to: params.get(\"to\") || \"\",\n        content: params.get(\"content\") || \"<p>No content provided.</p>\",\n        mailid: params.get(\"mailid\") || \"\"\n      };\n    }\n\n    window.onload = () => {\n      const { to, content, mailid } = getQueryParams();\n\n      // Set To field\n      document.getElementById(\"toField\").value = to;\n\n      // Set email content and append default footer\n      const emailContent = decodeHTML(content);\n      const footer = `\n        <p>Regards,<br> HR team.</p>\n        <p>\n          <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" \n               alt=\"Rencata Logo\" \n               style=\"width: 150px; height: auto;\">\n        </p>\n      `;\n      document.getElementById(\"emailPreview\").innerHTML = emailContent + footer;\n\n      // Auto popup after 20 seconds, close after 10 seconds\n      setTimeout(() => {\n        document.getElementById(\"thankYouPopup\").style.display = \"block\";\n        setTimeout(() => window.close(), 10000); // Close after 10 seconds\n      }, 20000); // Show popup after 20 seconds\n    };\n  </script>\n\n</body>\n</html>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        -208,
+        -96
+      ],
+      "id": "3c696ae8-1eed-408c-a874-4e2d0375b34f",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "content": "Receives the final approval request from the internal system to trigger sending the candidate email.",
+        "height": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        -208
+      ],
+      "id": "b25ffc02-9572-421b-bd98-6b46092d8f38",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Sends an HTML preview of the email to HR for confirmation before sending to the candidate.",
+        "height": 240,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        -208
+      ],
+      "id": "d6c69603-bcfb-4693-b74b-600d7590623e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Sends the approved negotiation response email to the candidate via Outlook, including HR footer and branding.",
+        "height": 272,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -208
+      ],
+      "id": "1db237b0-e266-472f-95b2-9a4905a4ca5f",
+      "name": "Sticky Note2"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Candidate_mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "f8044faa-4e77-467c-9bb5-6bd5c68d7ad9",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-12-05T06:05:20.245Z",
+      "updatedAt": "2025-12-05T06:05:20.245Z",
+      "role": "workflow:owner",
+      "workflowId": "IDxhO60qJrx5EuDJ",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-31T04:50:07.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1766988407922
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-31",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
