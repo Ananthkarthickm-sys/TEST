@@ -1,0 +1,401 @@
+{
+  "createdAt": "2025-12-12T06:33:49.585Z",
+  "updatedAt": "2025-12-29T06:06:47.000Z",
+  "id": "ylwgWPnYT0fHfTLT",
+  "name": "Pre-JoiningOrchestrationWorkflow",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -352,
+        32
+      ],
+      "id": "208a1675-48a5-41a7-9ed7-3310b7460911",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    id,\n    first_name,\n    last_name,\n    personal_email,\n    position,\n    doj,\n    CURRENT_DATE AS today,\n    (doj - CURRENT_DATE) AS days_until_joining\nFROM \n    onboarding.candidates\nWHERE \n    doj IS NOT NULL\n    AND doj >= CURRENT_DATE\n    AND doj <= CURRENT_DATE + INTERVAL '5 days'\nORDER BY \n    doj ASC;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -128,
+        32
+      ],
+      "id": "09511c86-bbda-48c7-adc6-0dd2b0842ec1",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "0CwtQcnj9v3qZLce",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        96,
+        32
+      ],
+      "id": "5294f8cb-aad9-4013-8938-a5e3f5be86e7",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "0CwtQcnj9v3qZLce",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Daily at scheduled time\n    ↓\n\"Who's joining in next 5 days?\"\n    ↓\nFound 3 candidates joining soon\n    ↓\nFor each candidate:\n  ├─ Send resignation reminder (if needed)\n  ├─ Send HR acceptance reminder (if needed)\n  ├─ Check HR acceptance received\n  ├─ Initiate PF setup\n  └─ Request ID confirmation\nAND WELCOME EMAIL\n    ↓\nAll reminders sent in 20 seconds!",
+        "height": 432,
+        "width": 368
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        -96
+      ],
+      "id": "eee9a849-12a3-4a02-851a-d027eb7542b0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "YecdNKKWnnu5H6Kl",
+          "mode": "list",
+          "cachedResultName": "resignation remainder"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        -272
+      ],
+      "id": "924c5e54-69d2-46ea-bae3-3023faffe395",
+      "name": "resignation remainder"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "AGzseSUdZloh7oJp",
+          "mode": "list",
+          "cachedResultName": "hr acceptance"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        -128
+      ],
+      "id": "0fa659c6-d4a5-4688-8070-69db08341ae1",
+      "name": "hr acceptance"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "GZl47hneiRyNLp76",
+          "mode": "list",
+          "cachedResultName": "Id_confirmation"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        512,
+        80
+      ],
+      "id": "0f3c6d70-ae24-45a9-b8a7-b111c3e612e5",
+      "name": "id_CONFIRMATION"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "g3iKhP9JRG1vsBoL",
+          "mode": "list",
+          "cachedResultName": "PF"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        320
+      ],
+      "id": "1f5ab37a-8fc8-4acc-906e-f4eac00bf143",
+      "name": "PF"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "MLkZvZeQ1oPB1IdJ",
+          "mode": "list",
+          "cachedResultName": "Access card assigning"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        128
+      ],
+      "id": "fb0f7104-a0aa-45db-8d3d-19e8d2ed5914",
+      "name": "Access card"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "lSDSghA0P8Lj9NWq",
+          "mode": "list",
+          "cachedResultName": "welcome email"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        576,
+        288
+      ],
+      "id": "6c17b924-af2d-4735-83f8-e6a7d79ae86d",
+      "name": "welcome email"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "hr acceptance",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "PF",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Access card",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "resignation remainder",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "id_CONFIRMATION",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "welcome email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "hr acceptance": {
+      "main": [
+        []
+      ]
+    },
+    "Access card": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "15673bb9-8a40-47d1-b345-9c287ca9068b",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-12-12T06:33:49.589Z",
+      "updatedAt": "2025-12-12T06:33:49.589Z",
+      "role": "workflow:owner",
+      "workflowId": "ylwgWPnYT0fHfTLT",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-31T04:50:07.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1766988407922
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-31",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
