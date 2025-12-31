@@ -1,0 +1,443 @@
+{
+  "createdAt": "2025-11-20T09:53:21.227Z",
+  "updatedAt": "2025-12-15T06:03:28.000Z",
+  "id": "cbp2q7EHdn0nrxvz",
+  "name": "duplicate",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        272,
+        352
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "b5942df6-0160-4ef7-965d-57583acdc8aa",
+      "name": "Replace me with your logic",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        528,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -160,
+        208
+      ],
+      "id": "1424a548-b5cc-4c20-9ec6-1c5b0921225e",
+      "name": "details"
+    },
+    {
+      "parameters": {
+        "fileSelector": "=/home/node/offertemp/esigned/{{ $('details').first().json.filename }}.pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        496,
+        128
+      ],
+      "id": "3045b7ac-ae2f-4618-8c93-d825891e822c",
+      "name": "offer letter"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "781128e3-da14-412c-8a4e-0e9cffc46864",
+              "name": "email_content",
+              "value": "=<p>\n  Dear <strong>{{ $('details').item.json.first_name }} {{ $('details').item.json.last_name }}</strong>,\n</p>\n\n<p>We are pleased to share your offer letter for the position of <strong>{{ $('details').item.json.position }}</strong> at <strong>{{ $('details').item.json.customer_name }}</strong>.\n</p>\n\n<p>Please take a moment to carefully go through the attached offer letter, which outlines the terms of your employment, including <strong>compensation</strong>, <strong>benefits</strong>, and <strong>joining formalities</strong>.\n</p>\n\n{{ $('details').item.json.templates.relocation_required ? `\n  <p>Additionally, we would like to highlight that your offered location is <strong>${$('details').item.json.offeredlocation}</strong>, while your current location is <strong>${$('details').item.json.currentlocation}</strong>. <strong>This role requires relocation.</strong>\n  </p>\n\n  <p>Kindly confirm your willingness to relocate.\n  </p>\n` : '' }}\n\n<p>We are excited to have you on board and look forward to working with you.\n</p>\n\n<p>Best regards,<br><strong>HR Team</strong>\n</p>\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        64,
+        208
+      ],
+      "id": "f3859a3b-9357-416c-8d0a-69ebca3d47ef",
+      "name": "email content"
+    },
+    {
+      "parameters": {
+        "toRecipients": "ananya.js@rencata.com",
+        "subject": "=Confirmation Required to Send Verified Offer Letter to {{ $('details').item.json.first_name }} {{ $('details').item.json.last_name }}",
+        "bodyContent": "={{ $('contents').item.json['email content'] }}",
+        "additionalFields": {
+          "attachments": {
+            "attachments": [
+              {
+                "binaryPropertyName": "data"
+              }
+            ]
+          },
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        720,
+        128
+      ],
+      "id": "9718732a-de18-4613-9233-2e22d5852417",
+      "name": "mail HR",
+      "webhookId": "205afcda-7bb7-4e9e-9deb-bd3a6541a8b9"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "yH6eMS0WRC0QG6xY",
+          "mode": "list",
+          "cachedResultName": "Email_log"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1168,
+        208
+      ],
+      "id": "d3f9cb82-e235-4174-ba4c-a8dc094fb737",
+      "name": "log email"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0241bca9-9e24-4c22-bbfd-469937ab614e",
+              "name": "id",
+              "value": "={{ $('details').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "7e884a74-4a85-4006-a80c-6a367090ef86",
+              "name": "process",
+              "value": "HR verification of offer letter",
+              "type": "string"
+            },
+            {
+              "id": "acf3f767-7bc0-417d-9439-fdd98af62a5c",
+              "name": "email content",
+              "value": "=<p style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n  Hi <strong>HR Team</strong>,\n</p>\n\n<p style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n  Kindly take a moment to review the attached offer letter and the email content prepared for the candidate. Please <strong>confirm</strong> to continue the process or edit if any changes are needed.\n</p>\n\n<!-- Centered Light Gray Box -->\n<div style=\"margin: 0 auto; width: 800px; max-width: 100%; background-color: #fafafa; border: 1px solid #ccc; border-radius: 12px; padding: 24px; font-family: Arial, sans-serif; font-size: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); text-align: left;\">\n\n  \n\n  <p style=\"margin-top: 20px;\">\n    📎 <strong>Attached:</strong> {{ $('details').item.json.filename }}\n  </p> {{ $('email content').item.json.email_content }}\n\n\n</div>\n\n<!-- Centered Buttons: Edit on left, Confirm on right -->\n<div style=\"text-align: center; margin-top: 24px;\">\n  <a href=\"https://med.rencata.com/webhook/edit-content?id={{ $('details').item.json.id }}&email_content={{ $('email content').item.json.email_content }}\"\n     style=\"display:inline-block;margin-right:12px;padding:12px 24px;background-color:#388e3c;\n     color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;\">\n     Edit Content\n  </a>\n\n  <a href=\"https://med.rencata.com/webhook/confirmsend?id={{ $('details').item.json.id }}&email_content={{ $('email content').item.json.email_content }}\"\n   style=\"display:inline-block;padding:12px 24px;background-color:#1976d2;\n   color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:16px;\">\n   Confirm Send\n</a>\n\n</div>\n\n<p style=\"font-family: Arial, sans-serif; font-size: 14px; margin-top: 20px;\">\n  Thank you,<br>\n  <strong>Agentic AI</strong>\n</p>\n<p style=\"margin-top: 20px;\">\n    <img src=\"https://media.licdn.com/dms/image/v2/C561BAQFcaBKo0RUV_g/company-background_10000/company-background_10000/0/1584361725954/rencata_cover?e=2147483647&v=beta&t=Om7LLN3Ndu_hg9G5SL9WE6vURmRBSLnv0pHX4XhPPnc\" \n         alt=\"Rencata Logo\" \n         style=\"width: 200px; height: auto; display: block;\">\n  </p>",
+              "type": "string"
+            },
+            {
+              "id": "ddf38094-8017-4b4e-98e7-735ea0c66f49",
+              "name": "sent to",
+              "value": "ananya.js@rencata.com",
+              "type": "string"
+            },
+            {
+              "id": "cbaee099-4a8c-4f47-bbbd-2844651b7afa",
+              "name": "created_by",
+              "value": "n8n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        288,
+        208
+      ],
+      "id": "f7bf4524-c119-4038-84d3-ced83b04cff3",
+      "name": "contents"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        944,
+        208
+      ],
+      "id": "58448d97-a774-4e90-86be-d7bf1a566c65",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = jsonb_set(templates::jsonb, '{offer_letter_sent_to_hr_verification}', 'true'::jsonb, false)::json,\n    updated_at = NOW()\nWHERE id = {{ $('data').first().json.id }};\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1376,
+        208
+      ],
+      "id": "4391788d-b28e-47d2-b3a4-2f859ba44da4",
+      "name": "update offer_letter_generated"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $('When Executed by Another Workflow').first().json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "templates"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1600,
+        208
+      ],
+      "id": "49593b8e-db83-4134-9d5f-72520d029fac",
+      "name": "offer_letter_generated done",
+      "alwaysOutputData": true
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Replace me with your logic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "details": {
+      "main": [
+        [
+          {
+            "node": "email content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "offer letter": {
+      "main": [
+        [
+          {
+            "node": "mail HR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "email content": {
+      "main": [
+        [
+          {
+            "node": "contents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "mail HR": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "contents": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "offer letter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "log email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update offer_letter_generated": {
+      "main": [
+        [
+          {
+            "node": "offer_letter_generated done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "log email": {
+      "main": [
+        [
+          {
+            "node": "update offer_letter_generated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "a02f77a1-bf53-44ca-8d30-bad24b76bdae",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-11-20T09:53:21.229Z",
+      "updatedAt": "2025-11-20T09:53:21.229Z",
+      "role": "workflow:owner",
+      "workflowId": "cbp2q7EHdn0nrxvz",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-31T04:50:07.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1766988407922
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-31",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
