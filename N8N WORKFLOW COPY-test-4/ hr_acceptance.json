@@ -1,0 +1,253 @@
+{
+  "createdAt": "2025-12-11T09:56:19.922Z",
+  "updatedAt": "2025-12-24T07:35:57.000Z",
+  "id": "AGzseSUdZloh7oJp",
+  "name": "hr acceptance",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "toRecipients": "vetrivel.ramesh@rencata.com",
+        "subject": "=Pending Document: HR Acceptance Letter ",
+        "bodyContent": "= Dear {{ $json.first_name }}{{ $json.last_name }}\n\nThis is a gentle reminder to kindly share the HR acceptance letter at your earliest convenience. We require the letter to proceed with the next steps of the process.\n\nPlease share the document at the earliest convenience or let us know if you are facing any challenges in obtaining it.\n\nThank you for your cooperation.\n\nWarm regards,\n[HR Name]\n[Company Name]\n[Contact Details]",
+        "additionalFields": {
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        512,
+        0
+      ],
+      "id": "9552fd63-016e-443c-8ded-69f43ef79059",
+      "name": "Send a message",
+      "webhookId": "8f66b2e0-367a-47ff-ba7e-e33dfaa26b1c",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "MicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        0
+      ],
+      "id": "d39170e4-5506-446b-a3fc-d8abb9ac604d",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "0CwtQcnj9v3qZLce",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE onboarding.candidates\nSET templates = templates::jsonb || jsonb_build_object(\n                    'hr_acceptance_reminder_sent', true,\n                    'hr_acceptance_last_reminder', NOW()::text\n                ),\n    updated_at = NOW()\nWHERE id = {{ $('Select rows from a table').item.json.id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        816,
+        0
+      ],
+      "id": "0b65689d-f0e1-4a24-a1ea-3c9fb0352edb",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a25fcbda-7ad4-4c4d-807e-11d7e12a9a76",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "content": "Updates each candidate’s record to mark that a reminder has been sent and logs the timestamp.",
+        "height": 416
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        768,
+        -192
+      ],
+      "id": "185d8b2d-dbcb-4f2f-a1a9-fe6cf57ebcae",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Sends a reminder email to the CANDIDATE (currently fixed as Ananthkarthick.m@rencata.com) about HR acceptance letters.",
+        "height": 480
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        432,
+        -240
+      ],
+      "id": "8c21295d-ed77-46a3-a31a-da0ff496908d",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Pulls the list of such candidates from the onboarding.candidates table.",
+        "height": 320,
+        "width": 208
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        160,
+        -144
+      ],
+      "id": "36022940-30d9-4ac1-9d40-a7b60c310668",
+      "name": "Sticky Note2"
+    }
+  ],
+  "connections": {
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "f31b6957-7c03-4ea8-8b0f-c1f44b6cf0d1",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-12-11T09:56:19.925Z",
+      "updatedAt": "2025-12-11T09:56:19.925Z",
+      "role": "workflow:owner",
+      "workflowId": "AGzseSUdZloh7oJp",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-31T04:50:07.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1766988407922
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-31",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
