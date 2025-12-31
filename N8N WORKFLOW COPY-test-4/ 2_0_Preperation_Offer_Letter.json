@@ -1,0 +1,566 @@
+{
+  "createdAt": "2025-11-20T09:39:14.798Z",
+  "updatedAt": "2025-12-16T12:15:48.000Z",
+  "id": "kfI0FkHVcHwPfFJE",
+  "name": "2.0.Preperation_Offer_Letter",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "data",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -576,
+        112
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Rf4hmAJ64k2MJkxk",
+          "mode": "list",
+          "cachedResultName": "2.2.Initiate Offer Letter E-Signing"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        688,
+        -32
+      ],
+      "id": "4bf3682f-9559-4096-8ba2-1fa3515e0851",
+      "name": "Send for eSigning",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CRO4dtFHqC5QYDFh",
+          "mode": "list",
+          "cachedResultName": "2.1.InitiateOfferLetterGenerate"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        528,
+        304
+      ],
+      "id": "9929aaeb-8eca-4eb0-92bd-a446947710ea",
+      "name": "Generate offer",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "36c5bc89-3841-42a8-9a4b-3b643cbe5891",
+              "leftValue": "={{ $json.templates.process_paused }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -128,
+        112
+      ],
+      "id": "6dbdce6b-bd00-4f0d-aa5e-5cf9b7d37229",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d17dd96c-ef83-46a7-87a1-61e1019a053a",
+              "leftValue": "={{ $json.offer_letter_file_name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        224
+      ],
+      "id": "2b9d79d4-381e-495c-98f1-b57b4ef6852a",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "toRecipients": "vetrivel.ramesh@rencata.com",
+        "subject": "=Process Paused - {{ $json.first_name }} {{ $json.last_name }} ({{ $json.candidate_id }})",
+        "bodyContent": "=<p>Process paused for candidate {{ $json.first_name }} {{ $json.last_name }} ({{ $json.candidate_id }}). Please review.</p>",
+        "additionalFields": {
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -128
+      ],
+      "id": "bc5f40c6-c992-4ea8-81ac-1257919a7871",
+      "name": "Send Pause Email",
+      "webhookId": "6166ab8c-a70f-4cb3-b83b-2f8aa78a7bcb",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "eWQEt8vkKHsJ6uml",
+          "name": "MicrosoftOutlookAccount"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "id  was recevied from previous node **save candidate data** [WORKFLOW](https://192.168.50.120:5670/workflow/CsS25PC1yU7fohqq)",
+        "height": 224,
+        "width": 176
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        16
+      ],
+      "id": "7c1f4d83-9a04-42fc-b0c0-ef6343a78d25",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "To return all the data from database related to the id",
+        "height": 240,
+        "width": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        32
+      ],
+      "id": "abcb5846-2972-42ee-b11a-ccd016aa9b5c",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "to check if the process is paused",
+        "height": 224,
+        "width": 160
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        48
+      ],
+      "id": "577f5450-eb1a-4d3b-85b4-a519f0e1e03f",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "here the email will be sent to hr if process is paused",
+        "height": 240,
+        "width": 176
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        208,
+        -224
+      ],
+      "id": "52151478-1731-4ab9-b3ed-a3ced3fad39a",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "**here we will check if offer letter file name is empty**",
+        "height": 208
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        80,
+        160
+      ],
+      "id": "1c748206-0926-41fc-b5cc-305b304fb2af",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "if there is no offer letter file name present it will come here to generate offer letter",
+        "height": 288,
+        "width": 208
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        480,
+        208
+      ],
+      "id": "9f9b8998-621d-4a7c-a8f3-69f81f1614d2",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "HERE WE SEND THE OUTPUT OF GENERATE OFFER LETTER NODE ",
+        "height": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "9571943d-7d5f-48db-91ff-f9763281fa32",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "onboarding",
+          "mode": "list",
+          "cachedResultName": "onboarding"
+        },
+        "table": {
+          "__rl": true,
+          "value": "candidates",
+          "mode": "list",
+          "cachedResultName": "candidates"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "*"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -352,
+        112
+      ],
+      "id": "aa21b724-2bd4-4a10-a895-8405c98cd65a",
+      "name": "Get Candidate infomation from db",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "zLFgSxFBtH9jn8kB",
+          "name": "AnanthKarthick_n8n_DB_Credential"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "data": {
+      "main": [
+        [
+          {
+            "node": "Get Candidate infomation from db",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send for eSigning": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send Pause Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send for eSigning",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate offer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate offer": {
+      "main": [
+        [
+          {
+            "node": "Send for eSigning",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Candidate infomation from db": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "data": [
+      {
+        "json": {
+          "id": 1188,
+          "candidate_id": "CA1188",
+          "fixed_component": "12000.00",
+          "variable_component": "3000.00",
+          "basic_salary": "4800.00",
+          "hra": "1920.00",
+          "other_allowances": "0.00",
+          "pf_amount": "960.00",
+          "esi_eligible": false,
+          "esi_amount": "0.00",
+          "gross_salary": "12000.00",
+          "net_salary": "0.00",
+          "created_at": "2025-07-11T10:30:00.000Z",
+          "gratuity": "0.00",
+          "flexi_benefits": "-4320.00",
+          "total_annual_performance_incentive": "0.00",
+          "pf_company_contribution": "0.00",
+          "annual_ctc": "15000.00"
+        }
+      }
+    ],
+    "Get Candidate infomation from db": [
+      {
+        "json": {
+          "id": 1188,
+          "candidate_id": "CA1188",
+          "first_name": "vig",
+          "last_name": "nesh",
+          "personal_email": "Vetrivel.Ramesh@rencata.com",
+          "mobile_number": "23345446445",
+          "hiring_department": "Technology",
+          "start_date": "2025-12-20T18:30:00.000Z",
+          "customer_name": "Rencata",
+          "project_name": "Project Faclcon",
+          "created_by": "admin",
+          "created_at": "2025-07-11T10:30:00.000Z",
+          "updated_at": "2025-12-16T07:25:40.661Z",
+          "templates": {
+            "created_at": null,
+            "updated_at": null,
+            "doj_calculated": false,
+            "offer_accepted": false,
+            "offer_declined": false,
+            "process_paused": false,
+            "hr_acceptance_date": null,
+            "offer_response_date": null,
+            "onboarding_complete": false,
+            "relocation_required": true,
+            "offer_letter_esigned": false,
+            "relocation_confirmed": false,
+            "hr_acceptance_received": false,
+            "offer_letter_generated": false,
+            "resignation_proof_date": null,
+            "relocation_last_reminder": null,
+            "relocation_reminder_sent": false,
+            "resignation_last_reminder": null,
+            "resignation_reminder_sent": false,
+            "resignation_proof_received": false,
+            "salary_structure_generated": false,
+            "salary_structure_validated": false,
+            "hr_acceptance_last_reminder": null,
+            "hr_acceptance_reminder_sent": false,
+            "relocation_confirmation_date": null,
+            "offer_letter_sent_for_esigning": false,
+            "offer_letter_sent_to_candidate": false,
+            "offer_letter_negotiated": false
+          },
+          "currentlocation": "Mumbai",
+          "offeredlocation": "Chennai",
+          "experience": 3,
+          "ctc": 15000,
+          "position": "QA Manager",
+          "doj": "2025-12-20T18:30:00.000Z",
+          "notice_period": 30,
+          "Assets": [
+            {
+              "item": "Windows Machine",
+              "quantity": 1
+            },
+            {
+              "item": "Monitor",
+              "quantity": 1
+            },
+            {
+              "item": "Keyboard",
+              "quantity": 1
+            }
+          ],
+          "software": [
+            "Visual Studio",
+            "Python",
+            "MySQL Workbench"
+          ],
+          "jobId": "SAUG0013",
+          "offer_letter_file_name": null,
+          "status": "pending",
+          "access_card_no": null
+        }
+      }
+    ]
+  },
+  "versionId": "133c9cf2-6fec-4d65-9365-58fe11977f4e",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-11-20T09:39:14.800Z",
+      "updatedAt": "2025-11-20T09:39:14.800Z",
+      "role": "workflow:owner",
+      "workflowId": "kfI0FkHVcHwPfFJE",
+      "projectId": "hPfhS797YBdpAEqI",
+      "project": {
+        "createdAt": "2025-09-26T06:43:01.081Z",
+        "updatedAt": "2025-09-26T06:44:32.495Z",
+        "id": "hPfhS797YBdpAEqI",
+        "name": "ANANTH KARTHICK M <ananthkarthick.m@rencata.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "createdAt": "2025-09-26T06:43:01.083Z",
+            "updatedAt": "2025-09-26T06:43:01.083Z",
+            "role": "project:personalOwner",
+            "userId": "a2369de8-faff-479b-b8da-fd42529be638",
+            "projectId": "hPfhS797YBdpAEqI",
+            "user": {
+              "createdAt": "2025-09-26T06:43:01.080Z",
+              "updatedAt": "2025-12-31T04:50:07.000Z",
+              "id": "a2369de8-faff-479b-b8da-fd42529be638",
+              "email": "ananthkarthick.m@rencata.com",
+              "firstName": "ANANTH KARTHICK",
+              "lastName": "M",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-26T06:44:39.371Z",
+                "personalization_survey_n8n_version": "1.109.1"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "NZ0Axgeqt41MvkFH",
+                "userActivated": true,
+                "userActivatedAt": 1763617113437,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1766988407922
+                }
+              },
+              "role": "global:member",
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-31",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}
